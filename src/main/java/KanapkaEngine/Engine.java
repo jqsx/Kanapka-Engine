@@ -85,6 +85,12 @@ public class Engine {
         return -1;
     }
 
+    public long getGameThreadID() {
+        if (gameThread != null)
+            return gameThread.getId();
+        return -1;
+    }
+
     public void End() {
         isRunning = false;
 
