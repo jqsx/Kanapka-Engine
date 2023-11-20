@@ -1,6 +1,7 @@
 package KanapkaEngine.Game;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class EngineConfiguration {
     public int FPSLIMIT = 60;
@@ -8,4 +9,6 @@ public class EngineConfiguration {
     public int width = 300;
     public int height = 300;
     public int WINDOW_CLOSE_OPERATION = JFrame.EXIT_ON_CLOSE;
+
+    public Dimension target_size = new Dimension(600, 400);
 }

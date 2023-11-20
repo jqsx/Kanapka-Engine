@@ -5,6 +5,7 @@ import KanapkaEngine.Components.RenderStage;
 import KanapkaEngine.Engine;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +23,29 @@ public class Renderer extends Canvas {
 
     private final long Second = (long) Math.pow(10, 9);
 
+    private static int FPS = 0;
+
+    private Dimension target_size;
+
     public Renderer(EngineConfiguration engineConfiguration, Engine engine) {
         this.engineConfiguration = engineConfiguration;
         this.engine = engine;
+        target_size = engineConfiguration.target_size;
+        setBackground(Color.black);
+        setSize(320, 180);
     }
 
     public void Render() {
         if (engine.getRenderThreadID() != Thread.currentThread().getId()) return;
         if (render_frame_delay + Second / engineConfiguration.FPSLIMIT > System.nanoTime()) return;
+        double delta = (System.nanoTime() - render_frame_delay) / (double) Second;
+        FPS = (int) (1.0 / delta);
+        render_frame_delay = System.nanoTime();
         Frame();
+    }
+
+    public static int getFPS() {
+        return FPS;
     }
 
     private void Frame() {
@@ -41,11 +56,39 @@ public class Renderer extends Canvas {
         }
 
         Graphics2D main = (Graphics2D) bs.getDrawGraphics();
+        main.setColor(getBackground());
+        main.fillRect(0, 0, getWidth(), getHeight());
 
+        main.setTransform(getWorldTransform());
+        main.setColor(Color.red);
+        main.fillRect(-100, -100, 200, 200);
         Render_Layer(main, BACKGROUND);
+        Render_Layer(main, WORLD);
+        Render_Layer(main, PARTICLES);
+
+        main.setTransform(getUITransform());
+        Render_Layer(main, UI);
+        Render_Layer(main, FOREGROUND);
 
         bs.show();
         main.dispose();
+    }
+
+    private AffineTransform getWorldTransform() {
+        AffineTransform at = new AffineTransform();
+
+        double ratio = Math.min(getHeight(), getWidth()) / (double) Math.max(getHeight(), getWidth());
+
+        at.scale(1.0 / ratio, - 1.0 / ratio);
+        at.translate(getWidth() * ratio, -getHeight() * ratio);
+
+        return at;
+    }
+
+    private AffineTransform getUITransform() {
+        AffineTransform at = new AffineTransform();
+
+        return at;
     }
 
     private void Render_Layer(Graphics2D main, List<RenderLayer> renderStage) {

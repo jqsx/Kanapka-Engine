@@ -21,6 +21,8 @@ public class Engine {
     private Thread gameThread;
     private Thread renderThread;
 
+    private Time time = new Time();
+
     public Engine(GameLogic logic) {
         this.logic = logic;
         init();
@@ -54,6 +56,7 @@ public class Engine {
             }
             LOGGER.info("Stopped Render Thread.");
         });
+        renderThread.start();
         LOGGER.info("Initialized Render Thread.");
     }
 
@@ -62,6 +65,7 @@ public class Engine {
         logic.Start();
         gameThread = new Thread(() -> {
             while (isRunning) {
+                time.GameUpdate();
                 try {
                     logic.Update();
                 } catch (Exception e) {
@@ -76,6 +80,7 @@ public class Engine {
             }
             LOGGER.info("Stopped Game Thread.");
         });
+        gameThread.start();
         LOGGER.info("Initialized Game Thread.");
     }
 
@@ -98,7 +103,7 @@ public class Engine {
         window.dispose();
     }
 
-    public void RegisterRenderLayer(RenderLayer renderLayer, RenderStage renderStage) {
-        renderer.RegisterRenderLayer(renderLayer, renderStage);
+    public void RegisterRenderLayer(RenderLayer renderLayer) {
+        renderer.RegisterRenderLayer(renderLayer, renderLayer.getStage());
     }
 }

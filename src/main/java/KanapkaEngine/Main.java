@@ -1,6 +1,7 @@
 package KanapkaEngine;
 
 import KanapkaEngine.Game.GameLogic;
+import KanapkaEngine.RenderLayers.Debug;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,5 +21,7 @@ public class Main {
 
             }
         });
+
+        engine.RegisterRenderLayer(new Debug());
     }
 }
