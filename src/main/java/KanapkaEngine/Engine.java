@@ -6,11 +6,11 @@ import KanapkaEngine.Game.EngineConfiguration;
 import KanapkaEngine.Game.GameLogic;
 import KanapkaEngine.Game.Renderer;
 import KanapkaEngine.Game.Window;
-
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Engine {
-    private static final Logger LOGGER = Logger.getLogger( Engine.class.getName() );
+    private static final Logger LOGGER = LogManager.getLogger(Engine.class);
     private static boolean isRunning = true;
     private Renderer renderer;
     private Window window;

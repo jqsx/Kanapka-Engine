@@ -1,13 +1,13 @@
 package KanapkaEngine.Components;
 
-public class NodeComponent {
+public abstract class NodeComponent {
     private Node parent;
 
     public Node getParent() {
         return parent;
     }
 
-    public void setParent(Node parent) {
+    public final void setParent(Node parent) {
         if (parent.isChild(this)) {
             this.parent = parent;
         }

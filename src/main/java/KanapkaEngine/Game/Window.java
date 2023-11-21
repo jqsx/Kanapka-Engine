@@ -13,6 +13,10 @@ public class Window extends JFrame {
         setTitle(engineConfiguration.window_title);
         setSize(engineConfiguration.width, engineConfiguration.height);
         setDefaultCloseOperation(engineConfiguration.WINDOW_CLOSE_OPERATION);
+
+        if (engineConfiguration.custom_title_bar)
+            setUndecorated(true);
+
         this.engine = engine;
         this.engineConfiguration = engineConfiguration;
         main = this;

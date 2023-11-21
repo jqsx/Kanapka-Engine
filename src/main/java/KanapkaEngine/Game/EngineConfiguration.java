@@ -10,5 +10,7 @@ public class EngineConfiguration {
     public int height = 300;
     public int WINDOW_CLOSE_OPERATION = JFrame.EXIT_ON_CLOSE;
 
+    public boolean custom_title_bar = false;
+
     public Dimension target_size = new Dimension(600, 400);
 }
