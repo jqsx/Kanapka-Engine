@@ -76,7 +76,7 @@ public class Renderer extends Canvas implements MouseListener {
         AffineTransform world_transform = getWorldTransform();
         main.setTransform(world_transform);
         main.setColor(Color.red);
-        main.fillRect(-500, -500, 1000, 1000);
+        main.fillRect(-250, -250, 500, 500);
         Render_Layer(main, BACKGROUND);
         main.setTransform(world_transform);
         Render_Layer(main, WORLD);
@@ -116,12 +116,13 @@ public class Renderer extends Canvas implements MouseListener {
     }
 
     private AffineTransform getWorldTransform() {
+        double div = System.getProperty("os.name").equals("darwin") ? 1.0 : 2.0;
         AffineTransform at = new AffineTransform();
         Dimension target = Toolkit.getDefaultToolkit().getScreenSize();
         double ratio = Math.min(getHeight() / (double)target.height, getWidth() / (double)target.width) / (double) Math.max(getHeight() / (double)target.height, getWidth() / (double)target.width);
 
         at.scale(1.0 / ratio, - 1.0 / ratio);
-        at.translate(getWidth() * ratio, -getHeight() * ratio);
+        at.translate(getWidth() * ratio / div, -getHeight() * ratio / div);
 
         return at;
     }

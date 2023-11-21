@@ -9,7 +9,6 @@ public class Main {
         System.setProperty("env", "dev");
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
-        engineConfiguration.custom_title_bar = true;
         Engine engine = new Engine(new GameLogic() {
             @Override
             public void Start() {
