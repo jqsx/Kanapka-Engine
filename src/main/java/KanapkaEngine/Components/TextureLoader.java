@@ -18,5 +18,9 @@ public class TextureLoader {
         }
         return null;
     }
+
+    public static BufferedImage loadFile(String path) {
+        return null;
+    }
     private TextureLoader() {}
 }
