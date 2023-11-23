@@ -2,12 +2,15 @@ package KanapkaEngine;
 
 import KanapkaEngine.Components.RenderLayer;
 import KanapkaEngine.Components.RenderStage;
-import KanapkaEngine.Game.EngineConfiguration;
-import KanapkaEngine.Game.GameLogic;
-import KanapkaEngine.Game.Renderer;
-import KanapkaEngine.Game.Window;
+import KanapkaEngine.Game.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Engine {
     private static final Logger LOGGER = LogManager.getLogger(Engine.class);
@@ -22,6 +25,8 @@ public class Engine {
     private Thread renderThread;
 
     private Time time = new Time();
+
+    private List<Plugin> plugins = new ArrayList<>();
 
     public Engine(GameLogic logic) {
         this.logic = logic;
@@ -42,6 +47,20 @@ public class Engine {
         init_render_thread();
 
         init_game_thread();
+    }
+
+    public void load(Plugin plugin) {
+        plugins.add(plugin);
+        plugin.Apply(this);
+    }
+
+    public void addListener(Plugin plugin) {
+        if (plugin instanceof MouseWheelListener listener)
+            window.addMouseWheelListener(listener);
+        if (plugin instanceof MouseMotionListener listener)
+            window.addMouseMotionListener(listener);
+        if (plugin instanceof MouseListener listener)
+            window.addMouseListener(listener);
     }
 
     private void init_render_thread() {
@@ -68,6 +87,9 @@ public class Engine {
                 time.GameUpdate();
                 try {
                     logic.Update();
+                    for (Plugin plugin : plugins) {
+                        plugin.Update();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,6 +123,10 @@ public class Engine {
 
         window.setVisible(false);
         window.dispose();
+
+        for (Plugin plugin : plugins) {
+            plugin.Detach();
+        }
     }
 
     public void RegisterRenderLayer(RenderLayer renderLayer) {

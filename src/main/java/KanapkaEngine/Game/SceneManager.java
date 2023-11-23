@@ -28,4 +28,18 @@ public class SceneManager {
         System.out.println("Scene isn't loaded");
         return null;
     }
+
+    public static void addNode(Node node) {
+        currentlyLoaded.nodes.add(node);
+    }
+
+    public static double getGlobalSize() {
+        if (currentlyLoaded != null)
+            return currentlyLoaded.getGlobalSize();
+        return 1;
+    }
+
+    public static void removeNode(Node node) {
+        currentlyLoaded.nodes.remove(node);
+    }
 }

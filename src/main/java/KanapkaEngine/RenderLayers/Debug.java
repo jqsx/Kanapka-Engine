@@ -1,11 +1,18 @@
 package KanapkaEngine.RenderLayers;
 
+import KanapkaEngine.Components.Camera;
+import KanapkaEngine.Components.Mathf;
 import KanapkaEngine.Components.RenderLayer;
 import KanapkaEngine.Components.RenderStage;
 import KanapkaEngine.Game.Renderer;
+import KanapkaEngine.Game.SceneManager;
+import KanapkaEngine.Game.Window;
 import KanapkaEngine.Time;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
+import static KanapkaEngine.Game.Window.getWindowSize;
 
 public class Debug implements RenderLayer {
     public Debug() {
@@ -15,6 +22,18 @@ public class Debug implements RenderLayer {
     public void Render(Graphics2D main) {
         drawText(main, "Game MS " + (Time.deltaTime() * 1000.0), new Point(0, 20));
         drawText(main, "FPS " + Renderer.getFPS(), new Point(0, 40));
+
+        for (int i = 0; i < Mathf.Clamp(SceneManager.getSceneNodes().size(), 0, 10); i++) {
+            drawText(main, "- " + i + ". " + SceneManager.getSceneNodes().get(i).name, new Point(0, 80 + 20 * i));
+        }
+
+        if (Camera.main == null) {
+            main.setColor(Color.red);
+            main.setFont(main.getFont().deriveFont(20f));
+            Rectangle2D rect = main.getFont().getStringBounds("No cameras drawing.", main.getFontRenderContext());
+            main.drawString("No cameras drawing.", (int) (getWindowSize().width / 2 - rect.getWidth() / 2), (int) (getWindowSize().height / 2 - rect.getHeight() / 2));
+            main.drawArc(0, 0, getWindowSize().width, getWindowSize().height, 0, 360);
+        }
     }
 
     private void drawText(Graphics2D main, String text, Point point) {
