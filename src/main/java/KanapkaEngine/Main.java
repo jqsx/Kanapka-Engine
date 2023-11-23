@@ -48,6 +48,7 @@ public class Main {
         }
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
+        engineConfiguration.FPSLIMIT = 120;
         Engine engine = new Engine(new GameLogic() {
             @Override
             public void Start() {

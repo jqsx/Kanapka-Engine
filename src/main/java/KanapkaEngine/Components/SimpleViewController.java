@@ -18,8 +18,10 @@ public class SimpleViewController extends Plugin implements MouseWheelListener {
 
     @Override
     public void Update() {
-        velocity = velocity.scalarMultiply(1.0 - Time.deltaTime());
-        
+        velocity = velocity.scalarMultiply(1.0 - Time.deltaTime() * 3.0);
+        if (Camera.main != null) {
+            Camera.main.setPosition(Camera.main.getPosition().add(velocity.scalarMultiply(Time.deltaTime() * 5)));
+        }
     }
 
     @Override
@@ -29,15 +31,11 @@ public class SimpleViewController extends Plugin implements MouseWheelListener {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        int s = (int) Math.signum(e.getPreciseWheelRotation());
-        Point total = new Point(0, 0);
-        if (e.isShiftDown())
-            total.translate(s, 0);
-        else
-            total.translate(0, s);
+        double s = e.getPreciseWheelRotation();
+        Vector2D total = e.isShiftDown() ? new Vector2D(-s, 0) : new Vector2D(0, s);
 
         if (Camera.main != null) {
-            velocity = velocity.add(new Vector2D(total.x, total.y));
+            velocity = velocity.add(total);
         }
     }
 }
