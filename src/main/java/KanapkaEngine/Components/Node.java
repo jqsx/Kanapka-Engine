@@ -60,7 +60,10 @@ public class Node {
     }
 
     public static Node build(Node parent) {
-        return new Node(parent);
+        Node child = new Node(parent);
+        if (parent != null)
+            child.transform.setPosition(parent.transform.getPosition());
+        return child;
     }
 
     public static Node build() {

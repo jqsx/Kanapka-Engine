@@ -49,12 +49,12 @@ public class Engine {
         init_game_thread();
     }
 
-    public void load(Plugin plugin) {
+    public final void load(Plugin plugin) {
         plugins.add(plugin);
         plugin.Apply(this);
     }
 
-    public void addListener(Plugin plugin) {
+    public final void addListener(Plugin plugin) {
         if (plugin instanceof MouseWheelListener listener)
             window.addMouseWheelListener(listener);
         if (plugin instanceof MouseMotionListener listener)
@@ -106,19 +106,19 @@ public class Engine {
         LOGGER.info("Initialized Game Thread.");
     }
 
-    public long getRenderThreadID() {
+    public final long getRenderThreadID() {
         if (renderThread != null)
             return renderThread.getId();
         return -1;
     }
 
-    public long getGameThreadID() {
+    public final long getGameThreadID() {
         if (gameThread != null)
             return gameThread.getId();
         return -1;
     }
 
-    public void End() {
+    public final void End() {
         isRunning = false;
 
         window.setVisible(false);
@@ -129,7 +129,7 @@ public class Engine {
         }
     }
 
-    public void RegisterRenderLayer(RenderLayer renderLayer) {
+    public final void RegisterRenderLayer(RenderLayer renderLayer) {
         renderer.RegisterRenderLayer(renderLayer, renderLayer.getStage());
     }
 }

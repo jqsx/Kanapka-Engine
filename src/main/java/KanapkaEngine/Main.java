@@ -15,7 +15,6 @@ import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
-        System.setProperty("env", "dev");
 
         Scene scene = new Scene("test");
         scene.load();
@@ -24,7 +23,9 @@ public class Main {
 
         Camera camera = new Camera();
 
-        TextureAtlas atlas = new TextureAtlas(TextureLoader.loadResource("objects.png"));
+        BufferedImage test = TextureLoader.loadResource("objects.png");
+        System.out.println(test);
+        TextureAtlas atlas = new TextureAtlas(test);
         atlas.createSubTexture("test", new Rectangle(0, 80, 48, 64));
         BufferedImage grass_texture = TextureLoader.loadResource("grass.png");
 
@@ -41,8 +42,6 @@ public class Main {
                     SpriteRenderer spriteRenderer = new SpriteRenderer();
                     node.addComponent(spriteRenderer);
                     spriteRenderer.setTexture(atlas.getSubTexture("test"));
-
-                    node.transform.setPosition(new Vector2D(i * 48, j * 64));
                 }
             }
         }

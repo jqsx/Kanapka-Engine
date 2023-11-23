@@ -14,7 +14,8 @@ public class TextureAtlas {
     }
 
     public final void createSubTexture(String name, Rectangle rect) {
-        subTextures.put(name, textures.getSubimage(rect.x, rect.y, rect.width, rect.height));
+        if (textures != null)
+            subTextures.put(name, textures.getSubimage(rect.x, rect.y, rect.width, rect.height));
     }
 
     public final BufferedImage getSubTexture(String name) {
