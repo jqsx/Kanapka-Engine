@@ -27,10 +27,11 @@ public class Main {
         System.out.println(test);
         TextureAtlas atlas = new TextureAtlas(test);
         atlas.createSubTexture("test", new Rectangle(0, 80, 48, 64));
+        atlas.createSubTexture("bush", new Rectangle(96, 112, 32, 32));
         BufferedImage grass_texture = TextureLoader.loadResource("grass.png");
 
-        for (int i = -3; i <= 3; i++) {
-            for (int j = -3; j <= 3; j++) {
+        for (int i = -5; i <= 5; i++) {
+            for (int j = -5; j <= 5; j++) {
                 Node grass = Node.build();
                 SpriteRenderer grassspriteRenderer = new SpriteRenderer();
                 grass.transform.setSize(new Vector2D(48 / 16.0, 64 / 16.0));
@@ -41,7 +42,7 @@ public class Main {
                     Node node = Node.build(grass);
                     SpriteRenderer spriteRenderer = new SpriteRenderer();
                     node.addComponent(spriteRenderer);
-                    spriteRenderer.setTexture(atlas.getSubTexture("test"));
+                    spriteRenderer.setTexture(atlas.getSubTexture(new Random().nextDouble() > 0.5 ? "test" : "bush"));
                 }
             }
         }

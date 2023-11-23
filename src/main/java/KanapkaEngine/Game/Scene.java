@@ -10,7 +10,7 @@ public class Scene {
     private boolean isLoaded = false;
     public final List<Node> nodes = new ArrayList<>();
 
-    double GLOBAL_SIZE = 5.0;
+    double GLOBAL_SIZE = 8.0;
 
     public Scene(String sceneFilePath) {
         this.loadPath = sceneFilePath;
