@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 public class TextureLoader {
     public static BufferedImage loadResource(String path) {
-        InputStream stream = TextureLoader.class.getResourceAsStream(path);
+        InputStream stream = ClassLoader.getSystemResourceAsStream(path);
         if (stream != null) {
             try {
                 return ImageIO.read(stream);
