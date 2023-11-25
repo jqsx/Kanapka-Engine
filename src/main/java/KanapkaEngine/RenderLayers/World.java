@@ -28,6 +28,10 @@ public class World implements RenderLayer {
     }
 
     private void renderNode(Graphics2D main, Node node) {
+        if (node.getRenderer() == null) {
+            renderChildNodes(main, node);
+            return;
+        }
         BufferedImage render = node.getRenderer().getRender();
         if (render != null) {
             Vector2D camera_position = Camera.main.getPosition();
