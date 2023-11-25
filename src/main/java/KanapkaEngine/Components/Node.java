@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
+    private static int NodeCount = 0;
     public String name = "Node_Instance";
     private Node parent;
     public final Transform transform = Transform.build(this);
@@ -63,10 +64,12 @@ public class Node {
         Node child = new Node(parent);
         if (parent != null)
             child.transform.setPosition(parent.transform.getPosition());
+        NodeCount++;
         return child;
     }
 
     public static Node build() {
+        NodeCount++;
         return new Node(null);
     }
 
@@ -84,6 +87,18 @@ public class Node {
             parent.addChild(this);
         else
             SceneManager.addNode(this);
+    }
+
+    public void Destroy() {
+        if (parent != null)
+            parent.removeChild(this);
+        else
+            SceneManager.removeNode(this);
+        NodeCount--;
+    }
+
+    public static int getNodeCount() {
+        return NodeCount;
     }
 
     public Renderer getRenderer() {

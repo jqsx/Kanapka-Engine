@@ -1,9 +1,6 @@
 package KanapkaEngine.RenderLayers;
 
-import KanapkaEngine.Components.Camera;
-import KanapkaEngine.Components.Mathf;
-import KanapkaEngine.Components.RenderLayer;
-import KanapkaEngine.Components.RenderStage;
+import KanapkaEngine.Components.*;
 import KanapkaEngine.Game.Renderer;
 import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.Game.Window;
@@ -22,6 +19,8 @@ public class Debug implements RenderLayer {
     public void Render(Graphics2D main) {
         drawText(main, "Game MS " + (Time.deltaTime() * 1000.0), new Point(0, 20));
         drawText(main, "FPS " + Renderer.getFPS(), new Point(0, 40));
+
+        drawText(main, "Visible Nodes " + World.Visible_Nodes + " / " + Node.getNodeCount(), new Point(100, 40));
 
         for (int i = 0; i < Mathf.Clamp(SceneManager.getSceneNodes().size(), 0, 10); i++) {
             drawText(main, "- " + i + ". " + SceneManager.getSceneNodes().get(i).name, new Point(0, 80 + 20 * i));

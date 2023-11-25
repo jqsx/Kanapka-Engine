@@ -10,12 +10,14 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class World implements RenderLayer {
+    public static int Visible_Nodes = 0;
+    public static boolean renderToGrid = false;
     @Override
     public void Render(Graphics2D main) {
+        Visible_Nodes = 0;
         if (Camera.main == null) {
             return;
         }
@@ -30,16 +32,18 @@ public class World implements RenderLayer {
             Vector2D camera_position = Camera.main.getPosition();
             Dimension window_bounds = Window.getWindowSize();
             Vector2D position = node.transform.getPosition();
+            double g_size = SceneManager.getGlobalSize();
+            double bounds_g_size = g_size * 0.8;
             Vector2D size = node.transform.getSize();
-            Rectangle boundingTextureBox = new Rectangle((int) position.getX(), (int) position.getY(), (int) (render.getWidth() * size.getX()), (int) (render.getHeight() * size.getY()));
-            Rectangle cameraView = new Rectangle((int) camera_position.getX() - window_bounds.width, (int) camera_position.getY() - window_bounds.height, window_bounds.width * 2, window_bounds.height * 2);
+            Rectangle boundingTextureBox = new Rectangle((int) position.getX() - (int) (render.getWidth() * size.getX()), (int) position.getY() - (int) (render.getHeight() * size.getY()), (int) (render.getWidth() * size.getX()) * 2, (int) (render.getHeight() * size.getY()) * 2);
+            Rectangle cameraView = new Rectangle((int) (camera_position.getX() - window_bounds.width / bounds_g_size), (int) (camera_position.getY() - window_bounds.height / bounds_g_size), (int) (window_bounds.width * 2 / bounds_g_size), (int) (window_bounds.height * 2 / bounds_g_size));
 
             if (cameraView.intersects(boundingTextureBox)) {
                 AffineTransform at = new AffineTransform();
-                double g_size = SceneManager.getGlobalSize();
                 at.scale(size.getX() * g_size, size.getY() * g_size);
                 at.translate((camera_position.getX() - position.getX()) / size.getX(), (camera_position.getY() - position.getY()) / size.getY());
                 main.drawImage(render, at, null);
+                Visible_Nodes++;
             }
         }
         renderChildNodes(main, node);

@@ -30,8 +30,10 @@ public class Main {
         atlas.createSubTexture("bush", new Rectangle(96, 112, 32, 32));
         BufferedImage grass_texture = TextureLoader.loadResource("grass.png");
 
-        for (int i = -5; i <= 5; i++) {
-            for (int j = -5; j <= 5; j++) {
+        int _size = 10;
+
+        for (int i = -_size; i <= _size; i++) {
+            for (int j = -_size; j <= _size; j++) {
                 Node grass = Node.build();
                 SpriteRenderer grassspriteRenderer = new SpriteRenderer();
                 grass.transform.setSize(new Vector2D(48 / 16.0, 64 / 16.0));
@@ -70,7 +72,6 @@ public class Main {
 
         engine.load(controller);
 
-        engine.RegisterRenderLayer(new Debug());
-        engine.RegisterRenderLayer(new World());
+        engine.InitializeLayers();
     }
 }

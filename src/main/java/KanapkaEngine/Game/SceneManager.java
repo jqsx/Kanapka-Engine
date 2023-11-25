@@ -30,7 +30,8 @@ public class SceneManager {
     }
 
     public static void addNode(Node node) {
-        currentlyLoaded.nodes.add(node);
+        if (currentlyLoaded != null)
+            currentlyLoaded.nodes.add(node);
     }
 
     public static double getGlobalSize() {
@@ -40,6 +41,11 @@ public class SceneManager {
     }
 
     public static void removeNode(Node node) {
-        currentlyLoaded.nodes.remove(node);
+        if (currentlyLoaded != null)
+            currentlyLoaded.nodes.remove(node);
+    }
+
+    public static boolean hasScene() {
+        return currentlyLoaded != null;
     }
 }

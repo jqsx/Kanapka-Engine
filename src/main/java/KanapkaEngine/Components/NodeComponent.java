@@ -1,5 +1,7 @@
 package KanapkaEngine.Components;
 
+import java.util.Objects;
+
 public abstract class NodeComponent {
     private Node parent;
 
@@ -8,7 +10,7 @@ public abstract class NodeComponent {
     }
 
     public final void setParent(Node parent) {
-        if (parent == null) return;
+        Objects.requireNonNull(parent, "Parent cannot be null.");
         if (parent.isChild(this)) {
             this.parent = parent;
             System.out.println(parent.name);

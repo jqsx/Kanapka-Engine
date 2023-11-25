@@ -10,6 +10,8 @@ public class Scene {
     private boolean isLoaded = false;
     public final List<Node> nodes = new ArrayList<>();
 
+    private int CHUNK_SIZE = 10;
+
     double GLOBAL_SIZE = 8.0;
 
     public Scene(String sceneFilePath) {
@@ -31,5 +33,26 @@ public class Scene {
 
     public final double getGlobalSize() {
         return GLOBAL_SIZE;
+    }
+
+    public final double setGlobalSize(double global_size) {
+        return this.GLOBAL_SIZE = global_size;
+    }
+
+    public int getChunkSize() {
+        return CHUNK_SIZE;
+    }
+
+
+    /**
+     * NOT RECOMMENDED TO CHANGE DURING RUN TIME!!!
+     * CHUNKS WILL GET MESSED UP AND CHUNKS WILL BE IN THE WRONG
+     * PLACES!!!
+     *
+     * RUN ONLY BEFORE WORLD CREATION!!!
+     * @param CHUNK_SIZE
+     */
+    public void setChunkSize(int CHUNK_SIZE) {
+        this.CHUNK_SIZE = CHUNK_SIZE;
     }
 }
