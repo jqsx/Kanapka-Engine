@@ -139,4 +139,12 @@ public class Engine {
         RegisterRenderLayer(new Debug());
         RegisterRenderLayer(new World());
     }
+
+    /**
+     * There are inconsistencies when it comes to window size on a mac and windows computers. Mac window size get calls are 2x smaller for some reason.
+     * @return If the operating system is a mac.
+     */
+    public static boolean isMacOS() {
+        return System.getProperty("os.name").toLowerCase().contains("mac");
+    }
 }
