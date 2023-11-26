@@ -22,4 +22,20 @@ public class Rigidbody extends NodeComponent {
     void onDestroy() {
 
     }
+
+    final void constructBody() {
+        body = new Body();
+        
+    }
+
+    public final void Append() {
+        if (body == null)
+            constructBody();
+        Physics.world.addBody(body);
+    }
+
+    public final void Detach() {
+        if (body != null)
+            Physics.world.removeBody(body);
+    }
 }
