@@ -114,7 +114,7 @@ public class Renderer extends Canvas implements MouseListener {
     }
 
     private AffineTransform getWorldTransform() {
-        double div = System.getProperty("os.name").toLowerCase().contains("mac") ? 1.0 : 2.0;
+        double div = Engine.isMacOS() ? 1.0 : 2.0;
         AffineTransform at = new AffineTransform();
         Dimension target = Toolkit.getDefaultToolkit().getScreenSize();
         double ratio = Math.min(getHeight() / (double)target.height, getWidth() / (double)target.width) / (double) Math.max(getHeight() / (double)target.height, getWidth() / (double)target.width);

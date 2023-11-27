@@ -12,6 +12,7 @@ public class Block {
 
     private BufferedImage render;
     private int render_stage = 0;
+    public boolean scale_render = true;
 
     public Block(Chunk parent, Point point) {
         Objects.requireNonNull(point, "Missing chunk point.");
@@ -22,22 +23,30 @@ public class Block {
 
     public final BufferedImage getRender() {
         if (render_stage == Renderer.NOT_STARTED) {
-            beginRender();
             render_stage = Renderer.STARTED;
+            beginRender();
         }
-        if (render_stage == Renderer.STARTED) return null;
-        else return render;
+        return render;
+    }
+
+    public final void setImage(BufferedImage image) {
+        Objects.requireNonNull(image);
+        this.render = image;
+        this.render_stage = Renderer.FINISHED;
     }
 
     void beginRender() {
-
-    }
-
-    void finishedRender() {
+        render = TextureLoader.loadResource(texture);
         render_stage = Renderer.FINISHED;
     }
 
     public final void append() {
         parent.appendBlock(this);
+    }
+
+    public final void Derender() {
+        render.flush();
+        render = null;
+        render_stage = Renderer.NOT_STARTED;
     }
 }

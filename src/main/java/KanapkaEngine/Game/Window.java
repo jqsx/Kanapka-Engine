@@ -11,6 +11,7 @@ public class Window extends JFrame {
     private final EngineConfiguration engineConfiguration;
     private final Engine engine;
     private static Window main;
+    private Renderer renderer;
     public Window(EngineConfiguration engineConfiguration, Engine engine) {
         setTitle(engineConfiguration.window_title);
         setSize(engineConfiguration.width, engineConfiguration.height);
@@ -24,6 +25,9 @@ public class Window extends JFrame {
         this.engine = engine;
         this.engineConfiguration = engineConfiguration;
         main = this;
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+        setLocation((int) (screen.width / 2.0 - engineConfiguration.width / 2.0), (int) (screen.height / 2.0 - engineConfiguration.height / 2.0));
 
         setMinimumSize(new Dimension(300, 300));
     }
@@ -47,12 +51,18 @@ public class Window extends JFrame {
         setCursor(cursor);
     }
 
-    public void addRenderer(Renderer renderer) {
+    public final void addRenderer(Renderer renderer) {
         add(renderer);
+        this.renderer = renderer;
         setVisible(true);
     }
 
     public static Dimension getWindowSize() {
         return new Dimension(main.getWidth(), main.getHeight());
+    }
+
+    public final void setWorldBackdrop(Color color) {
+        if (renderer != null)
+            renderer.setBackground(color);
     }
 }

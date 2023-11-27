@@ -1,6 +1,7 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.Node;
+import KanapkaEngine.Components.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ public class Scene {
     private String loadPath;
     private boolean isLoaded = false;
     public final List<Node> nodes = new ArrayList<>();
+    public final World scene_world;
 
     private int CHUNK_SIZE = 10;
 
@@ -16,6 +18,7 @@ public class Scene {
 
     public Scene(String sceneFilePath) {
         this.loadPath = sceneFilePath;
+        scene_world = new World();
     }
 
     public final void unload() {
