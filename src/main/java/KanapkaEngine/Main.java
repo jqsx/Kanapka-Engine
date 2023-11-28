@@ -1,5 +1,6 @@
 package KanapkaEngine;
 
+import KanapkaEngine.Components.Mathf;
 import KanapkaEngine.Editor.Editor;
 
 public class Main {

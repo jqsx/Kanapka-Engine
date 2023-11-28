@@ -1,9 +1,6 @@
 package KanapkaEngine.Editor;
 
-import KanapkaEngine.Components.Camera;
-import KanapkaEngine.Components.Node;
-import KanapkaEngine.Components.SimpleViewController;
-import KanapkaEngine.Components.SpriteRenderer;
+import KanapkaEngine.Components.*;
 import KanapkaEngine.Engine;
 import KanapkaEngine.Game.EngineConfiguration;
 import KanapkaEngine.Game.GameLogic;
@@ -24,8 +21,10 @@ public class Editor {
         Camera camera = new Camera();
 
         Node test = Node.build();
+        TextureAtlas atlas = new TextureAtlas(TextureLoader.loadResource("objects.png"));
+        atlas.createSubTexture("all", new Rectangle(200, 200));
         SpriteRenderer spriteRenderer = new SpriteRenderer();
-        spriteRenderer.setTexture("objects.png");
+        spriteRenderer.setTexture(atlas.getSubTexture("all"));
         test.addComponent(spriteRenderer);
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();

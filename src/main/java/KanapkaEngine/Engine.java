@@ -90,8 +90,8 @@ public class Engine {
                 time.GameUpdate();
                 try {
                     logic.Update();
-                    for (Plugin plugin : plugins) {
-                        plugin.Update();
+                    for (int i = 0; i < plugins.size(); i++) {
+                        plugins.get(i).Update();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -40,17 +40,16 @@ public class SpriteRenderer extends Renderer {
     private void LoadTexture() {
         loading_state = STARTED;
         new Thread(() -> {
-            System.out.println("loading");
-            rendered_visual = TextureLoader.loadResource(texture_path);
-            if (rendered_visual == null)
+            BufferedImage _texture = TextureLoader.loadResource(texture_path);
+            if (_texture == null)
                 createErrorTexture();
+            rendered_visual = new BufferedImage(_texture.getWidth(), _texture.getHeight(), _texture.getType());
             Graphics2D g = rendered_visual.createGraphics();
-            Dimension size = new Dimension(rendered_visual.getWidth(), rendered_visual.getHeight());
+            Dimension size = new Dimension(_texture.getWidth(), _texture.getHeight());
             AffineTransform at = new AffineTransform();
-            at.translate(size.width / 2.0, size.height / 2.0);
             at.scale(1, -1);
-            at.translate(-size.width / 2.0, -size.height / 2.0);
-            g.setTransform(at);
+            at.translate(0, -size.height);
+            g.drawImage(_texture, at, null);
 
             loading_state = FINISHED;
         }).start();

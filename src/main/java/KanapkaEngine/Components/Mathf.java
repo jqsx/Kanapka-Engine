@@ -20,4 +20,17 @@ public class Mathf {
     public static Point Clamp(Point n, int x_max, int y_max) {
         return new Point(Math.min(Math.abs(n.x), x_max), Math.min(Math.abs(n.y), y_max));
     }
+
+    public static double Sqrt(double a) {
+        double out = a;
+        for (int i = 0; i < 5; i++) {
+            out = sqrt_iteration(a, out);
+        }
+        return out;
+    }
+
+    private static double sqrt_iteration(double a, double previous) {
+        double m = (a / previous - previous) / 2.0;
+        return previous + m;
+    }
 }

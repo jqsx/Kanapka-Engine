@@ -132,8 +132,8 @@ public class Renderer extends Canvas implements MouseListener {
     }
 
     private void Render_Layer(Graphics2D main, List<RenderLayer> renderStage) {
-        for (RenderLayer renderLayer : renderStage) {
-            renderLayer.Render(main);
+        for (int i = 0; i < renderStage.size(); i++) {
+            renderStage.get(i).Render(main);
         }
     }
 
