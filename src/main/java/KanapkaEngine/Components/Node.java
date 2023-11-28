@@ -41,7 +41,9 @@ public class Node {
     }
 
     public final void removeComponent(NodeComponent nodeComponent) {
-        components.remove(nodeComponent);
+        boolean s = components.remove(nodeComponent);
+        if (s)
+            nodeComponent.onOrphan();
     }
 
     public final <V extends NodeComponent> V getComponent(Class<V> v) {
@@ -95,6 +97,9 @@ public class Node {
         else
             SceneManager.removeNode(this);
         NodeCount--;
+        for (int i = 0; i < components.size(); i++) {
+            components.get(i).onOrphan();
+        }
     }
 
     public static int getNodeCount() {
@@ -103,5 +108,14 @@ public class Node {
 
     public Renderer getRenderer() {
         return renderer;
+    }
+
+    public final void UpdateCall() {
+        for (int i = 0; i < components.size(); i++) {
+            components.get(i).Update();
+        }
+        for (int i = 0; i < children.size(); i++) {
+            children.get(i).UpdateCall();
+        }
     }
 }

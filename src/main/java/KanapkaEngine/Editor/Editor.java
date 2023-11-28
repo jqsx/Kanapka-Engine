@@ -6,6 +6,7 @@ import KanapkaEngine.Game.EngineConfiguration;
 import KanapkaEngine.Game.GameLogic;
 import KanapkaEngine.Game.Scene;
 import KanapkaEngine.Game.SceneManager;
+import org.dyn4j.geometry.Vector2;
 
 import java.awt.*;
 
@@ -22,10 +23,14 @@ public class Editor {
 
         Node test = Node.build();
         TextureAtlas atlas = new TextureAtlas(TextureLoader.loadResource("objects.png"));
-        atlas.createSubTexture("all", new Rectangle(200, 200));
+        atlas.createSubTexture("all", new Rectangle(16, 16));
         SpriteRenderer spriteRenderer = new SpriteRenderer();
         spriteRenderer.setTexture(atlas.getSubTexture("all"));
         test.addComponent(spriteRenderer);
+        Rigidbody rigidbody = new Rigidbody();
+        test.addComponent(rigidbody);
+        rigidbody.getBody().setLinearVelocity(0, 1);
+        Physics.setGravity(0, 0);
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
         engineConfiguration.FPSLIMIT = 120;

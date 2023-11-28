@@ -12,14 +12,22 @@ public abstract class NodeComponent {
     public final void setParent(Node parent) {
         Objects.requireNonNull(parent, "Parent cannot be null.");
         if (parent.isChild(this)) {
+            onOrphan();
             this.parent = parent;
             System.out.println(parent.name);
             Awake();
+            onParent();
         }
     }
 
     abstract void Start();
     void Awake() {
+
+    }
+    void onParent() {
+
+    }
+    void onOrphan() {
 
     }
     abstract void Update();

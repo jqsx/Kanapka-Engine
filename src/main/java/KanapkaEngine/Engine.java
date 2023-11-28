@@ -1,5 +1,7 @@
 package KanapkaEngine;
 
+import KanapkaEngine.Components.Node;
+import KanapkaEngine.Components.Physics;
 import KanapkaEngine.Components.RenderLayer;
 import KanapkaEngine.Components.RenderStage;
 import KanapkaEngine.Game.*;
@@ -88,10 +90,15 @@ public class Engine {
         gameThread = new Thread(() -> {
             while (isRunning) {
                 time.GameUpdate();
+                Physics.UpdateWorld();
                 try {
                     logic.Update();
                     for (int i = 0; i < plugins.size(); i++) {
                         plugins.get(i).Update();
+                    }
+                    List<Node> nodes = SceneManager.getSceneNodes();
+                    for (int i = 0; i < nodes.size(); i++) {
+                        nodes.get(i).UpdateCall();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

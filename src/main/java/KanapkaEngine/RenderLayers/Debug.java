@@ -23,7 +23,11 @@ public class Debug implements RenderLayer {
         drawText(main, "Visible Nodes " + World.Visible_Nodes + " / " + Node.getNodeCount(), new Point(100, 40));
 
         for (int i = 0; i < Mathf.Clamp(SceneManager.getSceneNodes().size(), 0, 10); i++) {
-            drawText(main, "- " + i + ". " + SceneManager.getSceneNodes().get(i).name, new Point(0, 80 + 20 * i));
+            Node element = SceneManager.getSceneNodes().get(i);
+            Rigidbody rb = element.getComponent(Rigidbody.class);
+            if (rb != null)
+                drawText(main, "- " + i + ". " + element.name + " p: " + rb.getBody().getWorldCenter(), new Point(0, 80 + 20 * i));
+            else drawText(main, "- " + i + ". " + element.name + " p: " + element.transform.getPosition(), new Point(0, 80 + 20 * i));
         }
 
         if (Camera.main == null) {

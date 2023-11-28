@@ -1,9 +1,12 @@
 package KanapkaEngine.Components;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.dyn4j.collision.Bounds;
 import org.dyn4j.collision.CollisionBody;
+import org.dyn4j.collision.Fixture;
 import org.dyn4j.dynamics.Body;
-import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.*;
 import org.dyn4j.world.World;
 
 public class Rigidbody extends NodeComponent {
@@ -15,7 +18,18 @@ public class Rigidbody extends NodeComponent {
 
     @Override
     void Update() {
+        Vector2 body_position = body.getWorldCenter();
+        getParent().transform.setPosition(new Vector2D(body_position.x, body_position.y));
+    }
 
+    @Override
+    void onParent() {
+        Append();
+    }
+
+    @Override
+    void onOrphan() {
+        Detach();
     }
 
     @Override
@@ -25,17 +39,22 @@ public class Rigidbody extends NodeComponent {
 
     final void constructBody() {
         body = new Body();
-        
+        body.addFixture(new Rectangle(1, 1));
+        body.setMass(MassType.NORMAL);
     }
 
     public final void Append() {
         if (body == null)
             constructBody();
-        Physics.world.addBody(body);
+        Physics.addBody(body);
     }
 
     public final void Detach() {
         if (body != null)
-            Physics.world.removeBody(body);
+            Physics.removeBody(body);
+    }
+
+    public Body getBody() {
+        return body;
     }
 }

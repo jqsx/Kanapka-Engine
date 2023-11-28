@@ -36,7 +36,7 @@ public class SimpleViewController extends Plugin implements MouseWheelListener {
         double s = e.getPreciseWheelRotation();
         if (e.isControlDown()) {
             Scene scene = SceneManager.getCurrentlyLoaded();
-            scene.setGlobalSize(Mathf.Clamp(scene.getGlobalSize() - s / 10.0, 1.0, 15.0));
+            scene.setGlobalSize(Mathf.Clamp(scene.getGlobalSize() - s / 10.0, 1.0, 100.0));
         }
         else {
             Vector2D total = e.isShiftDown() ? new Vector2D(-s, 0) : new Vector2D(0, s);
