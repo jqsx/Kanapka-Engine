@@ -29,6 +29,11 @@ public class SpriteRenderer extends Renderer {
     }
 
     @Override
+    String toJSON() {
+        return null;
+    }
+
+    @Override
     public BufferedImage getRender() {
         if (loading_state == NOT_STARTED) LoadTexture();
         else if (loading_state == STARTED) return rendered_visual == null ? null : rendered_visual;
@@ -41,15 +46,18 @@ public class SpriteRenderer extends Renderer {
         loading_state = STARTED;
         new Thread(() -> {
             BufferedImage _texture = TextureLoader.loadResource(texture_path);
-            if (_texture == null)
+            if (_texture == null) {
                 createErrorTexture();
-            rendered_visual = new BufferedImage(_texture.getWidth(), _texture.getHeight(), _texture.getType());
-            Graphics2D g = rendered_visual.createGraphics();
-            Dimension size = new Dimension(_texture.getWidth(), _texture.getHeight());
-            AffineTransform at = new AffineTransform();
-            at.scale(1, -1);
-            at.translate(0, -size.height);
-            g.drawImage(_texture, at, null);
+            }
+            else {
+                Graphics2D g = rendered_visual.createGraphics();
+                rendered_visual = new BufferedImage(_texture.getWidth(), _texture.getHeight(), _texture.getType());
+                Dimension size = new Dimension(_texture.getWidth(), _texture.getHeight());
+                AffineTransform at = new AffineTransform();
+                at.scale(1, -1);
+                at.translate(0, -size.height);
+                g.drawImage(_texture, at, null);
+            }
 
             loading_state = FINISHED;
         }).start();

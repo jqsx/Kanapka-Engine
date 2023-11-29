@@ -37,10 +37,21 @@ public class Rigidbody extends NodeComponent {
 
     }
 
+    @Override
+    String toJSON() {
+        return null;
+    }
+
     final void constructBody() {
         body = new Body();
-        body.addFixture(new Rectangle(1, 1));
-        body.setMass(MassType.NORMAL);
+        Collider collider = getParent().getComponent(Collider.class);
+//        body.setMassType(MassType.NORMAL);
+        if (collider != null) {
+            BodyFixture fixture = collider.getFixture();
+            body.setMass(fixture.createMass());
+            body.addFixture(fixture);
+            body.updateMass();
+        }
     }
 
     public final void Append() {

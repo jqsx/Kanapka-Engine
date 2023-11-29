@@ -16,9 +16,12 @@ public class Scene {
 
     double GLOBAL_SIZE = 8.0;
 
-    public Scene(String sceneFilePath) {
-        this.loadPath = sceneFilePath;
+    public Scene() {
         scene_world = new World();
+    }
+
+    public final void loadSceneFromFile(String path) {
+        this.loadPath = path;
     }
 
     public final void unload() {
@@ -27,6 +30,34 @@ public class Scene {
     }
 
     public final void load() {
+        if (loadPath != null)
+            new Thread(this::loadResource).start();
+        else isLoaded = true;
+    }
+
+    public final void load_FILE() {
+        if (loadPath != null)
+            new Thread(this::loadFile).start();
+        else isLoaded = true;
+    }
+
+    private void loadResource() {
+        // check if file exists
+
+        nodes.clear();
+
+        // load all nodes from the chosen file.
+
+        isLoaded = true;
+    }
+
+    private void loadFile() {
+        // check if file exists
+
+        nodes.clear();
+
+        // load all nodes from the chosen file.
+
         isLoaded = true;
     }
 

@@ -118,4 +118,14 @@ public class Node {
             children.get(i).UpdateCall();
         }
     }
+
+    class NodeData {
+        private static int globalIndex = 0;
+
+        public int[] path;
+
+        public NodeData(Node node) {
+
+        }
+    }
 }

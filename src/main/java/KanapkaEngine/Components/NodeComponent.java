@@ -37,4 +37,15 @@ public abstract class NodeComponent {
     }
 
     abstract void onDestroy();
+
+    abstract String toJSON();
+
+    private class NodeComponentData {
+        public Class ClassName;
+        public String JSON;
+        public NodeComponentData(NodeComponent component) {
+            this.ClassName = component.getClass();
+            this.JSON = component.toJSON();
+        }
+    }
 }

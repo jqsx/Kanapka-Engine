@@ -3,10 +3,10 @@ package KanapkaEngine;
 import KanapkaEngine.Components.Node;
 import KanapkaEngine.Components.Physics;
 import KanapkaEngine.Components.RenderLayer;
-import KanapkaEngine.Components.RenderStage;
 import KanapkaEngine.Game.*;
 import KanapkaEngine.RenderLayers.Chunks;
 import KanapkaEngine.RenderLayers.Debug;
+import KanapkaEngine.RenderLayers.UI;
 import KanapkaEngine.RenderLayers.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -149,6 +149,7 @@ public class Engine {
 
     public final void InitializeLayers() {
         RegisterRenderLayer(new Chunks());
+        RegisterRenderLayer(new UI());
         RegisterRenderLayer(new Debug());
         RegisterRenderLayer(new World());
     }

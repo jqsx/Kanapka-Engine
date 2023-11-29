@@ -73,6 +73,9 @@ public class Renderer extends Canvas implements MouseListener {
         main.setColor(getBackground());
         main.fillRect(0, 0, getWidth(), getHeight());
 
+        main.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        main.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         AffineTransform world_transform = getWorldTransform();
         main.setTransform(world_transform);
         Render_Layer(main, BACKGROUND);
