@@ -40,9 +40,12 @@ public class World implements RenderLayer {
             Rectangle boundingTextureBox = new Rectangle((int) -position.getX() - (int) (render.getWidth() * size.getX()), (int) -position.getY() - (int) (render.getHeight() * size.getY()), (int) (render.getWidth() * size.getX()) * 2, (int) (render.getHeight() * size.getY()) * 2);
             Rectangle cameraView = new Rectangle((int) (camera_position.getX() - window_bounds.width / g_size), (int) (camera_position.getY() - window_bounds.height / g_size), (int) (window_bounds.width * 2 / g_size), (int) (window_bounds.height * 2 / g_size));
             if (cameraView.intersects(boundingTextureBox)) {
+                Vector2D pos = new Vector2D((camera_position.getX() + position.getX()) / size.getX(), (camera_position.getY() + position.getY()) / size.getY());
                 AffineTransform at = new AffineTransform();
+                double rad = Math.toRadians(node.transform.getRotation());
                 at.scale(size.getX() * g_size, size.getY() * g_size);
-                at.translate((camera_position.getX() + position.getX()) / size.getX(), (camera_position.getY() + position.getY()) / size.getY());
+                at.translate(pos.getX(), pos.getY());
+                at.rotate(rad, render.getWidth() / 2.0, render.getHeight() / 2.0);
                 main.drawImage(render, at, null);
                 Visible_Nodes++;
             }

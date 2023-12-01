@@ -12,6 +12,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.PhysicsWorld;
+import org.dyn4j.world.World;
 
 import java.awt.*;
 
@@ -39,7 +40,8 @@ public class Editor {
             test.addComponent(collider);
             Rigidbody rigidbody = new Rigidbody();
             test.addComponent(rigidbody);
-//            rigidbody.getBody().setLinearVelocity((0.5 - Math.random()) * 10.0, (0.5 - Math.random()) * 10.0);
+            test.transform.setRotation(50);
+            rigidbody.getBody().setLinearVelocity((0.5 - Math.random()) * 10.0, (0.5 - Math.random()) * 10.0);
         }
 
         {
@@ -71,8 +73,6 @@ public class Editor {
             rigidbody.getBody().setMass(MassType.INFINITE);
             rigidbody.getBody().translate(-50, -16);
         }
-
-        Physics.setGravity(0, -9.81);
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
         engineConfiguration.FPSLIMIT = 120;

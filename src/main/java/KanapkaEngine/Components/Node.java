@@ -48,7 +48,7 @@ public class Node {
 
     public final <V extends NodeComponent> V getComponent(Class<V> v) {
         for (NodeComponent component : components) {
-            if (component.getClass() == v)
+            if (v.isAssignableFrom(component.getClass()))
                 return (V) component;
         }
         return null;

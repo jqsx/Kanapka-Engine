@@ -34,7 +34,8 @@ public class Physics {
 
     private static World<Body> getWorld() {
         World<Body> _world = new World<>();
-        _world.setBounds(new AxisAlignedBounds(Double.MIN_VALUE, Double.MAX_VALUE));
+
+        _world.setGravity(World.EARTH_GRAVITY);
         return _world;
     }
 }
