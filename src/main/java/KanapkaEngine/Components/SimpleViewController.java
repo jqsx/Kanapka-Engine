@@ -13,6 +13,7 @@ import java.awt.event.MouseWheelListener;
 
 public class SimpleViewController extends Plugin implements MouseWheelListener {
     Vector2D velocity = new Vector2D(0, 0);
+    Vector2D range = new Vector2D(0.001, 15.0);
     @Override
     public void Apply(Engine engine) {
         engine.addListener(this);
@@ -34,15 +35,16 @@ public class SimpleViewController extends Plugin implements MouseWheelListener {
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         double s = e.getPreciseWheelRotation();
+        if (!SceneManager.hasScene()) return;
         if (e.isControlDown()) {
             Scene scene = SceneManager.getCurrentlyLoaded();
-            scene.setGlobalSize(Mathf.Clamp(scene.getGlobalSize() - s / 10.0, 1.0, 100.0));
+            scene.setGlobalSize(Mathf.Clamp(scene.getGlobalSize() - s / 10.0, range.getX(), range.getY()));
         }
         else {
             Vector2D total = e.isShiftDown() ? new Vector2D(-s, 0) : new Vector2D(0, s);
 
             if (Camera.main != null) {
-                velocity = velocity.add(total);
+                velocity = velocity.add(total.scalarMultiply(1.0 / SceneManager.getCurrentlyLoaded().getGlobalSize()));
             }
         }
     }

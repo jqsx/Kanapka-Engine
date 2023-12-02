@@ -20,7 +20,6 @@ public class Rigidbody extends NodeComponent {
     void Update() {
         Vector2 body_position = body.getWorldCenter();
         getParent().transform.setPosition(new Vector2D(body_position.x, body_position.y));
-        
     }
 
     @Override
@@ -44,13 +43,14 @@ public class Rigidbody extends NodeComponent {
     }
 
     final void constructBody() {
+        Detach();
         body = new Body();
         Collider collider = getParent().getComponent(Collider.class);
 //        body.setMassType(MassType.NORMAL);
         if (collider != null) {
             BodyFixture fixture = collider.getFixture();
             body.setMass(fixture.createMass());
-            body.setMassType(MassType.NORMAL);
+            body.setMassType(MassType.FIXED_ANGULAR_VELOCITY);
             body.addFixture(fixture);
             body.updateMass();
             System.out.println("Found and added collider");

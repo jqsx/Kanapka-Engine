@@ -40,8 +40,6 @@ public class Editor {
             test.addComponent(collider);
             Rigidbody rigidbody = new Rigidbody();
             test.addComponent(rigidbody);
-            test.transform.setRotation(50);
-            rigidbody.getBody().setLinearVelocity((0.5 - Math.random()) * 10.0, (0.5 - Math.random()) * 10.0);
         }
 
         {
