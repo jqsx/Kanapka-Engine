@@ -5,17 +5,17 @@ import org.dyn4j.collision.AxisAlignedBounds;
 import org.dyn4j.collision.Bounds;
 import org.dyn4j.collision.CollisionBody;
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.AABB;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.World;
+import org.dyn4j.world.listener.CollisionListener;
+import org.dyn4j.world.listener.ContactListener;
 
 public class Physics {
-    private static final World<Body> world = getWorld();
+    public static final World<Body> world = getWorld();
 
-    /**
-     * Please don't mess with this function it should only be called by the Engine class.
-     */
     public static void UpdateWorld() {
         world.update(Time.deltaTime());
     }

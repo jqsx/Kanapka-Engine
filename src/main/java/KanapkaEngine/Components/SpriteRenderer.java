@@ -45,7 +45,7 @@ public class SpriteRenderer extends Renderer {
     private void LoadTexture() {
         loading_state = STARTED;
         new Thread(() -> {
-            BufferedImage _texture = TextureLoader.loadResource(texture_path);
+            BufferedImage _texture = ResourceLoader.loadResource(texture_path);
             if (_texture == null) {
                 createErrorTexture();
             }

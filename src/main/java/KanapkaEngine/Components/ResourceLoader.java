@@ -1,12 +1,16 @@
 package KanapkaEngine.Components;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public class TextureLoader {
+public class ResourceLoader {
     private static HashMap<String, BufferedImage> loadedImages = new HashMap<>();
     public static BufferedImage loadResource(String path) {
         if (loadedImages.containsKey(path)) return loadedImages.get(path);
@@ -24,8 +28,22 @@ public class TextureLoader {
         return null;
     }
 
+    public static InputStream loadStream(String path) {
+        return ClassLoader.getSystemResourceAsStream(path);
+    }
+
     public static BufferedImage loadFile(String path) {
         return null;
     }
-    private TextureLoader() {}
+    private ResourceLoader() {}
+
+    public static AudioClip loadAudio(String path) {
+        try {
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(loadStream(path)));
+            return new AudioClip(clip);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -36,7 +36,7 @@ public class Block {
     }
 
     void beginRender() {
-        render = TextureLoader.loadResource(texture);
+        render = ResourceLoader.loadResource(texture);
         render_stage = Renderer.FINISHED;
     }
 

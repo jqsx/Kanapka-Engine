@@ -2,6 +2,8 @@ package KanapkaEngine.Components;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import java.awt.*;
+
 public class Camera {
     public static Camera main;
 
@@ -20,5 +22,10 @@ public class Camera {
 
     public void setPosition(Vector2D position) {
         this.position = position;
+    }
+
+    public Vector2D ScreenToWorldPosition(Point screen_position) {
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        return position.subtract(new Vector2D(screen.getWidth() / 2.0, screen.getHeight() / 2.0)).add(new Vector2D(screen_position.x, -screen_position.y));
     }
 }
