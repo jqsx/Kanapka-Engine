@@ -56,16 +56,17 @@ public class Engine {
 
     public final void load(Plugin plugin) {
         plugins.add(plugin);
+        addListener(plugin);
         plugin.Apply(this);
     }
 
     public final void addListener(Plugin plugin) {
-        if (plugin instanceof MouseWheelListener listener)
-            window.addMouseWheelListener(listener);
-        if (plugin instanceof MouseMotionListener listener)
-            window.addMouseMotionListener(listener);
-        if (plugin instanceof MouseListener listener)
-            window.addMouseListener(listener);
+        if (plugin instanceof MouseWheelListener)
+            renderer.addMouseWheelListener((MouseWheelListener) plugin);
+        if (plugin instanceof MouseMotionListener)
+            renderer.addMouseMotionListener((MouseMotionListener) plugin);
+        if (plugin instanceof MouseListener)
+            renderer.addMouseListener((MouseListener) plugin);
     }
 
     private void init_render_thread() {

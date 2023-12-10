@@ -4,15 +4,11 @@ import KanapkaEngine.Components.*;
 import KanapkaEngine.Engine;
 import KanapkaEngine.Game.EngineConfiguration;
 import KanapkaEngine.Game.GameLogic;
-import KanapkaEngine.Game.Scene;
 import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.UI.Text;
 import KanapkaEngine.UI.UI;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.dyn4j.geometry.MassType;
-import org.dyn4j.geometry.Vector2;
-import org.dyn4j.world.PhysicsWorld;
-import org.dyn4j.world.World;
 
 import java.awt.*;
 
@@ -40,7 +36,7 @@ public class Editor {
             test.addComponent(rigidbody);
         }
 
-        {
+        for (int i = 0; i < 5; i++) {
             Node test = Node.build();
             SpriteRenderer spriteRenderer = new SpriteRenderer();
             spriteRenderer.setTexture(atlas.getSubTexture("all"));
@@ -50,8 +46,14 @@ public class Editor {
             test.addComponent(collider);
             Rigidbody rigidbody = new Rigidbody();
             test.addComponent(rigidbody);
-//            rigidbody.getBody().setLinearVelocity((0.5 - Math.random()) * 10.0, (0.5 - Math.random()) * 10.0);
             rigidbody.getBody().translate(0, 30);
+
+            AudioSource source = new AudioSource();
+            source.clip = ResourceLoader.loadAudio("Audio/coin-drop-1.wav");
+
+            test.addComponent(source);
+
+            source.play();
         }
 
         {

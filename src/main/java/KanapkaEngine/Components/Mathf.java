@@ -1,5 +1,7 @@
 package KanapkaEngine.Components;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 import java.awt.*;
 
 public class Mathf {
@@ -33,6 +35,10 @@ public class Mathf {
             out = sqrt_iteration(a, out);
         }
         return out;
+    }
+
+    public static double distance(Vector2D one, Vector2D two) {
+        return Sqrt(Math.pow(one.getX() - two.getX(), 2) + Math.pow(one.getY() - two.getY(), 2));
     }
 
     private static double sqrt_iteration(double a, double previous) {
