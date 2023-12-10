@@ -21,6 +21,12 @@ public class Mathf {
         return new Point(Math.min(Math.abs(n.x), x_max), Math.min(Math.abs(n.y), y_max));
     }
 
+    /**
+     * Just an approximation,
+     * This is a sqrt that uses 5 iterations to calculate the square root of a
+     * @param a
+     * @return square root approximate of a
+     */
     public static double Sqrt(double a) {
         double out = a;
         for (int i = 0; i < 5; i++) {

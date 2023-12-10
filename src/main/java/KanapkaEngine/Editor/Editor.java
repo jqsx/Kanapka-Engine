@@ -25,8 +25,6 @@ public class Editor {
 
         SceneManager.loadScene(scene);
 
-        Camera camera = new Camera();
-
         TextureAtlas atlas = new TextureAtlas(TextureLoader.loadResource("objects.png"));
         atlas.createSubTexture("all", new Rectangle(16, 16));
 
