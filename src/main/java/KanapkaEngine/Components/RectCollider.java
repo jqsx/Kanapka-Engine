@@ -28,24 +28,4 @@ public class RectCollider extends Collider {
         }
         return fixture;
     }
-
-    @Override
-    void Start() {
-
-    }
-
-    @Override
-    void Update() {
-
-    }
-
-    @Override
-    void onDestroy() {
-
-    }
-
-    @Override
-    String toJSON() {
-        return null;
-    }
 }

@@ -2,7 +2,7 @@ package KanapkaEngine.Components;
 
 import java.util.Objects;
 
-public abstract class NodeComponent {
+public class NodeComponent {
     private Node parent;
 
     public final Node getParent() {
@@ -20,25 +20,33 @@ public abstract class NodeComponent {
         }
     }
 
-    abstract void Start();
-    void Awake() {
+    public void Start() {
 
     }
-    void onParent() {
+    public void Awake() {
 
     }
-    void onOrphan() {
+    public void onParent() {
 
     }
-    abstract void Update();
+    public void onOrphan() {
+
+    }
+    public void Update() {
+
+    }
 
     public final void DestroyComponent() {
 
     }
 
-    abstract void onDestroy();
+    public void onDestroy() {
 
-    abstract String toJSON();
+    }
+
+    public String toJSON() {
+        return null;
+    }
 
     private class NodeComponentData {
         public Class ClassName;

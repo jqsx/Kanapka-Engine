@@ -11,12 +11,7 @@ public class AudioSource extends NodeComponent {
     public float distanceFalloff = 0.1f;
 
     @Override
-    void Start() {
-
-    }
-
-    @Override
-    void Awake() {
+    public void Awake() {
         if (playOnAwake)
             play();
     }
@@ -38,20 +33,5 @@ public class AudioSource extends NodeComponent {
 
     public final boolean isPlaying() {
         return clip.clip.isRunning();
-    }
-
-    @Override
-    void Update() {
-
-    }
-
-    @Override
-    void onDestroy() {
-
-    }
-
-    @Override
-    String toJSON() {
-        return null;
     }
 }

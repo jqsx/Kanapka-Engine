@@ -21,56 +21,8 @@ public class Editor {
 
         SceneManager.loadScene(scene);
 
-        TextureAtlas atlas = new TextureAtlas(TextureLoader.loadResource("objects.png"));
+        TextureAtlas atlas = new TextureAtlas(ResourceLoader.loadResource("objects.png"));
         atlas.createSubTexture("all", new Rectangle(16, 16));
-
-        {
-            Node test = Node.build();
-            SpriteRenderer spriteRenderer = new SpriteRenderer();
-            spriteRenderer.setTexture(atlas.getSubTexture("all"));
-            RectCollider collider = new RectCollider();
-            collider.setSize(new Vector2D(16, 16));
-            test.addComponent(spriteRenderer);
-            test.addComponent(collider);
-            Rigidbody rigidbody = new Rigidbody();
-            test.addComponent(rigidbody);
-        }
-
-        for (int i = 0; i < 5; i++) {
-            Node test = Node.build();
-            SpriteRenderer spriteRenderer = new SpriteRenderer();
-            spriteRenderer.setTexture(atlas.getSubTexture("all"));
-            RectCollider collider = new RectCollider();
-            collider.setSize(new Vector2D(16, 16));
-            test.addComponent(spriteRenderer);
-            test.addComponent(collider);
-            Rigidbody rigidbody = new Rigidbody();
-            test.addComponent(rigidbody);
-            rigidbody.getBody().translate(0, 30);
-
-            AudioSource source = new AudioSource();
-            source.clip = ResourceLoader.loadAudio("Audio/coin-drop-1.wav");
-
-            test.addComponent(source);
-
-            source.play();
-        }
-
-        {
-            Node floor = Node.build();
-            floor.name = "floor";
-            SpriteRenderer spriteRenderer = new SpriteRenderer();
-            spriteRenderer.setTexture(atlas.getSubTexture("all"));
-            RectCollider collider = new RectCollider();
-            collider.setSize(new Vector2D(100, 16));
-            floor.transform.setSize(new Vector2D(100.0 / 16, 1));
-            floor.addComponent(spriteRenderer);
-            floor.addComponent(collider);
-            Rigidbody rigidbody = new Rigidbody();
-            floor.addComponent(rigidbody);
-            rigidbody.getBody().setMass(MassType.INFINITE);
-            rigidbody.getBody().translate(-50, -16);
-        }
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
         engineConfiguration.FPSLIMIT = 120;

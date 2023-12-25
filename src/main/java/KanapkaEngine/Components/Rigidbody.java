@@ -11,35 +11,21 @@ import org.dyn4j.world.World;
 
 public class Rigidbody extends NodeComponent {
     private Body body;
-    @Override
-    void Start() {
-
-    }
 
     @Override
-    void Update() {
+    public void Update() {
         Vector2 body_position = body.getWorldCenter();
         getParent().transform.setPosition(new Vector2D(body_position.x, body_position.y));
     }
 
     @Override
-    void onParent() {
+    public void onParent() {
         Append();
     }
 
     @Override
-    void onOrphan() {
+    public void onOrphan() {
         Detach();
-    }
-
-    @Override
-    void onDestroy() {
-
-    }
-
-    @Override
-    String toJSON() {
-        return null;
     }
 
     final void constructBody() {

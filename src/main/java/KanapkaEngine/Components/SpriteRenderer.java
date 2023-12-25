@@ -13,25 +13,6 @@ public class SpriteRenderer extends Renderer {
      * 2 - finished
      */
     private String texture_path = "";
-    @Override
-    void Start() {
-
-    }
-
-    @Override
-    void Update() {
-
-    }
-
-    @Override
-    void onDestroy() {
-
-    }
-
-    @Override
-    String toJSON() {
-        return null;
-    }
 
     @Override
     public BufferedImage getRender() {

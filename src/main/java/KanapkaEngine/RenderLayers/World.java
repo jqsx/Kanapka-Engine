@@ -44,6 +44,7 @@ public class World implements RenderLayer {
                 AffineTransform at = new AffineTransform();
                 double rad = Math.toRadians(node.transform.getRotation());
                 at.scale(size.getX() * g_size, size.getY() * g_size);
+                Vector2D size_adjustment = new Vector2D(render.getWidth(), render.getHeight()).subtract(new Vector2D(render.getWidth() * size.getX() * g_size, render.getWidth() * size.getY() * g_size));
                 at.translate(pos.getX(), pos.getY());
                 at.rotate(rad, render.getWidth() / 2.0, render.getHeight() / 2.0);
                 main.drawImage(render, at, null);
