@@ -7,14 +7,12 @@ import KanapkaEngine.Game.GameLogic;
 import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.UI.Text;
 import KanapkaEngine.UI.UI;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.dyn4j.geometry.MassType;
 
 import java.awt.*;
 
 public class Editor {
     private static boolean editor = false;
-    public static void StartEditor() {
+    public static void StartEditor() throws Exception {
         editor = true;
         EditorScene scene = new EditorScene();
         scene.load();
@@ -28,6 +26,7 @@ public class Editor {
         engineConfiguration.FPSLIMIT = 120;
         engineConfiguration.width = 800;
         engineConfiguration.height = 600;
+        engineConfiguration.window_title = "Editor";
         Engine engine = new Engine(new GameLogic() {
             @Override
             public void Start() {
@@ -53,6 +52,22 @@ public class Editor {
             text.setColor(Color.red);
             text.setParent(UI.currentlyDisplayed);
             text.pivot = new Point(-1, -1);
+        }
+
+        {
+            World world = SceneManager.getCurrentlyLoaded().scene_world;
+            Chunk chunk = Chunk.build(new Point(0, 0), world);
+            Block b = new Block(chunk, new Point(0, 0));
+            b.setImage(ResourceLoader.loadResource("wooden.png"));
+            b.append();
+        }
+
+        {
+            Node node = Node.build();
+            SpriteRenderer renderer = new SpriteRenderer();
+            renderer.setTexture("wooden.png");
+            node.addComponent(renderer);
+            node.transform.setRotation(30);
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));

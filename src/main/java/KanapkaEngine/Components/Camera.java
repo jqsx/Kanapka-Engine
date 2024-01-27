@@ -8,6 +8,7 @@ public class Camera {
     public static Camera main = new Camera();
 
     private Vector2D position = new Vector2D(0, 0);
+    private double rotation = 0f;
     public double size = 1;
     public Camera() {
         if (main == null) {
@@ -29,5 +30,13 @@ public class Camera {
     public Vector2D ScreenToWorldPosition(Point screen_position) {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         return position.subtract(new Vector2D(screen.getWidth() / 2.0, screen.getHeight() / 2.0)).add(new Vector2D(screen_position.x, -screen_position.y));
+    }
+
+    public double getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
     }
 }

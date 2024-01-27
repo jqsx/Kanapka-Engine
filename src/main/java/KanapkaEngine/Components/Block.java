@@ -8,7 +8,7 @@ public class Block {
     public final Chunk parent;
     public final Point point;
 
-    public String texture = "";
+    public String texture;
 
     private BufferedImage render;
     private int render_stage = 0;
@@ -36,6 +36,7 @@ public class Block {
     }
 
     void beginRender() {
+        if (texture == null) return;
         render = ResourceLoader.loadResource(texture);
         render_stage = Renderer.FINISHED;
     }

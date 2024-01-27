@@ -12,10 +12,10 @@ public class Transform {
         this.parent = parent;
     }
 
-    public static Transform build(Node parent) {
-        if (parent.transform == null)
-            return new Transform(parent);
-        return null;
+    public static Transform build(Node parent) throws Exception {
+        if (parent.transform != null)
+            throw new Exception("Parent object of this transform is already set!");
+        return new Transform(parent);
     }
 
     public Vector2D getPosition() {

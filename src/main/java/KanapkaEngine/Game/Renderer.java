@@ -1,5 +1,6 @@
 package KanapkaEngine.Game;
 
+import KanapkaEngine.Components.Camera;
 import KanapkaEngine.Components.RenderLayer;
 import KanapkaEngine.Components.RenderStage;
 import KanapkaEngine.Engine;
@@ -122,8 +123,10 @@ public class Renderer extends Canvas implements MouseListener {
         Dimension target = Toolkit.getDefaultToolkit().getScreenSize();
         double ratio = Math.min(getHeight() / (double)target.height, getWidth() / (double)target.width) / (double) Math.max(getHeight() / (double)target.height, getWidth() / (double)target.width);
 
-        at.scale(1.0 / ratio, - 1.0 / ratio);
-        at.translate(getWidth() * ratio / div, -getHeight() * ratio / div);
+        at.scale(1.0 / ratio,  1.0 / ratio);
+        at.translate(getWidth() * ratio / div, getHeight() * ratio / div);
+        if (Camera.main != null)
+            at.rotate(Camera.main.getRotation());
 
         return at;
     }

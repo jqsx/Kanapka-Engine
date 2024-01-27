@@ -31,13 +31,7 @@ public class SpriteRenderer extends Renderer {
                 createErrorTexture();
             }
             else {
-                Graphics2D g = rendered_visual.createGraphics();
-                rendered_visual = new BufferedImage(_texture.getWidth(), _texture.getHeight(), _texture.getType());
-                Dimension size = new Dimension(_texture.getWidth(), _texture.getHeight());
-                AffineTransform at = new AffineTransform();
-                at.scale(1, -1);
-                at.translate(0, -size.height);
-                g.drawImage(_texture, at, null);
+                rendered_visual = _texture;
             }
 
             loading_state = FINISHED;

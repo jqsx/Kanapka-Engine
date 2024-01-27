@@ -4,6 +4,7 @@ import KanapkaEngine.Game.SceneManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Node {
     private static int NodeCount = 0;
@@ -54,7 +55,7 @@ public class Node {
         return null;
     }
 
-    private Node(Node parent) {
+    private Node(Node parent) throws Exception {
         this.parent = parent;
         if (parent != null)
             parent.addChild(this);
@@ -62,7 +63,7 @@ public class Node {
             SceneManager.addNode(this);
     }
 
-    public static Node build(Node parent) {
+    public static Node build(Node parent) throws Exception {
         Node child = new Node(parent);
         if (parent != null)
             child.transform.setPosition(parent.transform.getPosition());
@@ -70,7 +71,7 @@ public class Node {
         return child;
     }
 
-    public static Node build() {
+    public static Node build() throws Exception {
         NodeCount++;
         return new Node(null);
     }
