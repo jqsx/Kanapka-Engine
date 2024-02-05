@@ -1,5 +1,8 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Engine;
+import KanapkaEngine.Game.Scene;
+import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.Time;
 import org.apache.commons.math3.geometry.Vector;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Physics {
+    public static Vector2D gravity = new Vector2D(0, -9.81);
 
     private static List<Vector2D> rayCastFor(Ray ray, Rectangle rect) {
         List<Vector2D> intersections = new ArrayList<>();
@@ -72,5 +76,28 @@ public class Physics {
 
     private record Ray(Vector2D origin, Vector2D direction, double length) {
 
+    }
+
+    public final void FixedUpdate(double fixedDelta) {
+        if (SceneManager.hasScene()) {
+            for (Node node : SceneManager.getSceneNodes()) {
+                if (node.getRigidbody() == null) continue;
+                VelocityUpdate(node, fixedDelta);
+                for (Node other : SceneManager.getSceneNodes()) {
+                    if (other.getCollider() == null) continue;
+                    if (!other.getCollider().isColliding(node.getCollider())) continue;
+                    ProcessCollision(node, other, fixedDelta);
+                }
+            }
+        }
+    }
+
+    private void VelocityUpdate(Node node, double fixedDelta) {
+        Vector2D velocity = node.getRigidbody().addVelocity(gravity.scalarMultiply(fixedDelta));
+        node.transform.setPosition(node.transform.getPosition().add(velocity.scalarMultiply(fixedDelta)));
+    }
+
+    private void ProcessCollision(Node node, Node other, double fixedDelta) {
+        // figure out collision logic
     }
 }

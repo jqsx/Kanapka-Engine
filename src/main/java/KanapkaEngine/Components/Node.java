@@ -12,6 +12,8 @@ public class Node {
     private Node parent;
     public final Transform transform = Transform.build(this);
     private Renderer renderer;
+    private Collider collider;
+    private Rigidbody rigidbody;
     private final List<Node> children = new ArrayList<>();
 
     public final int childCount() {
@@ -28,6 +30,10 @@ public class Node {
         components.add(nodeComponent);
         if (nodeComponent instanceof Renderer)
             renderer = (Renderer) nodeComponent;
+        else if (nodeComponent instanceof Collider)
+            collider = (Collider) nodeComponent;
+        else if (nodeComponent instanceof Rigidbody)
+            rigidbody = (Rigidbody) nodeComponent;
         nodeComponent.setParent(this);
     }
 
@@ -43,8 +49,29 @@ public class Node {
 
     public final void removeComponent(NodeComponent nodeComponent) {
         boolean s = components.remove(nodeComponent);
-        if (s)
+        if (s) {
+            if (renderer == nodeComponent)
+                renderer = null;
+            else if (collider == nodeComponent)
+                collider = null;
+            else if (rigidbody == nodeComponent)
+                rigidbody = null;
             nodeComponent.onOrphan();
+        }
+    }
+
+    public final void removeComponent(int i) {
+        if (i >= components.size()) return;
+        NodeComponent nodeComponent = components.remove(Math.abs(i));
+        if (nodeComponent != null) {
+            if (renderer == nodeComponent)
+                renderer = null;
+            else if (collider == nodeComponent)
+                collider = null;
+            else if (rigidbody == nodeComponent)
+                rigidbody = null;
+            nodeComponent.onOrphan();
+        }
     }
 
     public final <V extends NodeComponent> V getComponent(Class<V> v) {
@@ -109,6 +136,11 @@ public class Node {
 
     public Renderer getRenderer() {
         return renderer;
+    }
+    public Collider getCollider() { return collider; }
+
+    public Rigidbody getRigidbody() {
+        return rigidbody;
     }
 
     public final void UpdateCall() {

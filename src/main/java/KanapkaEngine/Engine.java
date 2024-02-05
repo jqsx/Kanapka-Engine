@@ -29,9 +29,14 @@ public class Engine {
     private Thread gameThread;
     private Thread renderThread;
 
+    private final Physics physics = new Physics();
+
     private Time time = new Time();
 
     private List<Plugin> plugins = new ArrayList<>();
+
+    private long last_fixed_update = System.nanoTime();
+    private final double Second = (long) Math.pow(10, 9);
 
     public Engine(GameLogic logic) {
         this.logic = logic;
@@ -99,6 +104,11 @@ public class Engine {
                     List<Node> nodes = SceneManager.getSceneNodes();
                     for (int i = 0; i < nodes.size(); i++) {
                         nodes.get(i).UpdateCall();
+                    }
+                    if (last_fixed_update + Second / 50L < System.nanoTime()) {
+                        double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;
+                        physics.FixedUpdate(fixedDelta);
+                        last_fixed_update = System.nanoTime();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
