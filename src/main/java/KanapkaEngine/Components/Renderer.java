@@ -4,12 +4,14 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public abstract class Renderer extends NodeComponent {
+public class Renderer extends NodeComponent {
     BufferedImage rendered_visual;
     int loading_state = NOT_STARTED;
-    public abstract BufferedImage getRender();
+    public BufferedImage getRender() {
+        return rendered_visual;
+    }
 
-    public void setTexture(BufferedImage image) {
+    public final void setTexture(BufferedImage image) {
         rendered_visual = image;
     }
     public final static int NOT_STARTED = 0;

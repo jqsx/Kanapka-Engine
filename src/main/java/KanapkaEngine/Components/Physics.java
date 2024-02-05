@@ -1,41 +1,76 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Time;
-import org.dyn4j.collision.AxisAlignedBounds;
-import org.dyn4j.collision.Bounds;
-import org.dyn4j.collision.CollisionBody;
-import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.geometry.AABB;
-import org.dyn4j.geometry.Geometry;
-import org.dyn4j.geometry.Vector2;
-import org.dyn4j.world.World;
-import org.dyn4j.world.listener.CollisionListener;
-import org.dyn4j.world.listener.ContactListener;
+import org.apache.commons.math3.geometry.Vector;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Physics {
-    public static final World<Body> world = getWorld();
 
-    public static void UpdateWorld() {
-        world.update(Time.deltaTime());
+    private static List<Vector2D> rayCastFor(Ray ray, Rectangle rect) {
+        List<Vector2D> intersections = new ArrayList<>();
+        {
+            Vector2D p1 = new Vector2D(rect.x, rect.y);
+            Vector2D p2 = new Vector2D(rect.x, rect.y).add(new Vector2D(rect.width, 0.0));
+            Vector2D a = checkSide(ray, p1, p2);
+            if (a != null)
+                intersections.add(a);
+        }
+        {
+            Vector2D p1 = new Vector2D(rect.x, rect.y).add(new Vector2D(rect.width, 0.0));
+            Vector2D p2 = new Vector2D(rect.x, rect.y).add(new Vector2D(rect.width, rect.height));
+            Vector2D a = checkSide(ray, p1, p2);
+            if (a != null)
+                intersections.add(a);
+        }
+        {
+            Vector2D p1 = new Vector2D(rect.x, rect.y).add(new Vector2D(rect.width, rect.height));
+            Vector2D p2 = new Vector2D(rect.x, rect.y).add(new Vector2D(0.0, rect.height));
+            Vector2D a = checkSide(ray, p1, p2);
+            if (a != null)
+                intersections.add(a);
+        }
+        {
+            Vector2D p1 = new Vector2D(rect.x, rect.y);
+            Vector2D p2 = new Vector2D(rect.x, rect.y).add(new Vector2D(0.0, rect.height));
+            Vector2D a = checkSide(ray, p1, p2);
+            if (a != null)
+                intersections.add(a);
+        }
+
+        return intersections;
     }
 
-    public static void addBody(Body body) {
-        world.addBody(body);
+    private static Vector2D checkSide(Ray ray, Vector2D A, Vector2D B) {
+        Vector2D C = ray.origin;
+        Vector2D D = ray.origin.add(ray.direction);
+
+        double b = (D.getX() - C.getX()) * (B.getY() - A.getY()) - (B.getX() - A.getX()) * (D.getY() - C.getY());
+
+        double rT = (C.getY() - A.getY()) * (B.getX() - A.getX()) - (C.getX() - A.getX()) * (B.getY() - A.getY());
+        double r = rT / b;
+
+        double sT = (A.getX() - C.getX()) * (D.getY() - C.getY()) - (D.getX() - C.getX()) * (A.getY() - C.getY());
+        double s = sT / b;
+
+        Vector2D P = null;
+        if (s >= 0 && s <= 1)
+            P = B.subtract(A).scalarMultiply(s).add(A);
+        else if (r >= 0) {
+            P = D.subtract(C).scalarMultiply(r).add(C);
+        }
+        else return null;
+
+        if (Mathf.distance(ray.origin, P) > ray.length)
+            return null;
+
+        return P;
     }
 
-    public static void removeBody(Body body) {
-        world.removeBody(body);
-    }
+    private record Ray(Vector2D origin, Vector2D direction, double length) {
 
-    public static void setGravity(double x, double y) {
-        world.setGravity(x, y);
-    }
-
-    private static World<Body> getWorld() {
-        World<Body> _world = new World<>();
-
-        _world.setGravity(World.EARTH_GRAVITY);
-        return _world;
     }
 }

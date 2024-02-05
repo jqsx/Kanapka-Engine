@@ -91,7 +91,6 @@ public class Engine {
         gameThread = new Thread(() -> {
             while (isRunning) {
                 time.GameUpdate();
-                Physics.UpdateWorld();
                 try {
                     logic.Update();
                     for (int i = 0; i < plugins.size(); i++) {
