@@ -88,16 +88,49 @@ public class Physics {
                     if (!other.getCollider().isColliding(node.getCollider())) continue;
                     ProcessCollision(node, other, fixedDelta);
                 }
+                ApplyVelocity(node, fixedDelta);
             }
         }
     }
 
     private void VelocityUpdate(Node node, double fixedDelta) {
-        Vector2D velocity = node.getRigidbody().addVelocity(gravity.scalarMultiply(fixedDelta));
-        node.transform.setPosition(node.transform.getPosition().add(velocity.scalarMultiply(fixedDelta)));
+        node.getRigidbody().addVelocity(gravity.scalarMultiply(fixedDelta));
+    }
+
+    private void ApplyVelocity(Node node, double fixedDelta) {
+        node.transform.setPosition(node.transform.getPosition().add(node.getRigidbody().getVelocity().scalarMultiply(fixedDelta)));
     }
 
     private void ProcessCollision(Node node, Node other, double fixedDelta) {
         // figure out collision logic
+        Collider nodeCollider = node.getCollider();
+        Collider otherCollider = other.getCollider();
+
+        Vector2D nodeCenter = node.transform.getPosition().add(nodeCollider.getOffset());
+        Vector2D otherCenter = other.transform.getPosition().add(otherCollider.getOffset());
+
+        Vector2D nodeDiff = node.transform.getPosition().subtract(other.transform.getPosition());
+        Vector2D combinedScale = nodeCollider.getSize().add(otherCollider.getSize());
+        Vector2D nodeDiffScaled = new Vector2D(nodeDiff.getX() / combinedScale.getX(), nodeDiff.getY() / combinedScale.getY());
+
+        Vector2D position = node.transform.getPosition();
+        Vector2D velocity = node.getRigidbody().getVelocity();
+
+        if (Math.abs(nodeDiffScaled.getY()) > Math.abs(nodeDiffScaled.getX())) {
+            position = new Vector2D(position.getX() + (Math.abs(nodeDiff.getX()) - otherCollider.getSize().getX() / 2.0) * Math.signum(nodeDiff.getX()) + nodeCollider.getSize().getX() / 2.0, position.getY());
+        }
+        else {
+            position = new Vector2D(position.getX(), position.getY() + (Math.abs(nodeDiff.getY()) - otherCollider.getSize().getY() / 2.0) * Math.signum(nodeDiff.getY()) + nodeCollider.getSize().getY() / 2.0);
+        }
+        velocity = velocity.scalarMultiply(-1);
+
+        node.transform.setPosition(position);
+        node.getRigidbody().setVelocity(velocity);
+    }
+
+    private double getCorrection(double n1x, double n2x, double n1ColliderSize, double n2ColliderSize) {
+        double diff = n2x - n1x;
+
+        return 0;
     }
 }

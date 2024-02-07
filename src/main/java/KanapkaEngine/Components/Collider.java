@@ -8,6 +8,15 @@ public class Collider extends NodeComponent {
     private Vector2D size = new Vector2D(1, 1);
     private Vector2D offset = new Vector2D(0, 0);
     private final Rectangle rectangle = new Rectangle();
+
+    public Collider() {
+
+    }
+
+    public Collider(Vector2D size) {
+        setSize(size);
+    }
+
     public Vector2D getSize() {
         return size;
     }
@@ -22,11 +31,11 @@ public class Collider extends NodeComponent {
     }
 
     private Rectangle getRectangle() {
-        rectangle.width = (int)Math.round(size.getX() * 16.0);
-        rectangle.height = (int)Math.round(size.getY() * 16.0);
+        rectangle.width = (int)Math.round(size.getX() * getParent().transform.getSize().getX());
+        rectangle.height = (int)Math.round(size.getY() * getParent().transform.getSize().getY());
 
-        rectangle.x = (int)Math.round((offset.getX() + getParent().transform.getPosition().getX() - size.getX() / 2.0) * 16.0);
-        rectangle.y = (int)Math.round((offset.getY() + getParent().transform.getPosition().getY() - size.getY() / 2.0) * 16.0);
+        rectangle.x = (int)Math.round((offset.getX() + getParent().transform.getPosition().getX() - size.getX() / 2.0));
+        rectangle.y = (int)Math.round((offset.getY() + getParent().transform.getPosition().getY() - size.getY() / 2.0));
 
         return rectangle;
     }

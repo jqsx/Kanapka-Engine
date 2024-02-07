@@ -7,8 +7,10 @@ import KanapkaEngine.Game.GameLogic;
 import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.UI.Text;
 import KanapkaEngine.UI.UI;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
+import java.lang.invoke.VolatileCallSite;
 
 public class Editor {
     private static boolean editor = false;
@@ -44,22 +46,14 @@ public class Editor {
             }
         }, engineConfiguration);
 
-        UI.currentlyDisplayed = new UI();
         {
-            Text text = new Text();
-            text.setFont(engine.getWindow().getFont());
-            text.setText("bobux");
-            text.setColor(Color.red);
-            text.setParent(UI.currentlyDisplayed);
-            text.pivot = new Point(-1, -1);
-        }
-
-        {
-            World world = SceneManager.getCurrentlyLoaded().scene_world;
-            Chunk chunk = Chunk.build(new Point(0, 0), world);
-            Block b = new Block(chunk, new Point(0, 0));
-            b.setImage(ResourceLoader.loadResource("wooden.png"));
-            b.append();
+            Node node = Node.build();
+            SpriteRenderer renderer = new SpriteRenderer();
+            renderer.setTexture("wooden.png");
+            node.addComponent(renderer);
+            node.addComponent(new Rigidbody());
+            node.addComponent(new Collider());
+            node.transform.setSize(new Vector2D(16, 16));
         }
 
         {
@@ -67,7 +61,9 @@ public class Editor {
             SpriteRenderer renderer = new SpriteRenderer();
             renderer.setTexture("wooden.png");
             node.addComponent(renderer);
-            node.transform.setRotation(30);
+            node.addComponent(new Collider());
+            node.transform.setPosition(new Vector2D(0, -20));
+            node.transform.setSize(new Vector2D(48, 10));
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));

@@ -8,7 +8,7 @@ public class Renderer extends NodeComponent {
     BufferedImage rendered_visual;
     int loading_state = NOT_STARTED;
 
-    protected BufferedImage getRender() {
+    public BufferedImage getRender() {
         return null;
     }
 
