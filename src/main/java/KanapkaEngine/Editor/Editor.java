@@ -54,6 +54,7 @@ public class Editor {
             node.addComponent(new Rigidbody());
             node.addComponent(new Collider());
             node.transform.setSize(new Vector2D(16, 16));
+            node.transform.setPosition(new Vector2D(0, 50));
         }
 
         {
@@ -62,8 +63,8 @@ public class Editor {
             renderer.setTexture("wooden.png");
             node.addComponent(renderer);
             node.addComponent(new Collider());
-            node.transform.setPosition(new Vector2D(0, -20));
-            node.transform.setSize(new Vector2D(48, 10));
+            node.transform.setPosition(new Vector2D(0, 20));
+            node.transform.setSize(new Vector2D(16, 16));
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));

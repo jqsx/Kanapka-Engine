@@ -1,5 +1,6 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Editor.EditorActions;
 import KanapkaEngine.Engine;
 import KanapkaEngine.Game.Scene;
 import KanapkaEngine.Game.SceneManager;
@@ -85,8 +86,9 @@ public class Physics {
                 VelocityUpdate(node, fixedDelta);
                 for (Node other : SceneManager.getSceneNodes()) {
                     if (other.getCollider() == null) continue;
-                    if (!other.getCollider().isColliding(node.getCollider())) continue;
-                    ProcessCollision(node, other, fixedDelta);
+                    if (other == node) continue;
+                    if (other.getCollider().isColliding(node.getCollider()))
+                        ProcessCollision(node, other, fixedDelta);
                 }
                 ApplyVelocity(node, fixedDelta);
             }
@@ -103,34 +105,62 @@ public class Physics {
 
     private void ProcessCollision(Node node, Node other, double fixedDelta) {
         // figure out collision logic
+
         Collider nodeCollider = node.getCollider();
         Collider otherCollider = other.getCollider();
 
-        Vector2D nodeCenter = node.transform.getPosition().add(nodeCollider.getOffset());
-        Vector2D otherCenter = other.transform.getPosition().add(otherCollider.getOffset());
+        if (EditorActions.log) {
+            System.out.println("colliding and processing collision");
+            System.out.println(nodeCollider.isColliding(otherCollider));
+            EditorActions.log = false;
+        }
+
+        Vector2D nodeSize = nodeCollider.getScaledSize();
+        Vector2D otherSize = otherCollider.getScaledSize();
 
         Vector2D nodeDiff = node.transform.getPosition().subtract(other.transform.getPosition());
-        Vector2D combinedScale = nodeCollider.getSize().add(otherCollider.getSize());
+        Vector2D combinedScale = nodeSize.add(otherSize);
         Vector2D nodeDiffScaled = new Vector2D(nodeDiff.getX() / combinedScale.getX(), nodeDiff.getY() / combinedScale.getY());
 
         Vector2D position = node.transform.getPosition();
         Vector2D velocity = node.getRigidbody().getVelocity();
 
-        if (Math.abs(nodeDiffScaled.getY()) > Math.abs(nodeDiffScaled.getX())) {
-            position = new Vector2D(position.getX() + (Math.abs(nodeDiff.getX()) - otherCollider.getSize().getX() / 2.0) * Math.signum(nodeDiff.getX()) + nodeCollider.getSize().getX() / 2.0, position.getY());
+        if (Math.abs(nodeDiffScaled.getY()) < Math.abs(nodeDiffScaled.getX())) {
+            position = new Vector2D((position.getX() + (otherSize.getX() / 2.0 + nodeSize.getX() / 2.0 - Math.abs(nodeDiff.getX())) * Math.signum(nodeDiff.getX())), position.getY());
+            velocity = new Vector2D((-velocity.getX() * 0.5 * Math.signum(nodeDiff.getX())), velocity.getY());
         }
         else {
-            position = new Vector2D(position.getX(), position.getY() + (Math.abs(nodeDiff.getY()) - otherCollider.getSize().getY() / 2.0) * Math.signum(nodeDiff.getY()) + nodeCollider.getSize().getY() / 2.0);
+            position = new Vector2D(position.getX(), (position.getY() + (otherSize.getY() / 2.0 + nodeSize.getY() / 2.0 - Math.abs(nodeDiff.getY())) * Math.signum(nodeDiff.getY())));
+            velocity = new Vector2D(velocity.getX(), (-velocity.getY() * 0.5 * Math.signum(nodeDiff.getY())));
         }
-        velocity = velocity.scalarMultiply(-1);
 
         node.transform.setPosition(position);
         node.getRigidbody().setVelocity(velocity);
-    }
 
+        /**
+         *Vector2D blockCenter = new Vector2D(otherCollider.x + otherCollider.width / 2.0, otherCollider.y + otherCollider.height / 2.0);
+         *             Vector2D center = new Vector2D(position.getX() + collider.getX() / 2.0, position.getY() + collider.getY() / 2.0);
+         *             Vector2D difference = center.subtract(blockCenter);
+         *             Vector2D totalScale = other.blockData.collisionBox.add(collider);
+         *             Vector2D differenceScaled = new Vector2D(difference.getX() / totalScale.getX(), difference.getY() / totalScale.getY());
+         *
+         *             double d = Math.abs(difference.getX() - difference.getY());
+         *
+         *             if (d < 0.5) return;
+         *             else if (Math.abs(differenceScaled.getX()) > Math.abs(differenceScaled.getY())) {
+         *                 position = new Vector2D(Math.round(position.getX() + (otherCollider.width / 2.0 + collider.getX() / 2.0 - Math.abs(difference.getX())) * Math.signum(difference.getX())), position.getY());
+         *                 velocity = new Vector2D(Math.floor(-velocity.getX() * BOUNCE * Math.signum(difference.getX())), velocity.getY());
+         *             }
+         *             else {
+         *                 position = new Vector2D(position.getX(), Math.round(position.getY() + (otherCollider.height / 2.0 + collider.getY() / 2.0 - Math.abs(difference.getY())) * Math.signum(difference.getY())));
+         *                 velocity = new Vector2D(velocity.getX(), Math.floor(-velocity.getY() * BOUNCE * Math.signum(difference.getY())));
+         *
+         *                 if (otherCollider.y < position.getY()) lastGroundLevelCollision = System.currentTimeMillis();
+         *             }
+         */
+    }
     private double getCorrection(double n1x, double n2x, double n1ColliderSize, double n2ColliderSize) {
         double diff = n2x - n1x;
-
-        return 0;
+        return n1x + diff;
     }
 }

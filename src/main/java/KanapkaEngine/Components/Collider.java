@@ -27,17 +27,26 @@ public class Collider extends NodeComponent {
     }
 
     public boolean isColliding(Collider other) {
-        return other.getRectangle().intersects(getRectangle());
+        return getRectangle().intersects(other.getRectangle());
     }
 
-    private Rectangle getRectangle() {
-        rectangle.width = (int)Math.round(size.getX() * getParent().transform.getSize().getX());
-        rectangle.height = (int)Math.round(size.getY() * getParent().transform.getSize().getY());
+    public Rectangle getDiff(Collider other) {
+        return getRectangle().intersection(other.getRectangle());
+    }
 
-        rectangle.x = (int)Math.round((offset.getX() + getParent().transform.getPosition().getX() - size.getX() / 2.0));
-        rectangle.y = (int)Math.round((offset.getY() + getParent().transform.getPosition().getY() - size.getY() / 2.0));
+    public Rectangle getRectangle() {
+        Vector2D scaledSize = getScaledSize();
+        int w = (int)Math.round(scaledSize.getX());
+        int h = (int)Math.round(scaledSize.getY());
 
-        return rectangle;
+        int x = (int)Math.round((offset.getX() + getParent().transform.getPosition().getX() - scaledSize.getX() / 2.0));
+        int y = (int)Math.round((offset.getY() + getParent().transform.getPosition().getY() - scaledSize.getY() / 2.0));
+
+        return new Rectangle(x, y, w, h);
+    }
+
+    public Vector2D getScaledSize() {
+        return new Vector2D(size.getX() * getParent().transform.getSize().getX(), size.getY() * getParent().transform.getSize().getY());
     }
 
     public Vector2D getOffset() {

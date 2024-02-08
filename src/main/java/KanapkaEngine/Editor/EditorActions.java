@@ -1,15 +1,25 @@
 package KanapkaEngine.Editor;
 
+import KanapkaEngine.Components.Node;
 import KanapkaEngine.Engine;
 import KanapkaEngine.Game.Plugin;
+import KanapkaEngine.Game.SceneManager;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class EditorActions extends Plugin implements MouseListener {
     private Engine engine;
+    public static boolean log = false;
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("AAAA");
+        if (SceneManager.hasScene())
+            for (Node node : SceneManager.getSceneNodes()) {
+                if (node.getCollider() != null)
+                    System.out.println(node.getCollider().getRectangle().toString());
+            }
+
+        log = true;
     }
 
     @Override
