@@ -5,12 +5,9 @@ import KanapkaEngine.Engine;
 import KanapkaEngine.Game.EngineConfiguration;
 import KanapkaEngine.Game.GameLogic;
 import KanapkaEngine.Game.SceneManager;
-import KanapkaEngine.UI.Text;
-import KanapkaEngine.UI.UI;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
-import java.lang.invoke.VolatileCallSite;
 
 public class Editor {
     private static boolean editor = false;
@@ -63,8 +60,8 @@ public class Editor {
             renderer.setTexture("wooden.png");
             node.addComponent(renderer);
             node.addComponent(new Collider());
-            node.transform.setPosition(new Vector2D(0, 20));
-            node.transform.setSize(new Vector2D(16, 16));
+            node.transform.setPosition(new Vector2D(23.0, 20));
+            node.transform.setSize(new Vector2D(32, 16));
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
