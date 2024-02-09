@@ -7,6 +7,8 @@ public class Rigidbody extends NodeComponent {
 
     private double Mass = 1.0;
 
+    private double Bounce = 0.3;
+
     public Vector2D getVelocity() {
         return velocity;
     }
@@ -25,5 +27,13 @@ public class Rigidbody extends NodeComponent {
 
     public void setMass(double mass) {
         Mass = Math.abs(mass);
+    }
+
+    public double getBounce() {
+        return Bounce;
+    }
+
+    public void setBounce(double bounce) {
+        Bounce = Math.abs(bounce);
     }
 }

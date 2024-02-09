@@ -10,16 +10,9 @@ import java.awt.event.MouseListener;
 
 public class EditorActions extends Plugin implements MouseListener {
     private Engine engine;
-    public static boolean log = false;
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (SceneManager.hasScene())
-            for (Node node : SceneManager.getSceneNodes()) {
-                if (node.getCollider() != null)
-                    System.out.println(node.getCollider().getRectangle().toString());
-            }
 
-        log = true;
     }
 
     @Override

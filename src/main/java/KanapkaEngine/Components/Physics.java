@@ -109,12 +109,6 @@ public class Physics {
         Collider nodeCollider = node.getCollider();
         Collider otherCollider = other.getCollider();
 
-        if (EditorActions.log) {
-            System.out.println("colliding and processing collision");
-            System.out.println(nodeCollider.isColliding(otherCollider));
-            EditorActions.log = false;
-        }
-
         Vector2D nodeSize = nodeCollider.getScaledSize();
         Vector2D otherSize = otherCollider.getScaledSize();
 
@@ -127,11 +121,11 @@ public class Physics {
 
         if (Math.abs(nodeDiffScaled.getY()) < Math.abs(nodeDiffScaled.getX())) {
             position = new Vector2D((position.getX() + (otherSize.getX() / 2.0 + nodeSize.getX() / 2.0 - Math.abs(nodeDiff.getX())) * Math.signum(nodeDiff.getX())), position.getY());
-            velocity = new Vector2D((-velocity.getX() * 0.1 * Math.signum(nodeDiff.getX())), velocity.getY());
+            velocity = new Vector2D((-velocity.getX() * node.getRigidbody().getBounce() * Math.signum(nodeDiff.getX())), velocity.getY());
         }
         else {
             position = new Vector2D(position.getX(), (position.getY() + (otherSize.getY() / 2.0 + nodeSize.getY() / 2.0 - Math.abs(nodeDiff.getY())) * Math.signum(nodeDiff.getY())));
-            velocity = new Vector2D(velocity.getX(), (-velocity.getY() * 0.1 * Math.signum(nodeDiff.getY())));
+            velocity = new Vector2D(velocity.getX(), (-velocity.getY() * node.getRigidbody().getBounce() * Math.signum(nodeDiff.getY())));
         }
 
         node.transform.setPosition(position);

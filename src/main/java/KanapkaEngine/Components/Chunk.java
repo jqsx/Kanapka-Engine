@@ -37,6 +37,7 @@ public class Chunk {
             blocks = new Block[SceneManager.getCurrentlyLoaded().getChunkSize()][SceneManager.getCurrentlyLoaded().getChunkSize()];
         else
             throw new RuntimeException("No scene loaded.");
+        parent.set(this);
     }
 
     public Vector2D getPosition() {
@@ -56,7 +57,7 @@ public class Chunk {
     public BufferedImage getRender() {
         if (render_stage == Renderer.NOT_STARTED) beginRender();
         if (render_stage == Renderer.STARTED) return render;
-        else return render;
+        else return null;
     }
 
     private void beginRender() {
@@ -69,17 +70,7 @@ public class Chunk {
                 for (Block block : column) {
                     if (block == null) continue;
                     BufferedImage block_render = block.getRender();
-                    AffineTransform at = new AffineTransform();
-                    if (block.scale_render) {
-                        at.translate(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
-                        at.scale(BLOCK_SCALE / (double)block_render.getWidth(), -BLOCK_SCALE / (double)block_render.getHeight());
-                        at.translate(0, -BLOCK_SCALE);
-                    }
-                    else {
-                        Vector2D m = new Vector2D(BLOCK_SCALE / 2.0 - block_render.getWidth() / 2.0, BLOCK_SCALE - block_render.getHeight() / 2.0);
-                        at.translate(block.point.x * BLOCK_SCALE + m.getX(), block.point.y * BLOCK_SCALE + m.getY());
-                        at.scale(1, -1);
-                    }
+                    AffineTransform at = getAffineTransform(block, block_render);
 
                     g.drawImage(block_render, at, null);
                 }
@@ -89,6 +80,21 @@ public class Chunk {
 
             render_stage = Renderer.FINISHED;
         }).start();
+    }
+
+    private AffineTransform getAffineTransform(Block block, BufferedImage block_render) {
+        AffineTransform at = new AffineTransform();
+        if (block.scale_render) {
+            at.translate(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
+            at.scale(BLOCK_SCALE / (double) block_render.getWidth(), BLOCK_SCALE / (double) block_render.getHeight());
+            at.translate(0, -BLOCK_SCALE);
+        }
+        else {
+            Vector2D m = new Vector2D(BLOCK_SCALE / 2.0 - block_render.getWidth() / 2.0, BLOCK_SCALE - block_render.getHeight() / 2.0);
+            at.translate(block.point.x * BLOCK_SCALE + m.getX(), block.point.y * BLOCK_SCALE + m.getY());
+            at.scale(1, -1);
+        }
+        return at;
     }
 
     private void scaleAt(AffineTransform at, BufferedImage image) {

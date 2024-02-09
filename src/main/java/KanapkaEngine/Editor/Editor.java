@@ -44,24 +44,11 @@ public class Editor {
         }, engineConfiguration);
 
         {
-            Node node = Node.build();
-            SpriteRenderer renderer = new SpriteRenderer();
-            renderer.setTexture("wooden.png");
-            node.addComponent(renderer);
-            node.addComponent(new Rigidbody());
-            node.addComponent(new Collider());
-            node.transform.setSize(new Vector2D(16, 16));
-            node.transform.setPosition(new Vector2D(0, 50));
-        }
-
-        {
-            Node node = Node.build();
-            SpriteRenderer renderer = new SpriteRenderer();
-            renderer.setTexture("wooden.png");
-            node.addComponent(renderer);
-            node.addComponent(new Collider());
-            node.transform.setPosition(new Vector2D(23.0, 20));
-            node.transform.setSize(new Vector2D(32, 16));
+            World world = SceneManager.getCurrentlyLoaded().scene_world;
+            Chunk chunk = Chunk.build(new Point(0, 0), world);
+            Block block = new Block(chunk, new Point(0, 0));
+            block.setImage(atlas.getSubTexture("all"));
+            block.append();
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
