@@ -47,8 +47,16 @@ public class Editor {
             World world = SceneManager.getCurrentlyLoaded().scene_world;
             Chunk chunk = Chunk.build(new Point(0, 0), world);
             Block block = new Block(chunk, new Point(0, 0));
-            block.setImage(atlas.getSubTexture("all"));
+            block.setImage(ResourceLoader.loadResource("wooden.png"));
             block.append();
+        }
+
+        {
+            Node node = Node.build();
+            SpriteRenderer renderer = new SpriteRenderer();
+            renderer.setTexture("wooden.png");
+            node.addComponent(renderer);
+            node.transform.setSize(new Vector2D(16, 16));
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));

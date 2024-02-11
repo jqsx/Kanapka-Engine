@@ -56,7 +56,7 @@ public class Chunk {
 
     public BufferedImage getRender() {
         if (render_stage == Renderer.NOT_STARTED) beginRender();
-        if (render_stage == Renderer.STARTED) return render;
+        if (render_stage == Renderer.FINISHED) return render;
         else return null;
     }
 
