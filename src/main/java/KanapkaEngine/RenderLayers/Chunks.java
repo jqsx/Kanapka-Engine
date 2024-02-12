@@ -8,27 +8,55 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Chunks implements RenderLayer {
+    public static int VisibleChunks = 0;
+
+    private static List<Chunk> activeChunks = new ArrayList<>();
 
     @Override
     public void Render(Graphics2D main) {
+        VisibleChunks = 0;
         if (Camera.main == null) return;
         if (!SceneManager.hasScene()) return;
         int s = SceneManager.getCurrentlyLoaded().getChunkSize() * Chunk.BLOCK_SCALE;
         Vector2D position = Camera.main.getPosition();
         Point cameraOffset = new Point((int) Math.floor((position.getX() - (position.getX() % s)) / s), (int) Math.floor((position.getY() - (position.getY() % s)) / s));
+
+        double g_size = SceneManager.getGlobalSize();
+        Dimension window_bounds = Window.getWindowSize();
+        Rectangle2D camView = new Rectangle2D.Double(position.getX() + (window_bounds.width) / g_size,
+                ((position.getY() + (window_bounds.height) / g_size)),
+                (window_bounds.width / g_size),
+                (window_bounds.height / g_size)
+        );
+
         for (int i = -2; i <= 2; i++) {
             for (int j = -2; j <= 2; j++) {
-                Chunk test = SceneManager.getCurrentlyLoaded().scene_world.get(i + cameraOffset.x, j + cameraOffset.y);
-                if (test != null)
-                    renderChunk(main, test);
+                Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i + cameraOffset.x, j + cameraOffset.y);
+                if (c != null) {
+                    c.activate();
+                    activeChunks.add(c);
+                    renderChunk(main, c, camView);
+                }
             }
+        }
+        UpdateChunks();
+    }
+
+    private void UpdateChunks() {
+        for (int i = activeChunks.size() - 1; i >= 0; i--) {
+            activeChunks.get(i).CheckDeactivation();
+            if (!activeChunks.get(i).IsActive())
+                activeChunks.remove(activeChunks.get(i));
         }
     }
 
-    private void renderChunk(Graphics2D main, Chunk chunk) {
+    private void oldrenderChunk(Graphics2D main, Chunk chunk) {
         BufferedImage render = chunk.getRender();
         if (render != null) {
             Vector2D camera_position = Camera.main.getPosition();
@@ -45,6 +73,28 @@ public class Chunks implements RenderLayer {
                 at.scale(size.getX() * g_size, size.getY() * g_size);
                 at.translate((camera_position.getX() - position.getX()) / size.getX(), (camera_position.getY() - position.getY()) / size.getY());
                 main.drawImage(render, at, null);
+                VisibleChunks++;
+            }
+        }
+    }
+
+    private void renderChunk(Graphics2D main, Chunk chunk, Rectangle2D camView) {
+        BufferedImage render = chunk.getRender();
+        if (render != null) {
+            Vector2D camera_position = Camera.main.getPosition();
+            Vector2D position = chunk.getPosition();
+            Vector2D pos = new Vector2D((camera_position.getX() + position.getX()), -(camera_position.getY() + position.getY()));
+            double g_size = SceneManager.getGlobalSize();
+
+            Rectangle2D chunkBound = chunk.getBounds();
+
+            if (camView.intersects(chunkBound)) {
+                AffineTransform at = new AffineTransform();
+                at.scale(g_size, g_size);
+                at.translate(pos.getX(), pos.getY());
+
+                main.drawImage(render, at, null);
+                VisibleChunks++;
             }
         }
     }

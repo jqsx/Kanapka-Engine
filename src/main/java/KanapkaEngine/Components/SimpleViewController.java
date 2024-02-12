@@ -13,7 +13,7 @@ import java.awt.event.MouseWheelListener;
 
 public class SimpleViewController extends Plugin implements MouseWheelListener {
     Vector2D velocity = new Vector2D(0, 0);
-    Vector2D range = new Vector2D(0.001, 15.0);
+    Vector2D range = new Vector2D(0.001, 30.0);
     @Override
     public void Apply(Engine engine) {
         engine.addListener(this);

@@ -21,6 +21,7 @@ public class Debug implements RenderLayer {
         drawText(main, "FPS " + Renderer.getFPS(), new Point(0, 40));
 
         drawText(main, "Visible Nodes " + World.Visible_Nodes + " / " + Node.getNodeCount(), new Point(100, 40));
+        drawText(main, "Visible Chunks " + Chunks.VisibleChunks, new Point(400, 40));
 
         for (int i = 0; i < Mathf.Clamp(SceneManager.getSceneNodes().size(), 0, 10); i++) {
             Node element = SceneManager.getSceneNodes().get(i);

@@ -8,7 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class UIComponent {
+public class UIComponent {
     private List<UIComponent> children = new ArrayList<>();
     private UIComponent parent;
     public Point pivot = new Point(0, 0);
@@ -40,5 +40,7 @@ public abstract class UIComponent {
         return at;
     }
 
-    public abstract void render(Graphics2D main, AffineTransform at);
+    public void render(Graphics2D main, AffineTransform at) {
+
+    }
 }

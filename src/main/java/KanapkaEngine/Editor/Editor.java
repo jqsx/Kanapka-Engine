@@ -49,6 +49,7 @@ public class Editor {
             Block block = new Block(chunk, new Point(0, 0));
             block.setImage(ResourceLoader.loadResource("wooden.png"));
             block.append();
+            chunk.ready();
         }
 
         {
@@ -57,6 +58,7 @@ public class Editor {
             renderer.setTexture("wooden.png");
             node.addComponent(renderer);
             node.transform.setSize(new Vector2D(16, 16));
+            node.transform.setPosition(new Vector2D(0, 0));
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
