@@ -22,7 +22,7 @@ public class Editor {
         atlas.createSubTexture("all", new Rectangle(16, 16));
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
-        engineConfiguration.FPSLIMIT = 120;
+        engineConfiguration.FPSLIMIT = 9999;
         engineConfiguration.width = 800;
         engineConfiguration.height = 600;
         engineConfiguration.window_title = "Editor";
