@@ -8,8 +8,6 @@ import KanapkaEngine.RenderLayers.Chunks;
 import KanapkaEngine.RenderLayers.Debug;
 import KanapkaEngine.RenderLayers.UI;
 import KanapkaEngine.RenderLayers.World;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -18,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Engine {
-    private static final Logger LOGGER = LogManager.getLogger(Engine.class);
     private static boolean isRunning = true;
     private Renderer renderer;
     private Window window;
@@ -75,7 +72,7 @@ public class Engine {
     }
 
     private void init_render_thread() {
-        LOGGER.info("Initializing Render Thread.");
+        System.out.println("Initializing Render Thread.");
         renderThread = new Thread(() -> {
             while (isRunning) {
                 try {
@@ -84,14 +81,14 @@ public class Engine {
                     e.printStackTrace();
                 }
             }
-            LOGGER.info("Stopped Render Thread.");
+            System.out.println("Stopped Render Thread.");
         });
         renderThread.start();
-        LOGGER.info("Initialized Render Thread.");
+        System.out.println("Initialized Render Thread.");
     }
 
     private void init_game_thread() {
-        LOGGER.info("Initializing Game Thread.");
+        System.out.println("Initializing Game Thread.");
         logic.Start();
         gameThread = new Thread(() -> {
             while (isRunning) {
@@ -114,16 +111,16 @@ public class Engine {
                     e.printStackTrace();
                 }
             }
-            LOGGER.info("Stopping Game Thread.");
+            System.out.println("Stopping Game Thread.");
             try {
                 logic.End();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            LOGGER.info("Stopped Game Thread.");
+            System.out.println("Stopped Game Thread.");
         });
         gameThread.start();
-        LOGGER.info("Initialized Game Thread.");
+        System.out.println("Initialized Game Thread.");
     }
 
     public final long getRenderThreadID() {

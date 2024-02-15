@@ -118,8 +118,6 @@ public class Chunk {
                     if (block == null) continue;
                     BufferedImage block_render = block.getRender();
                     AffineTransform at = getAffineTransform(block, block_render);
-
-                    System.out.println(block_render.getRaster());
                     g.drawImage(block_render, at, null);
                 }
 
