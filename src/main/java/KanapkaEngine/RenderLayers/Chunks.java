@@ -16,7 +16,7 @@ import java.util.List;
 public class Chunks implements RenderLayer {
     public static int VisibleChunks = 0;
 
-    private static List<Chunk> activeChunks = new ArrayList<>();
+    private static final List<Chunk> activeChunks = new ArrayList<>();
 
     @Override
     public void Render(Graphics2D main) {
@@ -24,20 +24,19 @@ public class Chunks implements RenderLayer {
         if (Camera.main == null) return;
         if (!SceneManager.hasScene()) return;
         int s = SceneManager.getCurrentlyLoaded().getChunkSize() * Chunk.BLOCK_SCALE;
+        double g_size = SceneManager.getGlobalSize();
         Vector2D position = Camera.main.getPosition();
         Point cameraOffset = new Point((int) Math.floor((position.getX() - (position.getX() % s)) / s), (int) Math.floor((position.getY() - (position.getY() % s)) / s));
-
-        double g_size = SceneManager.getGlobalSize();
         Dimension window_bounds = Window.getWindowSize();
-        Rectangle2D camView = new Rectangle2D.Double(position.getX() + (window_bounds.width) / g_size,
-                ((position.getY() + (window_bounds.height) / g_size)),
-                (window_bounds.width / g_size),
-                (window_bounds.height / g_size)
+        Rectangle2D camView = new Rectangle2D.Double(position.getX() - (window_bounds.width / g_size),
+                position.getY() - (window_bounds.height / g_size),
+                window_bounds.width / g_size * 2.0,
+                window_bounds.height / g_size * 2.0
         );
 
         for (int i = -2; i <= 2; i++) {
             for (int j = -2; j <= 2; j++) {
-                Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i + cameraOffset.x, j + cameraOffset.y);
+                Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i - cameraOffset.x, j - cameraOffset.y);
                 if (c != null) {
                     c.activate();
                     activeChunks.add(c);
@@ -88,7 +87,7 @@ public class Chunks implements RenderLayer {
 
             Rectangle2D chunkBound = chunk.getBounds();
 
-            if (camView.intersects(chunkBound)) {
+            if (true) { //camView.intersects(chunkBound)) {
                 AffineTransform at = new AffineTransform();
                 at.scale(g_size, g_size);
                 at.translate(pos.getX(), pos.getY());

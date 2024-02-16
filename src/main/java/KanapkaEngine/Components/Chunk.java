@@ -33,8 +33,8 @@ public class Chunk {
     public Rectangle2D getBounds() {
         Vector2D camera_position = Camera.main.getPosition();
         Vector2D position = getPosition();
-        Vector2D pos = new Vector2D((camera_position.getX() + position.getX()), -(camera_position.getY() + position.getY()));
         double g_size = SceneManager.getGlobalSize();
+        Vector2D pos = new Vector2D((camera_position.getX() + position.getX()), -(camera_position.getY() + position.getY()));
         if (bounds == null)
             bounds = new Rectangle2D.Double(pos.getX(), pos.getY(), render.getWidth(), render.getHeight());
         else

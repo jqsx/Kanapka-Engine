@@ -45,20 +45,33 @@ public class Editor {
 
         {
             World world = SceneManager.getCurrentlyLoaded().scene_world;
-            Chunk chunk = Chunk.build(new Point(0, 0), world);
-            Block block = new Block(chunk, new Point(0, 0));
-            block.setImage(ResourceLoader.loadResource("wooden.png"));
-            block.append();
-            chunk.ready();
-        }
+            for (int i = 0; i < 9; i++) {
+                int x = i % 2;
+                int y = (int)Math.floor(i / 2.0);
+                Chunk chunk = Chunk.build(new Point(x - 1, y - 1), world);
+                {
+                    Block block = new Block(chunk, new Point(0, 0));
+                    block.setImage(ResourceLoader.loadResource("wooden.png"));
+                    block.append();
+                }
+                {
+                    Block block = new Block(chunk, new Point(9, 9));
+                    block.setImage(ResourceLoader.loadResource("wooden.png"));
+                    block.append();
+                }
+                {
+                    Block block = new Block(chunk, new Point(9, 0));
+                    block.setImage(ResourceLoader.loadResource("wooden.png"));
+                    block.append();
+                }
+                {
+                    Block block = new Block(chunk, new Point(0, 9));
+                    block.setImage(ResourceLoader.loadResource("wooden.png"));
+                    block.append();
+                }
 
-        {
-            Node node = Node.build();
-            SpriteRenderer renderer = new SpriteRenderer();
-            renderer.setTexture("wooden.png");
-            node.addComponent(renderer);
-            node.transform.setSize(new Vector2D(16, 16));
-            node.transform.setPosition(new Vector2D(0, 0));
+                chunk.ready();
+            }
         }
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));

@@ -14,6 +14,12 @@ public class World {
         else return null;
     }
 
+    public final boolean hasChunk(int x, int y) {
+        if (chunk_map.containsKey(x))
+            return chunk_map.get(x).containsKey(y);
+        else return false;
+    }
+
     public void onGet(Point p) {
 
     }

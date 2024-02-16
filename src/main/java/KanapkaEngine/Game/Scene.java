@@ -20,6 +20,10 @@ public class Scene {
         scene_world = new World();
     }
 
+    public Scene(World world) {
+        this.scene_world = world;
+    }
+
     public final void loadSceneFromFile(String path) {
         this.loadPath = path;
     }
