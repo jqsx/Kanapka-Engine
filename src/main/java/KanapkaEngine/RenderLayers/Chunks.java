@@ -6,17 +6,24 @@ import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.Game.Window;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class Chunks implements RenderLayer {
     public static int VisibleChunks = 0;
 
-    private static final List<Chunk> activeChunks = new ArrayList<>();
+    private static final LinkedList<Chunk> activeChunks = new LinkedList<>();
+    private Thread chunkUpdateThread;
+
+    public Chunks() {
+        chunkUpdateThread = new Thread(this::UpdateChunks);
+        chunkUpdateThread.start();
+    }
 
     @Override
     public void Render(Graphics2D main) {
@@ -39,20 +46,35 @@ public class Chunks implements RenderLayer {
                 Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i - cameraOffset.x, j - cameraOffset.y);
                 if (c != null) {
                     c.activate();
-                    activeChunks.add(c);
+                    if (!activeChunks.contains(c)) activeChunks.add(c);
                     renderChunk(main, c, camView);
                 }
             }
         }
-        UpdateChunks();
     }
 
     private void UpdateChunks() {
-        for (int i = activeChunks.size() - 1; i >= 0; i--) {
-            activeChunks.get(i).CheckDeactivation();
-            if (!activeChunks.get(i).IsActive())
-                activeChunks.remove(activeChunks.get(i));
+        long last_run = System.currentTimeMillis();
+        System.out.println("Chunk deactivation thread active.");
+        while (true) {
+            if (last_run + 1000L / 30L < System.currentTimeMillis()) {
+
+                try {
+                    IterateChunks();
+                } catch (ConcurrentModificationException ignore) {
+
+                }
+
+                last_run = System.currentTimeMillis();
+            }
         }
+    }
+
+    private void IterateChunks() {
+        activeChunks.removeIf(chunk -> {
+            chunk.CheckDeactivation();
+            return !chunk.IsActive();
+        });
     }
 
     private void oldrenderChunk(Graphics2D main, Chunk chunk) {

@@ -1,5 +1,7 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.SceneManager;
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Objects;
@@ -36,5 +38,11 @@ public class World {
 
     public void onSet(Chunk chunk) {
 
+    }
+
+    public static World getCurrent() {
+        if (!SceneManager.hasScene())
+            return null;
+        return SceneManager.getCurrentlyLoaded().scene_world;
     }
 }

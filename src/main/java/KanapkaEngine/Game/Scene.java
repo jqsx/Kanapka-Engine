@@ -4,12 +4,13 @@ import KanapkaEngine.Components.Node;
 import KanapkaEngine.Components.World;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Scene {
     private String loadPath;
     private boolean isLoaded = false;
-    public final List<Node> nodes = new ArrayList<>();
+    public final LinkedList<Node> nodes = new LinkedList<>();
     public final World scene_world;
 
     private int CHUNK_SIZE = 10;

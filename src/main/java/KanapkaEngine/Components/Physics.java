@@ -10,6 +10,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Physics {
@@ -81,18 +82,20 @@ public class Physics {
 
     public final void FixedUpdate(double fixedDelta) {
         if (SceneManager.hasScene()) {
-            for (Node node : SceneManager.getSceneNodes()) {
-                if (node.getRigidbody() == null) continue;
-                VelocityUpdate(node, fixedDelta);
-                for (Node other : SceneManager.getSceneNodes()) {
-                    if (other.getCollider() == null) continue;
-                    if (other == node) continue;
-                    if (other.getCollider().isColliding(node.getCollider()))
-                        ProcessCollision(node, other, fixedDelta);
-                }
-                ApplyVelocity(node, fixedDelta);
-            }
+            for (Node node : SceneManager.getSceneNodes()) CheckCollisionFor(node, fixedDelta);
         }
+    }
+
+    private void CheckCollisionFor(Node node, double fixedDelta) {
+        if (node.getRigidbody() == null) return;
+        VelocityUpdate(node, fixedDelta);
+        for (Node other : SceneManager.getSceneNodes()) {
+            if (other.getCollider() == null) continue;
+            if (other == node) continue;
+            if (other.getCollider().isColliding(node.getCollider()))
+                ProcessCollision(node, other, fixedDelta);
+        }
+        ApplyVelocity(node, fixedDelta);
     }
 
     private void VelocityUpdate(Node node, double fixedDelta) {

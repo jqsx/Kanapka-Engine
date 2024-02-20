@@ -14,8 +14,21 @@ public class Mathf {
         return a + (b - a) * Clamp(t, 0, 1);
     }
 
+    /**
+     * <code>min(max(mod(a, 2), 0), 1) + floor(a/2)</code> <br><br>
+     * I found it useful when procedurally generating terrain.
+     * @param a
+     * @return Step
+     */
+    public static double stepLerp(double a) {
+        return Clamp01(a % 2.0) + Math.floor(a / 2.0);
+    }
+
     public static double Clamp(double n, double min, double max) {
         return Math.max(Math.min(n, max), min);
+    }
+    public static double Clamp01(double n) {
+        return Clamp(n, 0, 1);
     }
 
     public static int Clamp(int n, int min, int max) {

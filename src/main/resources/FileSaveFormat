@@ -1,0 +1,17 @@
+Block:
+point byte byte, int id, int special_id
+10 bytes
+
+Chunk:
+point int int, int block_count
+12 bytes
+
+At default configuration
+max_per_chunk=1012bytes
+avg_per_chunk=512bytes
+
+Region32x32:
+chunk_count int
+max_chunk_count=1024
+max_per_region=1012kilobytes
+avg_per_region=512kilobytes

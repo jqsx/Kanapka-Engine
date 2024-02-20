@@ -7,47 +7,30 @@ import java.util.Objects;
 public class Block {
     public final Chunk parent;
     public final Point point;
-
-    public String texture;
-
-    private BufferedImage render;
-    private int render_stage = 0;
-    public boolean scale_render = true;
+    public int id = 0;
 
     public Block(Chunk parent, Point point) {
         Objects.requireNonNull(point, "Missing chunk point.");
         Objects.requireNonNull(parent, "Missing parent.");
         this.point = point;
         this.parent = parent;
-    }
-
-    public final BufferedImage getRender() {
-        if (render_stage == Renderer.NOT_STARTED) {
-            render_stage = Renderer.STARTED;
-            beginRender();
-        }
-        return render;
-    }
-
-    public final void setImage(BufferedImage image) {
-        Objects.requireNonNull(image);
-        this.render = image;
-        this.render_stage = Renderer.FINISHED;
-    }
-
-    void beginRender() {
-        if (texture == null) return;
-        render = ResourceLoader.loadResource(texture);
-        render_stage = Renderer.FINISHED;
-    }
-
-    public final void append() {
         parent.appendBlock(this);
     }
 
-    public final void Derender() {
-        render.flush();
-        render = null;
-        render_stage = Renderer.NOT_STARTED;
+    public Block(Chunk parent, Point point, int id) {
+        this(parent, point);
+        if (id < 0)
+            return;
+        if (id >= BlockManager.getBlockCount())
+            System.out.println("[WARN] Block id " + id + " is not registered in the BlockManager. Will default to block id 0 instead.");
+        this.id = id;
+    }
+
+    public final BufferedImage getRender() {
+        return BlockManager.getBlockData(id).getRender();
+    }
+
+    public final BlockData getBlockData() {
+        return BlockManager.getBlockData(id);
     }
 }

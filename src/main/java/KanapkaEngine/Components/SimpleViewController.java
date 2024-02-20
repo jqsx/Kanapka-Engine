@@ -28,11 +28,6 @@ public class SimpleViewController extends Plugin implements MouseWheelListener {
     }
 
     @Override
-    public void Detach() {
-
-    }
-
-    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         double s = e.getPreciseWheelRotation();
         if (!SceneManager.hasScene()) return;

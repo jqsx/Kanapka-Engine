@@ -132,9 +132,11 @@ public class Chunk {
     }
 
     private AffineTransform getAffineTransform(Block block, BufferedImage block_render) {
+        if (block_render == null)
+            return new AffineTransform();
         AffineTransform at = new AffineTransform();
         Vector2D p = new Vector2D(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
-        if (block.scale_render) {
+        if (block.getBlockData().scale_render) {
             at.scale(BLOCK_SCALE / (double) block_render.getWidth(), BLOCK_SCALE / (double) block_render.getHeight());
             at.translate(p.getX(), p.getY());
         }

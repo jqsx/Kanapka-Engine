@@ -3,6 +3,7 @@ package KanapkaEngine.Game;
 import KanapkaEngine.Components.Node;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SceneManager {
@@ -16,10 +17,10 @@ public class SceneManager {
         return currentlyLoaded;
     }
 
-    public static List<Node> getSceneNodes() {
+    public static LinkedList<Node> getSceneNodes() {
         if (currentlyLoaded != null)
             return currentlyLoaded.nodes;
-        return new ArrayList<>();
+        return new LinkedList<>();
     }
 
     public static Scene loadScene(Scene scene) {

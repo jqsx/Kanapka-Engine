@@ -95,12 +95,11 @@ public class Engine {
                 time.GameUpdate();
                 try {
                     logic.Update();
-                    for (int i = 0; i < plugins.size(); i++) {
+                    for (int i = plugins.size() - 1; i >= 0; i--) {
                         plugins.get(i).Update();
                     }
-                    List<Node> nodes = SceneManager.getSceneNodes();
-                    for (int i = 0; i < nodes.size(); i++) {
-                        nodes.get(i).UpdateCall();
+                    for (Node node : SceneManager.getSceneNodes()) {
+                        node.UpdateCall();
                     }
                     if (last_fixed_update + Second / 50L < System.nanoTime()) {
                         double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;

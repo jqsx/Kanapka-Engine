@@ -44,30 +44,22 @@ public class Editor {
         }, engineConfiguration);
 
         {
-            World world = SceneManager.getCurrentlyLoaded().scene_world;
+            World world = World.getCurrent();
             for (int i = 0; i < 9; i++) {
                 int x = i % 2;
                 int y = (int)Math.floor(i / 2.0);
                 Chunk chunk = Chunk.build(new Point(x - 1, y - 1), world);
                 {
-                    Block block = new Block(chunk, new Point(0, 0));
-                    block.setImage(ResourceLoader.loadResource("wooden.png"));
-                    block.append();
+                    new Block(chunk, new Point(0, 0));
                 }
                 {
-                    Block block = new Block(chunk, new Point(9, 9));
-                    block.setImage(ResourceLoader.loadResource("wooden.png"));
-                    block.append();
+                    new Block(chunk, new Point(9, 9));
                 }
                 {
-                    Block block = new Block(chunk, new Point(9, 0));
-                    block.setImage(ResourceLoader.loadResource("wooden.png"));
-                    block.append();
+                    new Block(chunk, new Point(9, 0));
                 }
                 {
-                    Block block = new Block(chunk, new Point(0, 9));
-                    block.setImage(ResourceLoader.loadResource("wooden.png"));
-                    block.append();
+                    new Block(chunk, new Point(0, 9));
                 }
 
                 chunk.ready();
