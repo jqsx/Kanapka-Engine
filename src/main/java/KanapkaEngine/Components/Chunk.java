@@ -7,7 +7,14 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Chunk {
@@ -171,7 +178,7 @@ public class Chunk {
         int block_count = 0;
         for (Block[] block : blocks) {
             for (Block value : block) {
-                if (value == null)
+                if (value != null)
                     block_count++;
             }
         }
@@ -181,14 +188,16 @@ public class Chunk {
         buffer.putInt(point.x);
         buffer.putInt(point.y);
         buffer.putInt(block_count);
-
-        int i = 0;
         for (Block[] block : blocks) {
             for (Block value : block) {
-                byte x = Integer.;
-
-                i++;
+                if (value == null) continue;
+                buffer.put((byte) Mathf.Clamp(value.point.x, 0, 127));
+                buffer.put((byte) Mathf.Clamp(value.point.y, 0, 127));
+                buffer.putInt(value.id);
+                buffer.putInt(value.special_id);
             }
         }
+
+        return buffer.array();
     }
 }

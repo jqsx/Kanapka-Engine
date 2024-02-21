@@ -8,6 +8,7 @@ import KanapkaEngine.Game.SceneManager;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class Editor {
     private static boolean editor = false;
