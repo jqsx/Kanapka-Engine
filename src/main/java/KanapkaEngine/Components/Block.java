@@ -8,6 +8,7 @@ public class Block {
     public final Chunk parent;
     public final Point point;
     public int id = 0;
+    public int special_id = 0;
 
     public Block(Chunk parent, Point point) {
         Objects.requireNonNull(point, "Missing chunk point.");

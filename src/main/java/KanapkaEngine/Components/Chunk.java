@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 public class Chunk {
@@ -164,5 +165,30 @@ public class Chunk {
 
     public World getParent() {
         return parent;
+    }
+
+    public byte[] getSave() {
+        int block_count = 0;
+        for (Block[] block : blocks) {
+            for (Block value : block) {
+                if (value == null)
+                    block_count++;
+            }
+        }
+
+        ByteBuffer buffer = ByteBuffer.allocate(12 + block_count * 10);
+
+        buffer.putInt(point.x);
+        buffer.putInt(point.y);
+        buffer.putInt(block_count);
+
+        int i = 0;
+        for (Block[] block : blocks) {
+            for (Block value : block) {
+                byte x = Integer.;
+
+                i++;
+            }
+        }
     }
 }
