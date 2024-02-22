@@ -1,10 +1,13 @@
 package KanapkaEngine.Editor;
 
+import KanapkaEngine.Components.Camera;
 import KanapkaEngine.Components.Node;
+import KanapkaEngine.Components.World;
 import KanapkaEngine.Engine;
 import KanapkaEngine.Game.Plugin;
 import KanapkaEngine.Game.SceneManager;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -17,7 +20,7 @@ public class EditorActions extends Plugin implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        World.getCurrent().saveWorld();
     }
 
     @Override
