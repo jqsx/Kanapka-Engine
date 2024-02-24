@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.SceneManager;
+import KanapkaEngine.RenderLayers.Chunks;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -96,7 +97,7 @@ public class Chunk {
 
     private void deactivate() {
         if (isActive && render != null)
-            if (lastActive + 10000L < System.currentTimeMillis()) {
+            if (lastActive + 1000L * Chunks.DEACTIVATIONDELAY < System.currentTimeMillis()) {
                 render_stage = Renderer.NOT_STARTED;
                 isActive = false;
                 render.flush();

@@ -17,6 +17,8 @@ import java.util.List;
 public class Chunks implements RenderLayer {
     public static int VisibleChunks = 0;
 
+    public static double DEACTIVATIONDELAY = 5.0;
+
     private static final LinkedList<Chunk> activeChunks = new LinkedList<>();
     private Thread chunkUpdateThread;
 
