@@ -18,32 +18,14 @@ public class Text extends UIComponent {
 
     private Font font;
 
-    private BufferedImage render;
-    private FontRenderContext context;
-
-    private void generateVisual() {
-        if (context == null) return;
-        Rectangle2D rect = font.deriveFont(size).getStringBounds(text, context);
-        BufferedImage image = new BufferedImage((int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
-        g.setColor(color);
-        g.drawString(text, 0, size);
-        g.dispose();
-        Vector2D scaled_size = super.size.scalarMultiply(0.01);
-        render = new BufferedImage((int)Math.round(image.getWidth() / scaled_size.getX()), (int)Math.round(image.getHeight() / scaled_size.getY()), BufferedImage.TYPE_INT_ARGB);
-        g = render.createGraphics();
-        AffineTransform at = new AffineTransform();
-        at.scale(1.0 / scaled_size.getX(), 1.0 /scaled_size.getY());
-        g.drawImage(image, at, null);
-        g.dispose();
-    }
     @Override
     public void render(Graphics2D main, AffineTransform at) {
-        if (context == null) {
-            context = main.getFontRenderContext();
-            generateVisual();
-        }
-        main.drawImage(render, at, null);
+        Dimension windowSize = Window.getWindowSize();
+        main.setFont(main.getFont().deriveFont(size));
+        main.setColor(color);
+        float x = (float)(position.getX() + (pivot.getX() >= 0 ? windowSize.width / (2.0 - pivot.getX()) : 0));
+        float y = (float)(position.getY() + (pivot.getY() >= 0 ? windowSize.height / (2.0 - pivot.getY()) : 0));
+        main.drawString(text, (int)x, (int)y);
     }
 
     public String getText() {
@@ -52,8 +34,6 @@ public class Text extends UIComponent {
 
     public void setText(String text) {
         this.text = text;
-
-        generateVisual();
     }
 
     public float getSize() {
@@ -62,7 +42,6 @@ public class Text extends UIComponent {
 
     public void setSize(float size) {
         this.size = size;
-        generateVisual();
     }
 
     public Font getFont() {
@@ -71,8 +50,6 @@ public class Text extends UIComponent {
 
     public void setFont(Font font) {
         this.font = font;
-
-        generateVisual();
     }
 
     public Color getColor() {
@@ -81,7 +58,5 @@ public class Text extends UIComponent {
 
     public void setColor(Color color) {
         this.color = color;
-
-        generateVisual();
     }
 }

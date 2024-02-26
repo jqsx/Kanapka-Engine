@@ -20,7 +20,7 @@ public class EditorActions extends Plugin implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        World.getCurrent().saveWorld();
+
     }
 
     @Override

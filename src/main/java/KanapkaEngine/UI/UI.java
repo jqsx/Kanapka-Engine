@@ -4,14 +4,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 public class UI extends UIComponent {
-    public static UI currentlyDisplayed;
+    public static UI currentlyDisplayed = new UI();
     @Override
     public void setParent(UIComponent parent) {
-
-    }
-
-    @Override
-    public void render(Graphics2D main, AffineTransform at) {
 
     }
 }

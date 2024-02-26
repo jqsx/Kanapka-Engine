@@ -12,7 +12,7 @@ public class SpriteRenderer extends Renderer {
      * 1 - started
      * 2 - finished
      */
-    private String texture_path = "";
+    private String texture_path;
 
     @Override
     public BufferedImage getRender() {
@@ -24,6 +24,7 @@ public class SpriteRenderer extends Renderer {
     }
 
     private void LoadTexture() {
+        if (texture_path == null) return;
         loading_state = STARTED;
         new Thread(() -> {
             BufferedImage _texture = ResourceLoader.loadResource(texture_path);

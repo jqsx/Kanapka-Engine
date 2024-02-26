@@ -9,10 +9,13 @@ import KanapkaEngine.RenderLayers.Debug;
 import KanapkaEngine.RenderLayers.UI;
 import KanapkaEngine.RenderLayers.World;
 
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 
 public class Engine {
@@ -54,6 +57,8 @@ public class Engine {
         init_render_thread();
 
         init_game_thread();
+
+        load(new Input());
     }
 
     public final void load(Plugin plugin) {
@@ -69,6 +74,8 @@ public class Engine {
             renderer.addMouseMotionListener((MouseMotionListener) plugin);
         if (plugin instanceof MouseListener)
             renderer.addMouseListener((MouseListener) plugin);
+        if (plugin instanceof KeyListener)
+            renderer.addKeyListener((KeyListener) plugin);
     }
 
     private void init_render_thread() {
@@ -98,8 +105,12 @@ public class Engine {
                     for (int i = plugins.size() - 1; i >= 0; i--) {
                         plugins.get(i).Update();
                     }
-                    for (Node node : SceneManager.getSceneNodes()) {
-                        node.UpdateCall();
+                    try {
+                        Iterator<Node> nodeIterator = SceneManager.getCurrentlyLoaded().nodes.descendingIterator();
+                        while (nodeIterator.hasNext())
+                            nodeIterator.next().UpdateCall();
+                    } catch (ConcurrentModificationException ignore) {
+
                     }
                     if (last_fixed_update + Second / 50L < System.nanoTime()) {
                         double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;

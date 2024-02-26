@@ -5,8 +5,14 @@ import KanapkaEngine.Engine;
 import KanapkaEngine.Game.EngineConfiguration;
 import KanapkaEngine.Game.GameLogic;
 import KanapkaEngine.Game.SceneManager;
+import KanapkaEngine.Game.Window;
+import KanapkaEngine.UI.Image;
+import KanapkaEngine.UI.Text;
+import KanapkaEngine.UI.UI;
+import KanapkaEngine.UI.UIComponent;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import javax.tools.Tool;
 import java.awt.*;
 import java.util.Arrays;
 
@@ -24,8 +30,9 @@ public class Editor {
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
         engineConfiguration.FPSLIMIT = 9999;
-        engineConfiguration.width = 800;
-        engineConfiguration.height = 600;
+        int screenHeight = (int)Math.round(Toolkit.getDefaultToolkit().getScreenSize().height / 1.5);
+        engineConfiguration.width = screenHeight;
+        engineConfiguration.height = screenHeight;
         engineConfiguration.window_title = "Editor";
         Engine engine = new Engine(new GameLogic() {
             @Override
@@ -45,27 +52,27 @@ public class Editor {
         }, engineConfiguration);
 
         {
-            World world = World.getCurrent();
-            for (int i = 0; i < 9; i++) {
-                int x = i % 2;
-                int y = (int)Math.floor(i / 2.0);
-                Chunk chunk = Chunk.build(new Point(x - 1, y - 1), world);
-                {
-                    new Block(chunk, new Point(0, 0));
-                }
-                {
-                    new Block(chunk, new Point(9, 9));
-                }
-                {
-                    new Block(chunk, new Point(9, 0));
-                }
-                {
-                    new Block(chunk, new Point(0, 9));
-                }
-
-                chunk.ready();
-            }
+            Text text = new Text();
+            text.setText("Text");
+            text.setColor(Color.red);
+            text.setSize(50f);
+            text.pivot = UIComponent.Pivot.Left;
         }
+
+        {
+            Node logo = Node.build();
+            SpriteRenderer renderer = new SpriteRenderer();
+            renderer.setTexture("logo.png");
+            logo.addComponent(renderer);
+            logo.transform.setSize(new Vector2D(100.0, 100.0));
+        }
+
+        {
+            Image image = new Image();
+            image.setImage("test.jpg");
+        }
+
+//        engine.getWindow().setResizable(false);
 
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
 
