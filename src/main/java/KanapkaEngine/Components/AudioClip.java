@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.Control;
 import javax.sound.sampled.FloatControl;
 
 public class AudioClip {

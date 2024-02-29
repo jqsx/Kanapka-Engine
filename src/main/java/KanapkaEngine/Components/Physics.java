@@ -142,8 +142,9 @@ public class Physics {
     private void playSound(Vector2D old, Vector2D position) {
         double total = Math.abs(position.getX() - old.getX()) + Math.abs(position.getY() - old.getY());
 
-        if (total > 0.1) {
+        if (total > 0.01) {
             hit.clip.setFramePosition(0);
+            hit.fc.setValue((float)Math.random() / 4f);
             hit.clip.start();
         }
     }

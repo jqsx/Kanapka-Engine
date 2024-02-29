@@ -16,7 +16,7 @@ public class ParticleSystem extends Renderer {
 
     }
 
-    public Iterator<Particle> getIterator() {
+    public final Iterator<Particle> getIterator() {
         return particles.iterator();
     }
 

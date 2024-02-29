@@ -148,6 +148,7 @@ public class World {
     public static World load(World to, String directory) {
         File dir = new File(directory);
         if (dir.exists() && dir.isDirectory()) {
+            to.setWorldName(dir.getName());
             for (File file : dir.listFiles()) {
                 if (file.isFile() && file.getName().startsWith("r")) {
                     String coords = file.getName().substring(1, file.getName().length() - 1);
@@ -176,7 +177,7 @@ public class World {
                         int chunkCount = buffer.getInt();
 
                         for (int i = 0; i < chunkCount; i++) {
-                            int chunk_x = buffer.getInt();
+                            int chunk_x = buffer.getInt(); 
                             int chunk_y = buffer.getInt();
                             int blockCount = buffer.getInt();
 
@@ -206,5 +207,5 @@ public class World {
             new Block(chunk, new Point(x, y), id).special_id = buffer.getInt();
         }
         return chunk;
-    } 
+    }
 }
