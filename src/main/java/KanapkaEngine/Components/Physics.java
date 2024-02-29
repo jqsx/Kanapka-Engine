@@ -16,6 +16,8 @@ import java.util.List;
 public class Physics {
     public static Vector2D gravity = new Vector2D(0, -9.81);
 
+    public static AudioClip hit = ResourceLoader.loadAudio("Audio/boxHit.wav");
+
     private static List<Vector2D> rayCastFor(Ray ray, Rectangle rect) {
         List<Vector2D> intersections = new ArrayList<>();
         {
@@ -131,7 +133,18 @@ public class Physics {
             velocity = new Vector2D(velocity.getX(), (-velocity.getY() * node.getRigidbody().getBounce() * Math.signum(nodeDiff.getY())));
         }
 
+        playSound(node.transform.getPosition(), position);
+
         node.transform.setPosition(position);
         node.getRigidbody().setVelocity(velocity);
+    }
+
+    private void playSound(Vector2D old, Vector2D position) {
+        double total = Math.abs(position.getX() - old.getX()) + Math.abs(position.getY() - old.getY());
+
+        if (total > 0.1) {
+            hit.clip.setFramePosition(0);
+            hit.clip.start();
+        }
     }
 }

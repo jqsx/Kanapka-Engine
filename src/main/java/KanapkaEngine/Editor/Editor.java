@@ -51,25 +51,53 @@ public class Editor {
             }
         }, engineConfiguration);
 
-        {
-            Text text = new Text();
-            text.setText("Text");
-            text.setColor(Color.red);
-            text.setSize(50f);
-            text.pivot = UIComponent.Pivot.Left;
-        }
+//        {
+//            Text text = new Text();
+//            text.setText("Text");
+//            text.setColor(Color.red);
+//            text.setSize(50f);
+//            text.pivot = UIComponent.Pivot.Left;
+//        }
+//
+//        {
+//            Node logo = Node.build();
+//            SpriteRenderer renderer = new SpriteRenderer();
+//            renderer.setTexture("logo.png");
+//            logo.addComponent(renderer);
+//            logo.transform.setSize(new Vector2D(100.0, 100.0));
+//        }
+//
+//        {
+//            Image image = new Image();
+//            image.setImage("test.jpg");
+//        }
 
         {
-            Node logo = Node.build();
+            Node node = Node.build();
             SpriteRenderer renderer = new SpriteRenderer();
-            renderer.setTexture("logo.png");
-            logo.addComponent(renderer);
-            logo.transform.setSize(new Vector2D(100.0, 100.0));
+            renderer.setTexture("wooden.png");
+            node.addComponent(renderer);
+            Rigidbody rigidbody = new Rigidbody();
+            Collider collider = new Collider();
+            node.addComponent(rigidbody);
+            node.addComponent(collider);
+
+            node.transform.setSize(new Vector2D(16, 16));
+
+            node.transform.setPosition(new Vector2D(0, 50));
         }
 
         {
-            Image image = new Image();
-            image.setImage("test.jpg");
+            Node node = Node.build();
+            SpriteRenderer renderer = new SpriteRenderer();
+            renderer.setTexture("wooden.png");
+            node.addComponent(renderer);
+            Collider collider = new Collider();
+            node.addComponent(collider);
+
+            node.transform.setSize(new Vector2D(16, 16));
+
+            node.transform.setPosition(new Vector2D(0, -20));
         }
 
 //        engine.getWindow().setResizable(false);
