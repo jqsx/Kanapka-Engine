@@ -20,6 +20,7 @@ public class NetworkConnectionToClient implements Runnable {
         try {
             in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+
         } catch (IOException e) {
             System.out.println("[SERVERCLIENT] Failed connection with client " + socket.getLocalAddress().getHostAddress());
             e.printStackTrace();

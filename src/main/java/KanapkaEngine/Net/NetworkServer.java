@@ -57,6 +57,13 @@ public class NetworkServer implements Runnable {
                 throw new RuntimeException(e);
             }
         }
+        if (!serverSocket.isClosed()) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private NetworkServer() {
