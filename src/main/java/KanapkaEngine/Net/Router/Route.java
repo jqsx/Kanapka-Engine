@@ -1,6 +1,5 @@
 package KanapkaEngine.Net.Router;
 
-import KanapkaEngine.Net.NetDataType;
 import KanapkaEngine.Net.NetworkClient;
 import KanapkaEngine.Net.NetworkConnectionToClient;
 
@@ -10,21 +9,12 @@ public class Route {
     protected boolean isReady = false;
     private short id;
 
-    private NetDataType[] messageSize;
-
-    public Route(NetDataType[] messageSize) {
-        this.messageSize = messageSize;
+    public Route() {
+        RouteManager.defineRoute(this);
     }
 
     public final short getID() {
         return id;
-    }
-    public final int getSize() {
-        int i = 0;
-        for (NetDataType dataType : messageSize) {
-            i+=dataType.size;
-        }
-        return i;
     }
 
     /**
@@ -44,18 +34,12 @@ public class Route {
 
     }
 
-    public final void send(NetworkConnectionToClient connectionToClient, byte[] data) {
-        ByteBuffer buffer = ByteBuffer.allocate(getSize());
-        buffer.put(data);
-        connectionToClient.send(getID(), buffer.array());
+    public final void sendToClient(NetworkConnectionToClient connectionToClient, byte[] data) {
+        connectionToClient.send(getID(), data);
     }
 
-    public final void send(byte[] data) {
-        ByteBuffer buffer = ByteBuffer.allocate(getSize());
-        buffer.put(data);
-        System.out.println("Perpared message");
-        NetworkClient.send(getID(), buffer.array());
-        System.out.println("Sent Message");
+    public final void sendToServer(byte[] data) {
+        NetworkClient.send(getID(), data);
     }
 
     protected final void define(short id) {

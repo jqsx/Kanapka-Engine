@@ -23,7 +23,7 @@ public class NetworkClient implements Runnable {
     }
 
     public static void Connect(String hostName, int port) {
-        System.out.println("Connecting to server.");
+        System.out.println("[CLIENT] Connecting to server.");
         try {
             if (instance != null) {
                 instance.isRunning = false;
@@ -39,7 +39,7 @@ public class NetworkClient implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("Connected to server.");
+        System.out.println("[CLIENT] Connected to server.");
     }
 
     public static void Connect(String hostName) {
@@ -51,20 +51,16 @@ public class NetworkClient implements Runnable {
         try {
             while (isRunning && !socket.isClosed()) {
                 short ID = in.readShort();
+                int length = in.readInt();
                 Route route = RouteManager.getRoute(ID);
                 if (route == null) {
-                    System.out.println("ROUTE NOT FOUND " + ID);
+                    System.out.println("[CLIENT] ROUTE NOT FOUND " + ID);
                     socket.close();
                     return;
                 }
-                byte[] data = new byte[route.getSize()];
-                boolean readEnd = false;
-                int i = 0;
-                while (!readEnd) {
+                byte[] data = new byte[length];
+                for (int i = 0; i < data.length; i++) {
                     data[i] = in.readByte();
-                    i++;
-                    if (i >= route.getSize())
-                        readEnd=true;
                 }
                 route.Client_IN(data);
             }
@@ -76,9 +72,10 @@ public class NetworkClient implements Runnable {
     public static void send(short id, byte[] data) {
         try {
             out.writeShort(id);
+            out.writeInt(data.length);
             out.write(data);
         } catch (IOException e) {
-            System.out.println("Problem");
+            System.out.println("[CLIENT] Problem");
         }
     }
 }

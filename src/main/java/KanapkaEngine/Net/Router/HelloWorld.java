@@ -1,14 +1,10 @@
 package KanapkaEngine.Net.Router;
 
-import KanapkaEngine.Net.NetDataType;
 import KanapkaEngine.Net.NetworkConnectionToClient;
 
 public class HelloWorld extends Route {
     public HelloWorld() {
-        super(new NetDataType[] {
-            NetDataType.INT
-        });
-        RouteManager.defineRoute(this);
+        super();
     }
 
     @Override

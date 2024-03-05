@@ -19,7 +19,7 @@ public class NetworkServer implements Runnable {
 
     private static ServerSocket serverSocket;
 
-    private static final List<NetworkConnectionToClient> clients = new ArrayList<>();
+    public static final List<NetworkConnectionToClient> clients = new ArrayList<>();
 
     private static Thread serverThread;
 
@@ -28,12 +28,15 @@ public class NetworkServer implements Runnable {
     public static void StartServer() {
         try {
             serverSocket = ServerSocketFactory.getDefault().createServerSocket();
+            System.out.println("[SERVER] Created server socket.");
             serverSocket.bind(new InetSocketAddress(hostName != null && !hostName.isEmpty() ? hostName : "localhost", PORT));
-
+            System.out.println("[SERVER] Bound server to correct hostName and port.");
             clients.clear();
+            System.out.println("[SERVER] Cleared existing clients.");
             if (serverThread != null)
                 instance.isRunning = false;
 
+            System.out.println("[SERVER] Starting server thread.");
             serverThread = new Thread(instance = new NetworkServer());
             serverThread.start();
         } catch (IOException e) {
@@ -43,10 +46,12 @@ public class NetworkServer implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("[SERVER] Started server thread.");
         while (isRunning && !serverSocket.isClosed()) {
             try {
+                System.out.println("[SERVER] Awaiting connection.");
                 Socket socket = serverSocket.accept();
-
+                System.out.println("[SERVER] Connection at " + socket.getInetAddress().getHostAddress());
                 clients.add(new NetworkConnectionToClient(socket));
             } catch (IOException e) {
                 throw new RuntimeException(e);

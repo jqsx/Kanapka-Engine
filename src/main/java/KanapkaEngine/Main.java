@@ -3,6 +3,7 @@ package KanapkaEngine;
 import KanapkaEngine.Components.Mathf;
 import KanapkaEngine.Editor.Editor;
 import KanapkaEngine.Net.NetworkClient;
+import KanapkaEngine.Net.NetworkConnectionToClient;
 import KanapkaEngine.Net.NetworkServer;
 import KanapkaEngine.Net.Router.HelloWorld;
 import KanapkaEngine.Net.Router.RouteManager;
@@ -27,7 +28,11 @@ public class Main {
         buffer.putInt(555);
 
         System.out.println("Sending data");
-        helloWorld.send(buffer.array());
+        helloWorld.sendToServer(buffer.array());
         System.out.println("Sent data.");
+
+        for (NetworkConnectionToClient conn : NetworkServer.clients) {
+            helloWorld.sendToClient(conn, buffer.array());
+        }
     }
 }
