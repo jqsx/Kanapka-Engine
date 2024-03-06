@@ -8,14 +8,8 @@ public class Transform {
     private double rotation = 0;
     private Vector2D size = new Vector2D(1, 1);
 
-    private Transform(Node parent) {
+    protected Transform(Node parent) {
         this.parent = parent;
-    }
-
-    public static Transform build(Node parent) throws Exception {
-        if (parent.transform != null)
-            throw new Exception("Parent object of this transform is already set!");
-        return new Transform(parent);
     }
 
     public Vector2D getPosition() {

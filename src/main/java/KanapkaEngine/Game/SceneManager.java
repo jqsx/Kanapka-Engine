@@ -31,7 +31,10 @@ public class SceneManager {
     }
 
     public static void addNode(Node node) {
-        if (currentlyLoaded != null)
+        if (currentlyLoaded == null) return;
+        if (node.getParent() != null)
+            node.setParent(null);
+        else
             currentlyLoaded.nodes.add(node);
     }
 

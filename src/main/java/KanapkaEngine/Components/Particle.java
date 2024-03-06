@@ -9,9 +9,8 @@ public class Particle {
 
     private double birth = Time.time();
 
-    protected Particle(Vector2D position, Vector2D velocity) {
+    protected Particle(Vector2D position) {
         this.position = position;
-        this.velocity = velocity;
     }
 
     public boolean isDead(double lifeTime) {

@@ -10,7 +10,7 @@ public class Node {
     private static int NodeCount = 0;
     public String name = "Node_Instance";
     private Node parent;
-    public final Transform transform = Transform.build(this);
+    public final Transform transform = new Transform(this);
     private Renderer renderer;
     private Collider collider;
     private Rigidbody rigidbody;
@@ -82,32 +82,26 @@ public class Node {
         return null;
     }
 
-    private Node(Node parent) throws Exception {
+    public Node(Node parent) {
         this.parent = parent;
-        if (parent != null)
+        if (parent != null) {
             parent.addChild(this);
+            transform.setPosition(parent.transform.getPosition());
+        }
         else
-            SceneManager.addNode(this);
-    }
-
-    public static Node build(Node parent) throws Exception {
-        Node child = new Node(parent);
-        if (parent != null)
-            child.transform.setPosition(parent.transform.getPosition());
+            setParent(null);
         NodeCount++;
-        return child;
     }
 
-    public static Node build() throws Exception {
-        NodeCount++;
-        return new Node(null);
+    public Node() {
+        this(null);
     }
 
-    public Node getParent() {
+    public final Node getParent() {
         return parent;
     }
 
-    public void setParent(Node parent) {
+    public final void setParent(Node parent) {
         if (this.parent != null)
             this.parent.removeChild(this);
         else
@@ -119,46 +113,37 @@ public class Node {
             SceneManager.addNode(this);
     }
 
-    public void Destroy() {
+    public final void Destroy() {
         if (parent != null)
             parent.removeChild(this);
         else
             SceneManager.removeNode(this);
         NodeCount--;
-        for (int i = 0; i < components.size(); i++) {
-            components.get(i).onOrphan();
+        for (NodeComponent component : components) {
+            component.onOrphan();
         }
+        components.clear();
     }
 
     public static int getNodeCount() {
         return NodeCount;
     }
 
-    public Renderer getRenderer() {
+    public final Renderer getRenderer() {
         return renderer;
     }
-    public Collider getCollider() { return collider; }
+    public final Collider getCollider() { return collider; }
 
-    public Rigidbody getRigidbody() {
+    public final Rigidbody getRigidbody() {
         return rigidbody;
     }
 
     public final void UpdateCall() {
-        for (int i = 0; i < components.size(); i++) {
-            components.get(i).Update();
+        for (NodeComponent component : components) {
+            component.Update();
         }
-        for (int i = 0; i < children.size(); i++) {
-            children.get(i).UpdateCall();
-        }
-    }
-
-    class NodeData {
-        private static int globalIndex = 0;
-
-        public int[] path;
-
-        public NodeData(Node node) {
-
+        for (Node child : children) {
+            child.UpdateCall();
         }
     }
 }

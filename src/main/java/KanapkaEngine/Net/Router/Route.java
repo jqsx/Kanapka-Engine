@@ -2,8 +2,9 @@ package KanapkaEngine.Net.Router;
 
 import KanapkaEngine.Net.NetworkClient;
 import KanapkaEngine.Net.NetworkConnectionToClient;
+import KanapkaEngine.Net.NetworkServer;
 
-import java.nio.ByteBuffer;
+import java.net.InetAddress;
 
 public class Route {
     protected boolean isReady = false;
@@ -19,10 +20,10 @@ public class Route {
 
     /**
      * Server Side
-     * @param connectionToClient
+     * @param conn
      * @param data
      */
-    public void ServerClient_IN(NetworkConnectionToClient connectionToClient, byte[] data) {
+    public void ServerClient_IN(NetworkConnectionToClient conn, byte[] data) {
 
     }
 
@@ -34,12 +35,42 @@ public class Route {
 
     }
 
+    public void onServerStart() {
+
+    }
+
+    public void onServerStop() {
+
+    }
+
+    public void onClientConnect(InetAddress address) {
+
+    }
+
+    public void onClientDisconnect() {
+
+    }
+
+    public void onServerClientDisconnect(NetworkConnectionToClient conn) {
+
+    }
+
+    public void onServerClientConnect(NetworkConnectionToClient conn) {
+
+    }
+
     public final void sendToClient(NetworkConnectionToClient connectionToClient, byte[] data) {
-        connectionToClient.send(getID(), data);
+        if (NetworkServer.clients.contains(connectionToClient))
+            connectionToClient.send(getID(), data);
+        else
+            System.out.println("[MSG>SERVERCLIENT] Server client isn't registered in current context.");
     }
 
     public final void sendToServer(byte[] data) {
-        NetworkClient.send(getID(), data);
+        if (NetworkClient.isConnected())
+            NetworkClient.send(getID(), data);
+        else
+            System.out.println("[MSG>SERVER] Client isn't connected to a server.");
     }
 
     protected final void define(short id) {

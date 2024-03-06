@@ -1,5 +1,7 @@
 package KanapkaEngine.Net;
 
+import KanapkaEngine.Net.Router.RouteManager;
+
 import javax.net.ServerSocketFactory;
 import javax.net.SocketFactory;
 import java.io.IOException;
@@ -27,6 +29,8 @@ public class NetworkServer implements Runnable {
 
     public static void StartServer() {
         try {
+            if (serverSocket != null)
+                RouteManager.onServerStop();
             serverSocket = ServerSocketFactory.getDefault().createServerSocket();
             System.out.println("[SERVER] Created server socket.");
             serverSocket.bind(new InetSocketAddress(hostName != null && !hostName.isEmpty() ? hostName : "localhost", PORT));
@@ -47,16 +51,30 @@ public class NetworkServer implements Runnable {
     @Override
     public void run() {
         System.out.println("[SERVER] Started server thread.");
+        RouteManager.onServerStart();
         while (isRunning && !serverSocket.isClosed()) {
             try {
                 System.out.println("[SERVER] Awaiting connection.");
                 Socket socket = serverSocket.accept();
                 System.out.println("[SERVER] Connection at " + socket.getInetAddress().getHostAddress());
-                clients.add(new NetworkConnectionToClient(socket));
+                NetworkConnectionToClient conn = new NetworkConnectionToClient(socket);
+                clients.add(conn);
+                RouteManager.onServerClientConnect(conn);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
+        if (!serverSocket.isClosed()) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        RouteManager.onServerStop();
+        serverSocket = null;
+        serverThread = null;
+        instance = null;
     }
 
     private NetworkServer() {

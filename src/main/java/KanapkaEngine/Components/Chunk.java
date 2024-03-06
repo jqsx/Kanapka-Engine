@@ -30,13 +30,36 @@ public class Chunk {
     private boolean isReadyForRender = false;
 
     private boolean isActive = false;
+    private boolean needReRender = false;
 
     private long lastActive = System.currentTimeMillis();
 
     public final void appendBlock(Block block) {
+        Objects.requireNonNull(block);
+        Block old = blocks[block.point.x][block.point.y];
         if (block.parent == this && isInRange(block.point)) {
+            if (old == null) needReRender = true;
+            else if (old.id != block.id) needReRender = true;
             blocks[block.point.x][block.point.y] = block;
         }
+    }
+
+    public final void setAir(Point p) {
+        if (isInRange(p)) {
+            Block old = blocks[p.x][p.y];
+            if (old != null) {
+                blocks[p.x][p.y] = null;
+                needReRender = true;
+            }
+        }
+    }
+
+    public final Block createBlock(int id, Point p) {
+        if (id < 0) {
+            setAir(p);
+            return null;
+        }
+        return new Block(this, p, id);
     }
 
     public Rectangle2D getBounds() {
@@ -85,7 +108,7 @@ public class Chunk {
 
     public BufferedImage getRender() {
         if (!isActive) return null;
-        if (render_stage == Renderer.NOT_STARTED) beginRender();
+        if (render_stage == Renderer.NOT_STARTED || needReRender) beginRender();
         if (render_stage == Renderer.FINISHED) return render;
         else return null;
     }
@@ -116,7 +139,9 @@ public class Chunk {
     }
 
     private void beginRender() {
-        if (!isReadyForRender) return;
+        if (!isReadyForRender && !needReRender) return;
+        if (needReRender)
+            needReRender = false;
         new Thread(() -> {
             int s = SceneManager.getCurrentlyLoaded().getChunkSize() * BLOCK_SCALE;
             BufferedImage image = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);

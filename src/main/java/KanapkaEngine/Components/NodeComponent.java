@@ -43,17 +43,4 @@ public class NodeComponent {
     public void onDestroy() {
 
     }
-
-    public String toJSON() {
-        return null;
-    }
-
-    private class NodeComponentData {
-        public Class ClassName;
-        public String JSON;
-        public NodeComponentData(NodeComponent component) {
-            this.ClassName = component.getClass();
-            this.JSON = component.toJSON();
-        }
-    }
 }

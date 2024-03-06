@@ -70,35 +70,7 @@ public class Editor {
 //        {
 //            Image image = new Image();
 //            image.setImage("test.jpg");
-//        }
-
-        for (int i = 0; i < 10; i++) {
-            Node node = Node.build();
-            SpriteRenderer renderer = new SpriteRenderer();
-            renderer.setTexture("wooden.png");
-            node.addComponent(renderer);
-            Rigidbody rigidbody = new Rigidbody();
-            Collider collider = new Collider();
-            node.addComponent(rigidbody);
-            node.addComponent(collider);
-
-            node.transform.setSize(new Vector2D(16, 16));
-
-            node.transform.setPosition(new Vector2D((0.5 - Math.random()) * 500, 50 + Math.random() * 100));
-        }
-
-        {
-            Node node = Node.build();
-            SpriteRenderer renderer = new SpriteRenderer();
-            renderer.setTexture("wooden.png");
-            node.addComponent(renderer);
-            Collider collider = new Collider();
-            node.addComponent(collider);
-
-            node.transform.setSize(new Vector2D(500, 16));
-
-            node.transform.setPosition(new Vector2D(0, -20));
-        }
+//        }r
 
 //        engine.getWindow().setResizable(false);
 

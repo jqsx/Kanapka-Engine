@@ -8,35 +8,43 @@ import java.io.*;
 import java.net.Socket;
 
 public class NetworkClient implements Runnable {
-    private static Thread thread;
-    private static Socket socket;
+    private Thread thread;
+    private Socket socket;
 
-    private static DataInputStream in;
-    private static DataOutputStream out;
+    private DataInputStream in;
+    private DataOutputStream out;
 
     public boolean isRunning = true;
 
     private static NetworkClient instance;
 
-    private NetworkClient() {
+    private NetworkClient(Socket socket) {
+        this.socket = socket;
 
+        RouteManager.onClientConnect(socket.getInetAddress());
+
+        thread = new Thread(this);
+        thread.start();
     }
 
     public static void Connect(String hostName, int port) {
         System.out.println("[CLIENT] Connecting to server.");
-        try {
-            if (instance != null) {
-                instance.isRunning = false;
+
+        if (instance != null) {
+            instance.isRunning = false;
+            if (!instance.socket.isClosed()) {
+                try {
+                    instance.socket.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            socket = SocketFactory.getDefault().createSocket(hostName, port);
+        }
 
-            in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-
-            thread = new Thread(instance = new NetworkClient());
-            thread.start();
+        try {
+            instance = new NetworkClient(SocketFactory.getDefault().createSocket(hostName, port));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         System.out.println("[CLIENT] Connected to server.");
@@ -48,6 +56,14 @@ public class NetworkClient implements Runnable {
 
     @Override
     public void run() {
+
+        try {
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         try {
             while (isRunning && !socket.isClosed()) {
                 short ID = in.readShort();
@@ -64,12 +80,24 @@ public class NetworkClient implements Runnable {
                 }
                 route.Client_IN(data);
             }
+            in.close();
+            out.close();
+            if (!socket.isClosed())
+                socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            RouteManager.onClientDisconnect();
         }
     }
 
     public static void send(short id, byte[] data) {
+        if (instance != null)
+            instance.Isend(id, data);
+    }
+
+    private void Isend(short id, byte[] data) {
         try {
             out.writeShort(id);
             out.writeInt(data.length);
@@ -77,5 +105,9 @@ public class NetworkClient implements Runnable {
         } catch (IOException e) {
             System.out.println("[CLIENT] Problem");
         }
+    }
+
+    public static boolean isConnected() {
+        return instance != null && instance.isRunning && !instance.socket.isClosed();
     }
 }

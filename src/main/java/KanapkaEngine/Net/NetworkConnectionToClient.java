@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class NetworkConnectionToClient implements Runnable {
-    private static HashMap<Short, Route> routes = new HashMap<>();
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
@@ -17,13 +16,6 @@ public class NetworkConnectionToClient implements Runnable {
     public NetworkConnectionToClient(Socket socket) {
         System.out.println("[SERVERCLIENT] Setting up server client connection.");
         this.socket = socket;
-        try {
-            in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-        } catch (IOException e) {
-            System.out.println("[SERVERCLIENT] Failed connection with client " + socket.getLocalAddress().getHostAddress());
-            e.printStackTrace();
-        }
 
         thread = new Thread(this);
         thread.start();
@@ -33,6 +25,15 @@ public class NetworkConnectionToClient implements Runnable {
     @Override
     public void run() {
         System.out.println("[SERVERCLIENT] Started server client connection thread.");
+
+        try {
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            System.out.println("[SERVERCLIENT] Failed connection with client " + socket.getLocalAddress().getHostAddress());
+            e.printStackTrace();
+        }
+
         try {
             while (!socket.isClosed()) {
                 short ID = in.readShort();
@@ -49,8 +50,16 @@ public class NetworkConnectionToClient implements Runnable {
                 }
                 route.ServerClient_IN(this, data);
             }
+            in.close();
+            out.close();
+            if (!socket.isClosed())
+                socket.close();
+            System.out.println("Closed");
         } catch (IOException e) {
             System.out.println("[SERVERCLIENT] Problem");
+        }
+        finally {
+            RouteManager.onServerClientDisconnect(this);
         }
     }
 

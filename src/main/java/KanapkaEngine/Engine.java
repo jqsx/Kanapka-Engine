@@ -49,7 +49,21 @@ public class Engine {
         init();
     }
 
+    private void credits() {
+        for (int i = 0; i < 10; i++)
+            System.out.print("-");
+        System.out.println();
+        System.out.println();
+        System.out.println("Thank you for using KanapkaEngine!");
+//        System.out.println("Version: " + getClass().getPackage().getImplementationVersion());
+        System.out.println();
+        for (int i = 0; i < 10; i++)
+            System.out.print("-");
+        System.out.println();
+    }
+
     private void init() {
+        credits();
         window = new Window(engineConfiguration, this);
 
         window.addRenderer(renderer = new Renderer(engineConfiguration, this));
