@@ -43,8 +43,10 @@ public class Chunks implements RenderLayer {
                 window_bounds.height / g_size * 2.0
         );
 
-        for (int i = -2; i <= 2; i++) {
-            for (int j = -2; j <= 2; j++) {
+        int dist = 1 + (int)Math.floor(2.0 / g_size);
+
+        for (int i = -dist; i <= dist; i++) {
+            for (int j = -dist; j <= dist; j++) {
                 Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i - cameraOffset.x, j - cameraOffset.y);
                 if (c != null) {
                     c.activate();

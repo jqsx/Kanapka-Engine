@@ -73,6 +73,7 @@ public class Renderer extends Canvas implements MouseListener {
         Graphics2D main = (Graphics2D) bs.getDrawGraphics();
         main.setColor(getBackground());
         main.fillRect(0, 0, getWidth(), getHeight());
+        main.setClip(0, 0, getWidth(), getHeight());
 
         main.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         main.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

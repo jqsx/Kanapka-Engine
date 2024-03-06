@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Engine {
-    private static boolean isRunning = true;
+    private boolean isRunning = true;
     private Renderer renderer;
     private Window window;
 
@@ -55,7 +55,7 @@ public class Engine {
         System.out.println();
         System.out.println();
         System.out.println("Thank you for using KanapkaEngine!");
-//        System.out.println("Version: " + getClass().getPackage().getImplementationVersion());
+        System.out.println("Version: " + getClass().getPackage().getImplementationVersion());
         System.out.println();
         for (int i = 0; i < 10; i++)
             System.out.print("-");
