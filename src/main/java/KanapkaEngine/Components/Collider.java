@@ -2,10 +2,9 @@ package KanapkaEngine.Components;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-public class Collider extends NodeComponent {
+public class Collider extends Component {
     private Vector2D size = new Vector2D(1, 1);
     private Vector2D offset = new Vector2D(0, 0);
 

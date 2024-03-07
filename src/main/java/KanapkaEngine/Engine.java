@@ -22,18 +22,16 @@ public class Engine {
     private boolean isRunning = true;
     private Renderer renderer;
     private Window window;
-
     private EngineConfiguration engineConfiguration = new EngineConfiguration();
-    private GameLogic logic;
-
+    private final GameLogic logic;
     private Thread gameThread;
     private Thread renderThread;
 
     private final Physics physics = new Physics();
 
-    private Time time = new Time();
+    private final Time time = new Time();
 
-    private List<Plugin> plugins = new ArrayList<>();
+    private final List<Plugin> plugins = new ArrayList<>();
 
     private long last_fixed_update = System.nanoTime();
     private final double Second = (long) Math.pow(10, 9);

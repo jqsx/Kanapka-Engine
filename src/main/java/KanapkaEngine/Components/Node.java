@@ -4,7 +4,6 @@ import KanapkaEngine.Game.SceneManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Node {
     private static int NodeCount = 0;
@@ -24,17 +23,17 @@ public class Node {
         return children.get(i);
     }
 
-    private final List<NodeComponent> components = new ArrayList<>();
+    private final List<Component> components = new ArrayList<>();
 
-    public final void addComponent(NodeComponent nodeComponent) {
-        components.add(nodeComponent);
-        if (nodeComponent instanceof Renderer)
-            renderer = (Renderer) nodeComponent;
-        else if (nodeComponent instanceof Collider)
-            collider = (Collider) nodeComponent;
-        else if (nodeComponent instanceof Rigidbody)
-            rigidbody = (Rigidbody) nodeComponent;
-        nodeComponent.setParent(this);
+    public final void addComponent(Component component) {
+        components.add(component);
+        if (component instanceof Renderer)
+            renderer = (Renderer) component;
+        else if (component instanceof Collider)
+            collider = (Collider) component;
+        else if (component instanceof Rigidbody)
+            rigidbody = (Rigidbody) component;
+        component.setParent(this);
     }
 
     public final void addChild(Node child) {
@@ -43,39 +42,39 @@ public class Node {
 
     public final void removeChild(Node child) { children.remove(child); }
 
-    public final boolean isChild(NodeComponent nodeComponent) {
-        return components.contains(nodeComponent);
+    public final boolean isChild(Component component) {
+        return components.contains(component);
     }
 
-    public final void removeComponent(NodeComponent nodeComponent) {
-        boolean s = components.remove(nodeComponent);
+    public final void removeComponent(Component component) {
+        boolean s = components.remove(component);
         if (s) {
-            if (renderer == nodeComponent)
+            if (renderer == component)
                 renderer = null;
-            else if (collider == nodeComponent)
+            else if (collider == component)
                 collider = null;
-            else if (rigidbody == nodeComponent)
+            else if (rigidbody == component)
                 rigidbody = null;
-            nodeComponent.onOrphan();
+            component.onOrphan();
         }
     }
 
     public final void removeComponent(int i) {
         if (i >= components.size()) return;
-        NodeComponent nodeComponent = components.remove(Math.abs(i));
-        if (nodeComponent != null) {
-            if (renderer == nodeComponent)
+        Component component = components.remove(Math.abs(i));
+        if (component != null) {
+            if (renderer == component)
                 renderer = null;
-            else if (collider == nodeComponent)
+            else if (collider == component)
                 collider = null;
-            else if (rigidbody == nodeComponent)
+            else if (rigidbody == component)
                 rigidbody = null;
-            nodeComponent.onOrphan();
+            component.onOrphan();
         }
     }
 
-    public final <V extends NodeComponent> V getComponent(Class<V> v) {
-        for (NodeComponent component : components) {
+    public final <V extends Component> V getComponent(Class<V> v) {
+        for (Component component : components) {
             if (v.isAssignableFrom(component.getClass()))
                 return (V) component;
         }
@@ -119,7 +118,7 @@ public class Node {
         else
             SceneManager.removeNode(this);
         NodeCount--;
-        for (NodeComponent component : components) {
+        for (Component component : components) {
             component.onOrphan();
         }
         components.clear();
@@ -139,7 +138,7 @@ public class Node {
     }
 
     public final void UpdateCall() {
-        for (NodeComponent component : components) {
+        for (Component component : components) {
             component.Update();
         }
         for (Node child : children) {

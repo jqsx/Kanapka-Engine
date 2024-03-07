@@ -1,10 +1,8 @@
 package KanapkaEngine.Components;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class Renderer extends NodeComponent {
+public class Renderer extends Component {
     BufferedImage rendered_visual;
     int loading_state = NOT_STARTED;
 

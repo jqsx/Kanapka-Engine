@@ -2,7 +2,7 @@ package KanapkaEngine.Components;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-public class Rigidbody extends NodeComponent {
+public class Rigidbody extends Component {
     private Vector2D velocity = new Vector2D(0,0);
 
     private double Mass = 1.0;

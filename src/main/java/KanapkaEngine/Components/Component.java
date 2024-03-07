@@ -2,7 +2,7 @@ package KanapkaEngine.Components;
 
 import java.util.Objects;
 
-public class NodeComponent {
+public class Component {
     private Node parent;
 
     public final Node getParent() {

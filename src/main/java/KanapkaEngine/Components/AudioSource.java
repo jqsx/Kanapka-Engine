@@ -1,8 +1,6 @@
 package KanapkaEngine.Components;
 
-import java.math.BigDecimal;
-
-public class AudioSource extends NodeComponent {
+public class AudioSource extends Component {
 
     public AudioClip clip;
 
