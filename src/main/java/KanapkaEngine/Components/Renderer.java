@@ -7,7 +7,7 @@ public class Renderer extends Component {
     int loading_state = NOT_STARTED;
 
     public BufferedImage getRender() {
-        return null;
+        return rendered_visual;
     }
 
     public final void setTexture(BufferedImage image) {

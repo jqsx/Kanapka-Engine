@@ -36,6 +36,10 @@ public class Node {
         component.setParent(this);
     }
 
+    void Update() {
+
+    }
+
     public final void addChild(Node child) {
         children.add(child);
     }
@@ -113,6 +117,7 @@ public class Node {
     }
 
     public final void Destroy() {
+        onDestroy();
         if (parent != null)
             parent.removeChild(this);
         else
@@ -122,6 +127,10 @@ public class Node {
             component.onOrphan();
         }
         components.clear();
+    }
+
+    void onDestroy() {
+
     }
 
     public static int getNodeCount() {
@@ -138,6 +147,7 @@ public class Node {
     }
 
     public final void UpdateCall() {
+        Update();
         for (Component component : components) {
             component.Update();
         }

@@ -74,6 +74,18 @@ public class Editor {
 
 //        engine.getWindow().setResizable(false);
 
+        {
+            Node node = new Node();
+
+            node.addComponent(new Collider());
+//            node.addComponent(new Rigidbody());
+            node.addComponent(new SpriteRenderer());
+
+            node.getRenderer().setTexture(ResourceLoader.loadResource("wooden.png"));
+
+            node.transform.setSize(new Vector2D(100, 100));
+        }
+
         engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
 
         SimpleViewController controller = new SimpleViewController();

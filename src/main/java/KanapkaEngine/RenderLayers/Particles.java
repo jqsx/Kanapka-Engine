@@ -4,6 +4,7 @@ import KanapkaEngine.Components.*;
 import KanapkaEngine.Game.SceneManager;
 
 import java.awt.*;
+import java.awt.image.RescaleOp;
 
 public class Particles implements RenderLayer {
     @Override
@@ -11,7 +12,7 @@ public class Particles implements RenderLayer {
         for (Node node : SceneManager.getSceneNodes()) {
             Renderer renderer = node.getRenderer();
             if (renderer instanceof ParticleSystem particleSystem) {
-                
+
             }
         }
     }
