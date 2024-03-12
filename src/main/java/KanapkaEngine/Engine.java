@@ -1,13 +1,11 @@
 package KanapkaEngine;
 
+import KanapkaEngine.Components.Chunk;
 import KanapkaEngine.Components.Node;
 import KanapkaEngine.Components.Physics;
 import KanapkaEngine.Components.RenderLayer;
 import KanapkaEngine.Game.*;
-import KanapkaEngine.RenderLayers.Chunks;
-import KanapkaEngine.RenderLayers.Debug;
-import KanapkaEngine.RenderLayers.UI;
-import KanapkaEngine.RenderLayers.World;
+import KanapkaEngine.RenderLayers.*;
 
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
@@ -113,21 +111,22 @@ public class Engine {
             while (isRunning) {
                 time.GameUpdate();
                 try {
+                    if (last_fixed_update + Second / 50L < System.nanoTime()) {
+                        double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;
+                        physics.FixedUpdate(fixedDelta);
+                        last_fixed_update = System.nanoTime();
+                    }
                     logic.Update();
                     for (int i = plugins.size() - 1; i >= 0; i--) {
                         plugins.get(i).Update();
                     }
+                    Chunk.UpdateChunks();
                     try {
                         Iterator<Node> nodeIterator = SceneManager.getCurrentlyLoaded().nodes.descendingIterator();
                         while (nodeIterator.hasNext())
                             nodeIterator.next().UpdateCall();
                     } catch (ConcurrentModificationException ignore) {
 
-                    }
-                    if (last_fixed_update + Second / 50L < System.nanoTime()) {
-                        double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;
-                        physics.FixedUpdate(fixedDelta);
-                        last_fixed_update = System.nanoTime();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -178,6 +177,7 @@ public class Engine {
 
     public final void InitializeLayers() {
         RegisterRenderLayer(new Chunks());
+        RegisterRenderLayer(new ChunkNodes());
         RegisterRenderLayer(new UI());
         RegisterRenderLayer(new Debug());
         RegisterRenderLayer(new World());

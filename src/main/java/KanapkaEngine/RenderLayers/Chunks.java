@@ -22,6 +22,10 @@ public class Chunks implements RenderLayer {
     private static final LinkedList<Chunk> activeChunks = new LinkedList<>();
     private Thread chunkUpdateThread;
 
+    public static Iterator<Chunk> getActiveChunks() {
+        return activeChunks.iterator();
+    }
+
     public Chunks() {
         chunkUpdateThread = new Thread(this::UpdateChunks);
         chunkUpdateThread.start();
@@ -43,9 +47,10 @@ public class Chunks implements RenderLayer {
                 window_bounds.height / g_size * 2.0
         );
 
-        int dist = 1 + (int)Math.floor(2.0 / g_size);
+        int dist = 1 + (int)Math.floor(5.0 / g_size);
+        int dist_w = (int)Math.round(dist * ((double)window_bounds.width / (double)window_bounds.height));
 
-        for (int i = -dist; i <= dist; i++) {
+        for (int i = -dist_w; i <= dist_w; i++) {
             for (int j = -dist; j <= dist; j++) {
                 Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i - cameraOffset.x, j - cameraOffset.y);
                 if (c != null) {

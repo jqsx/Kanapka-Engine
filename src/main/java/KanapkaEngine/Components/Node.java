@@ -36,7 +36,7 @@ public class Node {
         component.setParent(this);
     }
 
-    void Update() {
+    public void Update() {
 
     }
 
@@ -129,7 +129,7 @@ public class Node {
         components.clear();
     }
 
-    void onDestroy() {
+    public void onDestroy() {
 
     }
 

@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.SceneManager;
+import KanapkaEngine.RenderLayers.ChunkNodes;
 import KanapkaEngine.RenderLayers.Chunks;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -15,8 +16,8 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 
 public class Chunk {
     public static final int BLOCK_SCALE = 16;
@@ -34,6 +35,8 @@ public class Chunk {
 
     private long lastActive = System.currentTimeMillis();
 
+    private final LinkedList<ChunkNode> chunkNodeList = new LinkedList<>();
+
     public final void appendBlock(Block block) {
         Objects.requireNonNull(block);
         Block old = blocks[block.point.x][block.point.y];
@@ -42,6 +45,19 @@ public class Chunk {
             else if (old.id != block.id) needReRender = true;
             blocks[block.point.x][block.point.y] = block;
         }
+    }
+
+    public final void appendNode(ChunkNode node) {
+        if (!chunkNodeList.contains(node))
+            chunkNodeList.add(node);
+    }
+
+    public final void removeNode(ChunkNode node) {
+        chunkNodeList.remove(node);
+    }
+
+    public final void removeNode(int i) {
+        chunkNodeList.remove(i);
     }
 
     public final void setAir(Point p) {
@@ -225,5 +241,23 @@ public class Chunk {
         }
 
         return buffer.array();
+    }
+
+    private void Update() {
+        chunkNodeList.forEach(ChunkNode::UpdateCall);
+    }
+
+    public static void UpdateChunks() {
+        try {
+            Iterator<Chunk> chunkIterator = Chunks.getActiveChunks();
+            while (chunkIterator.hasNext())
+                chunkIterator.next().Update();
+        } catch (ConcurrentModificationException ignore) {
+
+        }
+    }
+
+    public final Iterator<ChunkNode> getChunkNodes() {
+        return chunkNodeList.descendingIterator();
     }
 }
