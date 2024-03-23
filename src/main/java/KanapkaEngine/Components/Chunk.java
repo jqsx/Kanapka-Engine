@@ -217,8 +217,17 @@ public class Chunk {
     }
 
     public byte[] getSave() {
+        if (!isReadyForRender) {
+            ByteBuffer buffer = ByteBuffer.allocate(12);
+            buffer.putInt(point.x);
+            buffer.putInt(point.y);
+            buffer.putInt(0);
+            return buffer.array();
+        }
+        Block[][] temp_blocks = Arrays.copyOf(blocks, blocks.length);
+        System.out.println("Getting save for chunk x: " + point.x + " y: " + point.y);
         int block_count = 0;
-        for (Block[] block : blocks) {
+        for (Block[] block : temp_blocks) {
             for (Block value : block) {
                 if (value != null)
                     block_count++;
@@ -226,17 +235,24 @@ public class Chunk {
         }
 
         ByteBuffer buffer = ByteBuffer.allocate(12 + block_count * 10);
+        System.out.println("Buffer size: " + buffer.capacity());
+        System.out.println("Block count: " + block_count);
 
         buffer.putInt(point.x);
         buffer.putInt(point.y);
         buffer.putInt(block_count);
-        for (Block[] block : blocks) {
+        for (Block[] block : temp_blocks) {
             for (Block value : block) {
                 if (value == null) continue;
-                buffer.put((byte) Mathf.Clamp(value.point.x, 0, 127));
-                buffer.put((byte) Mathf.Clamp(value.point.y, 0, 127));
+                byte x = (byte) Mathf.Clamp(value.point.x, 0, 127);
+                System.out.println(x);
+                byte y = (byte) Mathf.Clamp(value.point.y, 0, 127);
+                System.out.println(y);
+                buffer.put(x);
+                buffer.put(y);
                 buffer.putInt(value.id);
                 buffer.putInt(value.special_id);
+                System.out.println("Limit: " + buffer.remaining());
             }
         }
 
@@ -249,15 +265,13 @@ public class Chunk {
 
     public static void UpdateChunks() {
         try {
-            Iterator<Chunk> chunkIterator = Chunks.getActiveChunks();
-            while (chunkIterator.hasNext())
-                chunkIterator.next().Update();
+            Chunks.getActiveChunks().forEachRemaining(Chunk::Update);
         } catch (ConcurrentModificationException ignore) {
 
         }
     }
 
-    public final Iterator<ChunkNode> getChunkNodes() {
-        return chunkNodeList.descendingIterator();
+    public final LinkedList<ChunkNode> getChunkNodes() {
+        return chunkNodeList;
     }
 }

@@ -13,6 +13,9 @@ public class BlockData {
         this.texture = texture;
         getRender();
     }
+    public BlockData(BufferedImage image) {
+        this.render = image;
+    }
     public BlockData() {
 
     }

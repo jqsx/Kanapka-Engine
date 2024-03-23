@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Node {
     private static int NodeCount = 0;
+
+    private boolean alive = true;
     public String name = "Node_Instance";
     private Node parent;
     public final Transform transform = new Transform(this);
@@ -26,6 +28,7 @@ public class Node {
     private final List<Component> components = new ArrayList<>();
 
     public final void addComponent(Component component) {
+        if (!alive) return;
         components.add(component);
         if (component instanceof Renderer)
             renderer = (Renderer) component;
@@ -41,16 +44,22 @@ public class Node {
     }
 
     public final void addChild(Node child) {
+        if (!alive) return;
         children.add(child);
     }
 
-    public final void removeChild(Node child) { children.remove(child); }
+    public final void removeChild(Node child) {
+        if (!alive) return;
+        children.remove(child);
+    }
 
     public final boolean isChild(Component component) {
+        if (!alive) return false;
         return components.contains(component);
     }
 
     public final void removeComponent(Component component) {
+        if (!alive) return;
         boolean s = components.remove(component);
         if (s) {
             if (renderer == component)
@@ -64,6 +73,7 @@ public class Node {
     }
 
     public final void removeComponent(int i) {
+        if (!alive) return;
         if (i >= components.size()) return;
         Component component = components.remove(Math.abs(i));
         if (component != null) {
@@ -78,6 +88,7 @@ public class Node {
     }
 
     public final <V extends Component> V getComponent(Class<V> v) {
+        if (!alive) return null;
         for (Component component : components) {
             if (v.isAssignableFrom(component.getClass()))
                 return (V) component;
@@ -88,11 +99,9 @@ public class Node {
     public Node(Node parent) {
         this.parent = parent;
         if (parent != null) {
-            parent.addChild(this);
+            setParent(parent);
             transform.setPosition(parent.transform.getPosition());
         }
-        else
-            setParent(null);
         NodeCount++;
     }
 
@@ -101,10 +110,12 @@ public class Node {
     }
 
     public final Node getParent() {
+        if (!alive) return null;
         return parent;
     }
 
-    public final void setParent(Node parent) {
+    public void setParent(Node parent) {
+        if (!alive) return;
         if (this.parent != null)
             this.parent.removeChild(this);
         else
@@ -116,16 +127,20 @@ public class Node {
             SceneManager.addNode(this);
     }
 
-    public final void Destroy() {
-        onDestroy();
-        if (parent != null)
-            parent.removeChild(this);
-        else
-            SceneManager.removeNode(this);
-        NodeCount--;
-        for (Component component : components) {
-            component.onOrphan();
+    public void append() {
+        if (parent == null) {
+            SceneManager.addNode(this);
         }
+    }
+
+    public final void Destroy() {
+        if (!alive) return;
+        alive = false;
+        onDestroy();
+        children.forEach(Node::Destroy);
+        children.clear();
+        NodeCount--;
+        components.forEach(Component::onOrphan);
         components.clear();
     }
 
@@ -138,21 +153,34 @@ public class Node {
     }
 
     public final Renderer getRenderer() {
+        if (!alive) return null;
         return renderer;
     }
-    public final Collider getCollider() { return collider; }
+    public final Collider getCollider() {
+        if (!alive) return null;
+        return collider;
+    }
 
     public final Rigidbody getRigidbody() {
+        if (!alive) return null;
         return rigidbody;
     }
 
     public final void UpdateCall() {
+        if (!alive) return;
         Update();
         for (Component component : components) {
             component.Update();
         }
+        synchronized (children) {
+            children.removeIf(child -> !child.isAlive());
+        }
         for (Node child : children) {
             child.UpdateCall();
         }
+    }
+
+    public final boolean isAlive() {
+        return alive;
     }
 }

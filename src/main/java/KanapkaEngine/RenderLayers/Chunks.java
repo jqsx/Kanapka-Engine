@@ -2,6 +2,7 @@ package KanapkaEngine.RenderLayers;
 
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Engine;
+import KanapkaEngine.Game.Plugin;
 import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.Game.Window;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
@@ -14,21 +15,19 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
-public class Chunks implements RenderLayer {
+public class Chunks extends Plugin implements RenderLayer {
     public static int VisibleChunks = 0;
 
     public static double DEACTIVATIONDELAY = 5.0;
 
     private static final LinkedList<Chunk> activeChunks = new LinkedList<>();
-    private Thread chunkUpdateThread;
 
     public static Iterator<Chunk> getActiveChunks() {
         return activeChunks.iterator();
     }
 
     public Chunks() {
-        chunkUpdateThread = new Thread(this::UpdateChunks);
-        chunkUpdateThread.start();
+
     }
 
     @Override
@@ -62,28 +61,30 @@ public class Chunks implements RenderLayer {
         }
     }
 
+    private long last_run = System.currentTimeMillis();
     private void UpdateChunks() {
-        long last_run = System.currentTimeMillis();
-        System.out.println("Chunk deactivation thread active.");
-        while (true) {
-            if (last_run + 1000L / 30L < System.currentTimeMillis()) {
+        if (last_run + 1000L / 30L < System.currentTimeMillis()) {
 
-                try {
-                    IterateChunks();
-                } catch (ConcurrentModificationException ignore) {
+            IterateChunks();
 
-                }
-
-                last_run = System.currentTimeMillis();
-            }
+            last_run = System.currentTimeMillis();
         }
     }
 
+    @Override
+    public void Update() {
+        UpdateChunks();
+    }
+
     private void IterateChunks() {
-        activeChunks.removeIf(chunk -> {
-            chunk.CheckDeactivation();
-            return !chunk.IsActive();
-        });
+        try {
+            activeChunks.removeIf(chunk -> {
+                chunk.CheckDeactivation();
+                return !chunk.IsActive();
+            });
+        } catch (ConcurrentModificationException | NullPointerException e) {
+
+        }
     }
 
     private void oldrenderChunk(Graphics2D main, Chunk chunk) {

@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ConcurrentModificationException;
+import java.util.LinkedList;
 
 public class ChunkNodes implements RenderLayer {
     @Override
@@ -29,7 +31,13 @@ public class ChunkNodes implements RenderLayer {
             for (int j = -dist; j <= dist; j++) {
                 Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i - cameraOffset.x, j - cameraOffset.y);
                 if (c != null && c.IsActive()) {
-                    c.getChunkNodes().forEachRemaining(node -> renderNode(main, node));
+                    try {
+                        LinkedList<ChunkNode> temp = new LinkedList<>(c.getChunkNodes());
+                        temp.iterator().forEachRemaining(node -> renderNode(main, node));
+                        temp.clear();
+                    } catch (ConcurrentModificationException | NullPointerException ignore) {
+
+                    }
                 }
             }
         }

@@ -84,7 +84,7 @@ public class Physics {
 
     public final void FixedUpdate(double fixedDelta) {
         if (SceneManager.hasScene()) {
-            for (Node node : SceneManager.getSceneNodes()) CheckCollisionFor(node, fixedDelta);
+            SceneManager.getSceneNodes().descendingIterator().forEachRemaining(node -> CheckCollisionFor(node, fixedDelta));
         }
     }
 

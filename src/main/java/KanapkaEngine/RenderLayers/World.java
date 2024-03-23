@@ -9,6 +9,9 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public class World implements RenderLayer {
     public static int Visible_Nodes = 0;
@@ -19,8 +22,13 @@ public class World implements RenderLayer {
         if (Camera.main == null) {
             return;
         }
-        for (Node node : SceneManager.getSceneNodes()) {
-            renderNode(main, node);
+
+        try {
+            LinkedList<Node> temp = new LinkedList<>(SceneManager.getSceneNodes());
+            temp.iterator().forEachRemaining(node -> renderNode(main, node));
+            temp.clear();
+        } catch (ConcurrentModificationException | NullPointerException ignore) {
+
         }
     }
 
@@ -41,7 +49,7 @@ public class World implements RenderLayer {
             Rectangle boundingTextureBox = new Rectangle((int) -position.getX() - (int) (render.getWidth() * size.getX()), (int) -position.getY() - (int) (render.getHeight() * size.getY()), (int) (render.getWidth() * size.getX()) * 2, (int) (render.getHeight() * size.getY()) * 2);
             Rectangle cameraView = new Rectangle((int) (camera_position.getX() - window_bounds.width / g_size), (int) (camera_position.getY() - window_bounds.height / g_size), (int) (window_bounds.width * 2 / g_size), (int) (window_bounds.height * 2 / g_size));
             if (true){//cameraView.intersects(boundingTextureBox)) {
-                Vector2D pos = new Vector2D((camera_position.getX() + position.getX() - node.transform.getSize().getX() / 2.0) / size.getX(), -(camera_position.getY() + position.getY() - node.transform.getSize().getY() / 2.0) / size.getY());
+                Vector2D pos = new Vector2D((camera_position.getX() + position.getX() - size.getX() / 2.0) / size.getX(), -(camera_position.getY() + position.getY() - size.getY() / 2.0) / size.getY());
                 AffineTransform at = new AffineTransform();
                 double rad = Math.toRadians(node.transform.getRotation());
                 at.scale(size.getX() * g_size, size.getY() * g_size);

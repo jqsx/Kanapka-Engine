@@ -45,8 +45,11 @@ public class SceneManager {
     }
 
     public static void removeNode(Node node) {
-        if (currentlyLoaded != null)
-            currentlyLoaded.nodes.remove(node);
+        if (currentlyLoaded != null) {
+            synchronized (currentlyLoaded.nodes) {
+                currentlyLoaded.nodes.remove(node);
+            }
+        }
     }
 
     public static boolean hasScene() {

@@ -6,6 +6,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -88,39 +90,42 @@ public class World {
         if (hasRegion(x, y)) {
             File worldDir = new File(worldName);
 
-            if (!worldDir.exists() || worldDir.isFile())
+            if (!worldDir.exists())
                 worldDir.mkdir();
 
             List<byte[]> chunkData = new ArrayList<>();
 
-            int chunkByteCount = 0;
             int chunkCount = 0;
 
             for (int i = 0; i < 32; i++) {
                 for (int j = 0; j < 32; j++) {
                     Point p = new Point(x * 32 + i, y * 32 + j);
-                    Chunk chunk = get(p.x, p.y);
-                    if (chunk != null) {
+                    if (hasChunk(p.x, p.y)) {
+                        Chunk chunk = get(p.x, p.y);
                         byte[] data = chunk.getSave();
-                        chunkByteCount += data.length;
                         chunkData.add(data);
                         chunkCount++;
+                        System.out.println(chunkCount);
                     }
                 }
             }
 
-            ByteBuffer buffer = ByteBuffer.allocate(4 + chunkByteCount);
-            buffer.putInt(chunkCount);
-            for (byte[] data : chunkData) {
-                buffer.put(data);
-            }
+            System.out.println("Prepared " + chunkCount + " for save.");
 
-            Path path = Paths.get(worldName + "/rx"+x+"y"+y);
-            try {
-                Files.write(path, buffer.array());
+            File path = new File(worldName + "/rx"+x+"y"+y+".rg");
+            try (FileOutputStream stream = new FileOutputStream(path)) {
+                stream.write(chunkCount);
+                int i = 0;
+                for (byte[] data : chunkData) {
+                    stream.write(data);
+                    i++;
+                    System.out.println("Saving chunk N" + i);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            System.out.println("Saved region x: " + x + " y: " + y);
         }
     }
 

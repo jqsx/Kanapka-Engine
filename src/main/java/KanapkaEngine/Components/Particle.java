@@ -11,35 +11,35 @@ public class Particle {
 
     private double birth = Time.time();
 
-    protected Particle(Vector2D position) {
+    public Particle(Vector2D position) {
         this.position = position;
     }
 
-    public boolean isDead(double lifeTime) {
+    public final boolean isDead(double lifeTime) {
         return birth + lifeTime < Time.time();
     }
 
-    public Vector2D getVelocity() {
+    public final Vector2D getVelocity() {
         return velocity;
     }
 
-    public void setVelocity(Vector2D velocity) {
+    public final void setVelocity(Vector2D velocity) {
         this.velocity = velocity;
     }
 
-    public Vector2D getPosition() {
+    public final Vector2D getPosition() {
         return position;
     }
 
-    public void setPosition(Vector2D position) {
+    public final void setPosition(Vector2D position) {
         this.position = position;
     }
 
-    public void addPosition(Vector2D add) {
+    public final void addPosition(Vector2D add) {
         position = position.add(add);
     }
 
-    public void addVelocity(Vector2D add) {
+    public final void addVelocity(Vector2D add) {
         velocity = velocity.add(add);
     }
 }

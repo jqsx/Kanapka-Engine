@@ -7,18 +7,20 @@ import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class ParticleSystem extends Renderer {
-    private final LinkedList<Particle> particles = new LinkedList<>();
+public class ParticleSystem<T extends Particle> extends Renderer {
+    private final LinkedList<T> particles = new LinkedList<>();
     private static final int UPDATE_RATE = 60;
 
     private double last_update = Time.time();
+
+    private Iterator<T> _iterator;
 
     public ParticleSystem() {
 
     }
 
-    public final Iterator<Particle> getIterator() {
-        return particles.iterator();
+    public final LinkedList<T> getList() {
+        return particles;
     }
 
     public final void Spawn() {
@@ -26,17 +28,22 @@ public class ParticleSystem extends Renderer {
     }
 
     public final void SpawnOffset(Vector2D offset) {
-        Particle particle = new Particle(getParent().transform.getPosition().add(offset));
-        particles.add(particle);
-        onSpawn(particle);
+        T t = createParticle(offset);
+        particles.add(t);
+        onSpawn(t);
     }
 
-    void onSpawn(Particle instance) {
+    public T createParticle(Vector2D offset) {
+        return null;
+    }
+
+    void onSpawn(T instance) {
 
     }
 
-    @Override
-    public BufferedImage getRender() {
+
+
+    public BufferedImage getRender(Particle particle) {
         return rendered_visual;
     }
 
@@ -57,7 +64,7 @@ public class ParticleSystem extends Renderer {
     }
 
     private void Loop(double fixedDelta) {
-        for (Particle particle : particles) {
+        for (T particle : particles) {
             UpdateParticle(particle, fixedDelta);
         }
     }
@@ -65,11 +72,11 @@ public class ParticleSystem extends Renderer {
     private void CheckExpired() {
         particles.removeIf(particle -> particle.isDead(getLifeTime()));
     }
-    private void UpdateParticle(Particle particle, double fixedDelta) {
+    private void UpdateParticle(T particle, double fixedDelta) {
         onParticleUpdate(particle, fixedDelta);
     }
 
-    public void onParticleUpdate(Particle particle, double fixedDelta) {
+    public void onParticleUpdate(T particle, final double fixedDelta) {
 
     }
 }
