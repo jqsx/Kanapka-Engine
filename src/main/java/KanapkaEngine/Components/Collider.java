@@ -8,6 +8,8 @@ public class Collider extends Component {
     private Vector2D size = new Vector2D(1, 1);
     private Vector2D offset = new Vector2D(0, 0);
 
+    private Rectangle2D rect = new Rectangle2D.Double();
+
     public Collider() {
 
     }
@@ -34,10 +36,11 @@ public class Collider extends Component {
         double w = scaledSize.getX();
         double h = scaledSize.getY();
 
-        double x = (offset.getX() + getParent().transform.getPosition().getX() - scaledSize.getX() / 2.0);
+        double x = (offset.getX() + (getParent().transform.getPosition().getX() + getParent().transform.getSize().getX() / 2.0) - scaledSize.getX() / 2.0);
         double y = (offset.getY() + getParent().transform.getPosition().getY() - scaledSize.getY() / 2.0);
 
-        return new Rectangle2D.Double(x, y, w, h);
+        rect.setRect(x, y, w, h);
+        return rect;
     }
 
     public Vector2D getScaledSize() {

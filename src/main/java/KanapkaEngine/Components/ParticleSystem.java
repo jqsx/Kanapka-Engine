@@ -58,9 +58,14 @@ public class ParticleSystem<T extends Particle> extends Renderer {
 
             Loop(fixedDelta);
             CheckExpired();
+            onUpdate(fixedDelta);
 
             last_update = Time.time();
         }
+    }
+
+    public void onUpdate(double fixedDelta) {
+
     }
 
     private void Loop(double fixedDelta) {

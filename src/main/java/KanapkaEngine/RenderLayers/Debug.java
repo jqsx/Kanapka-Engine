@@ -23,6 +23,13 @@ public class Debug implements RenderLayer {
         drawText(main, "Visible Nodes " + World.Visible_Nodes + " / " + Node.getNodeCount(), new Point(100, 40));
         drawText(main, "Visible Chunks " + Chunks.VisibleChunks, new Point(400, 40));
 
+        {
+            Dimension screen = Window.getWindowSize();
+
+            main.setColor(Color.red);
+            main.fillArc((int) (screen.width - 10f), (int) (screen.height - 10f), (int) 20f, (int) 20f, 0, 360);
+        }
+
         if (Camera.main == null) {
             main.setColor(Color.red);
             main.setFont(main.getFont().deriveFont(20f));

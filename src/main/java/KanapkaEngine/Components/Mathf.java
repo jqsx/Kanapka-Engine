@@ -14,6 +14,13 @@ public class Mathf {
         return a + (b - a) * Clamp(t, 0, 1);
     }
 
+    public static Vector2D Lerp(Vector2D a, Vector2D b, double t) {
+        double x = Lerp(a.getX(), b.getX(), t);
+        double y = Lerp(a.getY(), b.getY(), t);
+
+        return new Vector2D(x, y);
+    }
+
     /**
      * <code>min(max(mod(a, 2), 0), 1) + floor(a/2)</code> <br><br>
      * I found it useful when procedurally generating terrain.
