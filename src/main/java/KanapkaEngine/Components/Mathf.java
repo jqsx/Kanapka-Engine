@@ -8,6 +8,9 @@ import java.util.Random;
 public class Mathf {
     private Mathf() {}
 
+    /**
+     * Noise with seed 15, if you can't be asked to instance it yourself.
+     */
     public static final NoiseGenerator Noise = new NoiseGenerator(15);
 
     public static double Lerp(double a, double b, double t) {
@@ -54,10 +57,26 @@ public class Mathf {
      */
     public static double Sqrt(double a) {
         double out = a;
-        for (int i = 0; i < 5; i++) {
+        while (Math.round(out * out) != Math.round(a)) {
             out = sqrt_iteration(a, out);
         }
         return out;
+    }
+
+    /**
+     * dx = abs(x1 - x0)<br>
+     * dy = abs(y1 - y0)<br>
+     * <br>
+     * dist = 0.5 * (dx + dy + max(dx, dy))
+     * @param one
+     * @param two
+     * @return
+     */
+    public static double Adistance(Vector2D one, Vector2D two) {
+        double dx = Math.abs(two.getX() - one.getX());
+        double dy = Math.abs(two.getY() - one.getY());
+
+        return 0.5 * (dx + dy + Math.max(dx, dy));
     }
 
     public static double distance(Vector2D one, Vector2D two) {

@@ -21,7 +21,6 @@ public class SimpleViewController extends Plugin implements MouseWheelListener, 
 
     Point input = new Point(0, 0);
 
-
     @Override
     public void Apply(Engine engine) {
         engine.addListener(this);

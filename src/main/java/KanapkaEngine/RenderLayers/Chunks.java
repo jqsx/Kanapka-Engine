@@ -22,8 +22,12 @@ public class Chunks extends Plugin implements RenderLayer {
 
     private static final LinkedList<Chunk> activeChunks = new LinkedList<>();
 
-    public static Iterator<Chunk> getActiveChunks() {
-        return activeChunks.iterator();
+    public static LinkedList<Chunk> getActiveChunks() {
+        try {
+            return new LinkedList<>(activeChunks);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return getActiveChunks();
+        }
     }
 
     public Chunks() {

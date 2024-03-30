@@ -1,11 +1,10 @@
 package KanapkaEngine.Editor;
 
-import KanapkaEngine.Components.Camera;
-import KanapkaEngine.Components.Node;
-import KanapkaEngine.Components.World;
+import KanapkaEngine.Components.*;
 import KanapkaEngine.Engine;
 import KanapkaEngine.Game.Plugin;
 import KanapkaEngine.Game.SceneManager;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -15,7 +14,22 @@ public class EditorActions extends Plugin implements MouseListener {
     private Engine engine;
     @Override
     public void mouseClicked(MouseEvent e) {
+        {
+            Node node = new Node();
 
+            node.addComponent(new Collider());
+            node.addComponent(new Rigidbody());
+            node.addComponent(new Renderer());
+
+            node.getRenderer().setTexture(ResourceLoader.loadResource("none.png"));
+
+            node.transform.setSize(new Vector2D(16, 16));
+            node.transform.setPosition(Camera.main.getPosition().scalarMultiply(-1));
+
+            node.getRigidbody().setBounce(0);
+
+            node.append();
+        }
     }
 
     @Override

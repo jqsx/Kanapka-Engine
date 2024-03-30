@@ -110,8 +110,10 @@ public class Engine {
             while (isRunning) {
                 time.GameUpdate();
                 try {
-                    synchronized (SceneManager.getSceneNodes()) {
+                    try {
                         SceneManager.getSceneNodes().removeIf((node) -> !node.isAlive());
+                    } catch (ConcurrentModificationException e) {
+
                     }
                     if (last_fixed_update + Second / 50L < System.nanoTime()) {
                         double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;
@@ -129,14 +131,14 @@ public class Engine {
 
                     }
                 } catch (Exception e) {
-                    System.out.println(e);
+                    throw new RuntimeException(e);
                 }
             }
             System.out.println("Stopping Game Thread.");
             try {
                 logic.End();
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
             System.out.println("Stopped Game Thread.");
         });

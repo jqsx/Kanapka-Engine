@@ -39,6 +39,7 @@ public class Chunk {
 
     public final void appendBlock(Block block) {
         Objects.requireNonNull(block);
+        if (!isInRange(block.point)) return;
         Block old = blocks[block.point.x][block.point.y];
         if (block.parent == this && isInRange(block.point)) {
             if (old == null) needReRender = true;
@@ -90,6 +91,17 @@ public class Chunk {
         return bounds;
     }
 
+    public Block getBlock(int x, int y) {
+        return getBlock(new Point(x, y));
+    }
+
+    public Block getBlock(Point p) {
+        if (isInRange(p)) {
+            return blocks[p.x][p.y];
+        }
+        return null;
+    }
+
     private boolean isInRange(Point p) {
         return isInRange(p.x) && isInRange(p.y);
     }
@@ -111,6 +123,10 @@ public class Chunk {
     public Vector2D getPosition() {
         int s = BLOCK_SCALE * SceneManager.getCurrentlyLoaded().getChunkSize();
         return new Vector2D(point.x * s, point.y * s);
+    }
+
+    public Vector2D getBlockPosition(Point p) {
+        return getPosition().add(new Vector2D(p.x, -p.y).scalarMultiply(BLOCK_SCALE));
     }
 
     public static Vector2D getSize() {
@@ -265,7 +281,7 @@ public class Chunk {
 
     public static void UpdateChunks() {
         try {
-            Chunks.getActiveChunks().forEachRemaining(Chunk::Update);
+            Chunks.getActiveChunks().forEach(Chunk::Update);
         } catch (ConcurrentModificationException ignore) {
 
         }

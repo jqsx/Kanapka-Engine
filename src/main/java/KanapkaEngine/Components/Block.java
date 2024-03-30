@@ -1,5 +1,7 @@
 package KanapkaEngine.Components;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
@@ -33,5 +35,11 @@ public class Block {
 
     public final BlockData getBlockData() {
         return BlockManager.getBlockData(id);
+    }
+
+    public final Vector2D getPosition() {
+        double s = Chunk.BLOCK_SCALE / 2.0;
+        Vector2D p = parent.getBlockPosition(point);
+        return p.add(new Vector2D(-s * (p.getX() < 0 ? 1.0 : 0.0), 0));
     }
 }

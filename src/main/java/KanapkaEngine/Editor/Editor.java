@@ -1,15 +1,16 @@
 package KanapkaEngine.Editor;
 
 import KanapkaEngine.Components.*;
+import KanapkaEngine.Components.Component;
+import KanapkaEngine.Components.Renderer;
 import KanapkaEngine.Engine;
-import KanapkaEngine.Game.EngineConfiguration;
-import KanapkaEngine.Game.GameLogic;
-import KanapkaEngine.Game.SceneManager;
+import KanapkaEngine.Game.*;
 import KanapkaEngine.Game.Window;
 import KanapkaEngine.UI.Image;
 import KanapkaEngine.UI.Text;
 import KanapkaEngine.UI.UI;
 import KanapkaEngine.UI.UIComponent;
+import org.apache.commons.math3.analysis.function.Add;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import javax.tools.Tool;
@@ -23,10 +24,16 @@ public class Editor {
         EditorScene scene = new EditorScene();
         scene.load();
 
+        Physics.gravity = Physics.gravity.scalarMultiply(3);
+
         SceneManager.loadScene(scene);
 
         TextureAtlas atlas = new TextureAtlas(ResourceLoader.loadResource("objects.png"));
         atlas.createSubTexture("all", new Rectangle(16, 16));
+
+        BlockManager.createBlock(new BlockData("grass.png"));
+
+        BlockManager.getBlockData(1).hasCollision = false;
 
         EngineConfiguration engineConfiguration = new EngineConfiguration();
         engineConfiguration.FPSLIMIT = 9999;
@@ -51,42 +58,47 @@ public class Editor {
             }
         }, engineConfiguration);
 
-//        {
-//            Text text = new Text();
-//            text.setText("Text");
-//            text.setColor(Color.red);
-//            text.setSize(50f);
-//            text.pivot = UIComponent.Pivot.Left;
-//        }
-//
-//        {
-//            Node logo = Node.build();
-//            SpriteRenderer renderer = new SpriteRenderer();
-//            renderer.setTexture("logo.png");
-//            logo.addComponent(renderer);
-//            logo.transform.setSize(new Vector2D(100.0, 100.0));
-//        }
-//
-//        {
-//            Image image = new Image();
-//            image.setImage("test.jpg");
-//        }r
-
-//        engine.getWindow().setResizable(false);
-
         {
             Node node = new Node();
 
             node.addComponent(new Collider());
-//            node.addComponent(new Rigidbody());
-            node.addComponent(new SpriteRenderer());
+            node.addComponent(new Rigidbody());
+            node.addComponent(new Renderer());
 
             node.getRenderer().setTexture(ResourceLoader.loadResource("wooden.png"));
 
-            node.transform.setSize(new Vector2D(100, 100));
+            node.transform.setSize(new Vector2D(16, 16));
+            node.transform.setPosition(new Vector2D(20, 200));
+
+            node.addComponent(new Component() {
+                @Override
+                public void Update() {
+                    if (node.isAlive()) {
+                        if (node.transform.getPosition().getY() < -500)
+                            node.Destroy();
+                    }
+                }
+            });
+
+            node.getRigidbody().setBounce(0);
+
+            node.append();
         }
 
-        engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
+        {
+            World world = SceneManager.getCurrentlyLoaded().scene_world;
+
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    Chunk chunk = Chunk.build(new Point(i, j), world);
+
+                    AddBlocks(chunk);
+                }
+            }
+        }
+
+//        engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
+        engine.getWindow().setWorldBackdrop(new Color(0, 0, 107));
 
         SimpleViewController controller = new SimpleViewController();
         EditorActions editorActions = new EditorActions();
@@ -97,6 +109,18 @@ public class Editor {
         engine.InitializeLayers();
         engine.RegisterRenderLayer(new EditorRenderLayer());
         engine.RegisterRenderLayer(new EditorRenderWorld());
+    }
+
+    private static void AddBlocks(Chunk chunk) {
+        int m = SceneManager.getCurrentlyLoaded().getChunkSize();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                if (Mathf.Adistance(new Vector2D(30, 60), chunk.getPosition().add(new Vector2D(i, -j).scalarMultiply(Chunk.BLOCK_SCALE))) > 160) {
+                    new Block(chunk, new Point(i, j));
+                }
+            }
+        }
+        chunk.ready();
     }
 
     public static boolean isEditor() {
