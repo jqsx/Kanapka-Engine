@@ -72,7 +72,7 @@ public class Mathf {
      * @param two
      * @return
      */
-    public static double Adistance(Vector2D one, Vector2D two) {
+    public static double aDistance(Vector2D one, Vector2D two) {
         double dx = Math.abs(two.getX() - one.getX());
         double dy = Math.abs(two.getY() - one.getY());
 

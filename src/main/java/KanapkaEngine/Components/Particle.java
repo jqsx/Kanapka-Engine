@@ -9,7 +9,7 @@ public class Particle {
     private Vector2D position = new Vector2D(0.0, 0.0);
     private Vector2D velocity = new Vector2D(0.0, 0.0);
 
-    private double birth = Time.time();
+    private final double birth = Time.time();
 
     public Particle(Vector2D position) {
         this.position = position;

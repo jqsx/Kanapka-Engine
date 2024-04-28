@@ -28,9 +28,13 @@ public class World implements RenderLayer {
         }
 
         try {
-            LinkedList<Node> temp = new LinkedList<>(SceneManager.getSceneNodes());
-            temp.iterator().forEachRemaining(node -> renderNode(main, node));
-            temp.clear();
+            TSLinkedList<Node>.Element last = SceneManager.getSceneNodes().getRoot();
+
+            while (last != null) {
+                renderNode(main, last.getValue());
+
+                last = last.getNext();
+            }
         } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
 
         }

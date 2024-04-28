@@ -115,7 +115,7 @@ public class Editor {
         int m = SceneManager.getCurrentlyLoaded().getChunkSize();
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < m; j++) {
-                if (Mathf.Adistance(new Vector2D(30, 60), chunk.getPosition().add(new Vector2D(i, -j).scalarMultiply(Chunk.BLOCK_SCALE))) > 160) {
+                if (Mathf.aDistance(new Vector2D(30, 60), chunk.getPosition().add(new Vector2D(i, -j).scalarMultiply(Chunk.BLOCK_SCALE))) > 160) {
                     new Block(chunk, new Point(i, j));
                 }
             }

@@ -14,7 +14,6 @@ public class Component {
         if (parent.isChild(this)) {
             onOrphan();
             this.parent = parent;
-            System.out.println(parent.name);
             Awake();
             onParent();
         }

@@ -1,6 +1,7 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.Node;
+import KanapkaEngine.Components.TSLinkedList;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,10 +18,10 @@ public class SceneManager {
         return currentlyLoaded;
     }
 
-    public static LinkedList<Node> getSceneNodes() {
+    public static TSLinkedList<Node> getSceneNodes() {
         if (currentlyLoaded != null)
             return currentlyLoaded.nodes;
-        return new LinkedList<>();
+        return new TSLinkedList<>();
     }
 
     public static Scene loadScene(Scene scene) {
@@ -35,7 +36,7 @@ public class SceneManager {
         if (node.getParent() != null)
             node.setParent(null);
         else
-            currentlyLoaded.nodes.add(node);
+            currentlyLoaded.nodes.addEnd(node);
     }
 
     public static double getGlobalSize() {
@@ -46,9 +47,7 @@ public class SceneManager {
 
     public static void removeNode(Node node) {
         if (currentlyLoaded != null) {
-            synchronized (currentlyLoaded.nodes) {
-                currentlyLoaded.nodes.remove(node);
-            }
+            currentlyLoaded.nodes.remove(node);
         }
     }
 

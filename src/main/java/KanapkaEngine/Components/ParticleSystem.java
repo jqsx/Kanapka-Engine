@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class ParticleSystem<T extends Particle> extends Renderer {
-    private final LinkedList<T> particles = new LinkedList<>();
+    private final TSLinkedList<T> particles = new TSLinkedList<>();
     private static final int UPDATE_RATE = 60;
 
     private double last_update = Time.time();
@@ -19,7 +19,7 @@ public class ParticleSystem<T extends Particle> extends Renderer {
 
     }
 
-    public final LinkedList<T> getList() {
+    public final TSLinkedList<T> getList() {
         return particles;
     }
 
@@ -29,7 +29,7 @@ public class ParticleSystem<T extends Particle> extends Renderer {
 
     public final void SpawnOffset(Vector2D offset) {
         T t = createParticle(offset);
-        particles.add(t);
+        particles.addEnd(t);
         onSpawn(t);
     }
 
@@ -37,11 +37,9 @@ public class ParticleSystem<T extends Particle> extends Renderer {
         return null;
     }
 
-    void onSpawn(T instance) {
+    public void onSpawn(T instance) {
 
     }
-
-
 
     public BufferedImage getRender(Particle particle) {
         return rendered_visual;
@@ -69,9 +67,9 @@ public class ParticleSystem<T extends Particle> extends Renderer {
     }
 
     private void Loop(double fixedDelta) {
-        for (T particle : particles) {
+        particles.foreach((particle) -> {
             UpdateParticle(particle, fixedDelta);
-        }
+        });
     }
 
     private void CheckExpired() {

@@ -87,9 +87,15 @@ public class Physics {
     public final void FixedUpdate(double fixedDelta) {
         if (SceneManager.hasScene()) {
             try {
-                LinkedList<Node> temp_nodes = new LinkedList<>(SceneManager.getSceneNodes());
-                temp_nodes.forEach(node -> { CheckCollisionFor(node, fixedDelta); CheckCollisionForChunk(node, fixedDelta);});
-                temp_nodes.clear();
+                TSLinkedList<Node>.Element last = SceneManager.getSceneNodes().getRoot();
+
+                while (last != null) {
+                    Node node = last.getValue();
+
+                    CheckCollisionFor(node, fixedDelta); CheckCollisionForChunk(node, fixedDelta);
+
+                    last = last.getNext();
+                }
             } catch (ConcurrentModificationException ignore) {
 
             }
@@ -99,12 +105,14 @@ public class Physics {
     private void CheckCollisionFor(Node node, double fixedDelta) {
         if (node.getRigidbody() == null) return;
         VelocityUpdate(node, fixedDelta);
-        for (Node other : SceneManager.getSceneNodes()) {
-            if (other.getCollider() == null) continue;
-            if (other == node) continue;
+
+        if (node.getCollider() == null) return;
+        SceneManager.getSceneNodes().foreach((other) -> {
+            if (other.getCollider() == null) return;
+            if (other == node) return;
             if (other.getCollider().isColliding(node.getCollider()))
                 ProcessCollision(node, other, fixedDelta);
-        }
+        });
         ApplyVelocity(node, fixedDelta);
     }
 
@@ -173,6 +181,8 @@ public class Physics {
         Collider nodeCollider = node.getCollider();
         Collider otherCollider = other.getCollider();
 
+        if (nodeCollider == null || otherCollider == null) return;
+
         Vector2D nodeSize = nodeCollider.getScaledSize();
         Vector2D otherSize = otherCollider.getScaledSize();
 
@@ -203,6 +213,8 @@ public class Physics {
         Rectangle2D otherCollider = getBlockCollider(other);
 
         Collider nodeCollider = node.getCollider();
+
+        if (nodeCollider == null || otherCollider == null) return;
 
         if (!otherCollider.intersects(nodeCollider.getRectangle())) return;
 

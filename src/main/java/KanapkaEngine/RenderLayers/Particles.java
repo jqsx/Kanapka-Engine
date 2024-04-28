@@ -8,7 +8,6 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 
@@ -20,15 +19,18 @@ public class Particles implements RenderLayer {
     public void Render(Graphics2D main) {
         recalculateCameraView();
         try {
-            LinkedList<Node> temp_nodes = new LinkedList<>(SceneManager.getSceneNodes());
-            temp_nodes.forEach(node -> {
+            TSLinkedList<Node>.Element last = SceneManager.getSceneNodes().getRoot();
+
+            while (last != null) {
+                Node node = last.getValue();
                 Point point = new Point((int) node.transform.getPosition().getX(), (int) node.transform.getPosition().getY());
                 if (cameraView.contains(point)) {
                     renderParticleSystem(main, node);
                     World.Visible_Nodes++;
                 }
-            });
-            temp_nodes.clear();
+
+                last = last.getNext();
+            }
         } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
 
         }
@@ -38,9 +40,10 @@ public class Particles implements RenderLayer {
         Renderer renderer = node.getRenderer();
         if (renderer instanceof ParticleSystem particleSystem) {
             try {
-                LinkedList<Particle> temp_particles = new LinkedList<Particle>(particleSystem.getList());
-                temp_particles.forEach(particle -> renderParticle(main, particle, particleSystem));
-                temp_particles.clear();
+                particleSystem.getList().foreach(particle -> {
+                    renderParticle(main, (Particle) particle, particleSystem);
+                });
+
             } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
 
             }

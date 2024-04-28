@@ -68,6 +68,8 @@ public class Engine {
         init_game_thread();
 
         load(new Input());
+
+        window.setVisible(true);
     }
 
     public final void load(Plugin plugin) {
@@ -126,7 +128,7 @@ public class Engine {
                     }
                     Chunk.UpdateChunks();
                     try {
-                        SceneManager.getSceneNodes().descendingIterator().forEachRemaining(Node::UpdateCall);
+                        SceneManager.getSceneNodes().foreach(Node::UpdateCall);
                     } catch (ConcurrentModificationException ignore) {
 
                     }

@@ -65,8 +65,13 @@ public class Renderer extends Canvas implements MouseListener {
 
     private void Frame() {
         BufferStrategy bs = getBufferStrategy();
+
         if (bs == null) {
-            createBufferStrategy(2);
+            try {
+                createBufferStrategy(2);
+            } catch (IllegalStateException e) {
+
+            }
             return;
         }
 

@@ -54,7 +54,6 @@ public class Window extends JFrame {
     public final void addRenderer(Renderer renderer) {
         add(renderer);
         this.renderer = renderer;
-        setVisible(true);
     }
 
     public static Dimension getWindowSize() {

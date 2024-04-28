@@ -1,6 +1,7 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.Node;
+import KanapkaEngine.Components.TSLinkedList;
 import KanapkaEngine.Components.World;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 public class Scene {
     private String loadPath;
     private boolean isLoaded = false;
-    public final LinkedList<Node> nodes = new LinkedList<>();
+    public final TSLinkedList<Node> nodes = new TSLinkedList<>();
     public final World scene_world;
 
     private int CHUNK_SIZE = 10;
