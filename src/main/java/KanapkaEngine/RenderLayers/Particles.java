@@ -21,16 +21,13 @@ public class Particles implements RenderLayer {
         try {
             TSLinkedList<Node>.Element last = SceneManager.getSceneNodes().getRoot();
 
-            while (last != null) {
-                Node node = last.getValue();
+            SceneManager.getSceneNodes().foreach(node -> {
                 Point point = new Point((int) node.transform.getPosition().getX(), (int) node.transform.getPosition().getY());
                 if (cameraView.contains(point)) {
                     renderParticleSystem(main, node);
                     World.Visible_Nodes++;
                 }
-
-                last = last.getNext();
-            }
+            });
         } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
 
         }

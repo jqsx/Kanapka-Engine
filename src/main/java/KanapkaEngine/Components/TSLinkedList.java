@@ -33,6 +33,17 @@ public class TSLinkedList<T> {
         return this.size = s;
     }
 
+    public boolean contains(T value) {
+        Element last = getRoot();
+        while (last != null) {
+            if (last.value.equals(value))
+                return true;
+            last = last.next;
+        }
+
+        return false;
+    }
+
     public final void clear() {
         root = null;
         size = 0;

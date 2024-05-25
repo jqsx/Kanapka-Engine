@@ -17,8 +17,6 @@ public class EditorActions extends Plugin implements MouseListener {
         {
             Node node = new Node();
 
-            node.addComponent(new Collider());
-            node.addComponent(new Rigidbody());
             node.addComponent(new Renderer());
 
             node.getRenderer().setTexture(ResourceLoader.loadResource("none.png"));
@@ -26,7 +24,9 @@ public class EditorActions extends Plugin implements MouseListener {
             node.transform.setSize(new Vector2D(16, 16));
             node.transform.setPosition(Camera.main.getPosition().scalarMultiply(-1));
 
-            node.getRigidbody().setBounce(0);
+            node.addComponent(new Rigidbody());
+
+            node.addComponent(new Collider());
 
             node.append();
         }

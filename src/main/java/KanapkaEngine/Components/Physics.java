@@ -92,7 +92,9 @@ public class Physics {
                 while (last != null) {
                     Node node = last.getValue();
 
-                    CheckCollisionFor(node, fixedDelta); CheckCollisionForChunk(node, fixedDelta);
+                    CheckCollisionFor(node, fixedDelta);
+
+                    _CheckCollisionForChunk(node, fixedDelta);
 
                     last = last.getNext();
                 }
@@ -116,12 +118,62 @@ public class Physics {
         ApplyVelocity(node, fixedDelta);
     }
 
+    private void _CheckCollisionForChunk(Node node, double fixedDelta) {
+
+        if (node.getRigidbody() == null) return;
+
+        if (node.getCollider() == null) return;
+
+        Vector2D chunkSize = Chunk.getSize();
+
+        World world = World.getCurrent();
+
+        if (world == null)
+            return;
+
+        Point chunkPoint = new Point(
+                (int) (Math.floor(node.transform.getPosition().getX() / chunkSize.getX()) + round(Mathf.Clamp01(-node.transform.getPosition().getX()))),
+                (int) (Math.floor(node.transform.getPosition().getY() / chunkSize.getY()) + 1));
+
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                Chunk check = world.get(chunkPoint.x + x, chunkPoint.y + y);
+
+                if (check != null) {
+
+                    check.collisionCheck();
+                    Vector2D chunkPosition = check.getPosition();
+                    Point blockPoint = new Point(
+                            (int)Math.abs(round((node.transform.getPosition().getX() - chunkPosition.getX()) / Chunk.BLOCK_SCALE)),
+                            (int)Math.abs(round((node.transform.getPosition().getY() - chunkPosition.getY()) / Chunk.BLOCK_SCALE)));
+
+                    for (int i = -2; i <= 2; i++) {
+                        for (int j = -2; j <= 2; j++) {
+                            Point p = new Point(blockPoint.x + i, blockPoint.y + j);
+                            Block block = check.getBlock(p);
+
+                            if (block != null && block.getBlockData().hasCollision)
+                                ProcessCollision(node, block, fixedDelta);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private double round(double a) {
+        return Math.floor(Math.abs(a) + 0.5) * Math.signum(a);
+    }
+
     private void CheckCollisionForChunk(Node node, double fixedDelta) {
+        if (node.getRigidbody() == null) return;
+        if (node.getCollider() == null) return;
+
         Vector2D chunkSize = Chunk.getSize();
         int blockCount = SceneManager.getCurrentlyLoaded().getChunkSize();
         Point chunkPoint = new Point(
-                (int) (Math.floor(node.transform.getPosition().getX() / chunkSize.getX()) + Math.round(Mathf.Clamp01(-node.transform.getPosition().getX()))),
-                (int) (Math.floor(node.transform.getPosition().getY() / chunkSize.getY()) + 1));
+                (int) ((node.transform.getPosition().getX() / chunkSize.getX()) + Math.round(Mathf.Clamp01(-node.transform.getPosition().getX()))),
+                (int) ((node.transform.getPosition().getY() / chunkSize.getY()) + 1));
 
         Vector2D chunkCenter = new Vector2D(
                 chunkPoint.x * chunkSize.getX() + chunkSize.getX() / 2.0,
@@ -140,8 +192,8 @@ public class Physics {
                 if (chunk != null) {
                     Vector2D chunkPosition = chunk.getPosition();
                     Point blockPoint = new Point(
-                            (int)Math.abs(Math.floor((node.transform.getPosition().getX() - chunkPosition.getX()) / Chunk.BLOCK_SCALE)),
-                            (int)Math.abs(Math.floor((node.transform.getPosition().getY() - chunkPosition.getY()) / Chunk.BLOCK_SCALE)));
+                            (int)Math.abs(((node.transform.getPosition().getX() - chunkPosition.getX()) / Chunk.BLOCK_SCALE)),
+                            (int)Math.abs(((node.transform.getPosition().getY() - chunkPosition.getY()) / Chunk.BLOCK_SCALE)));
 
 
                     for (int k = -1; k < 1; k++) {
@@ -151,8 +203,6 @@ public class Physics {
 
                             if (block != null && block.getBlockData().hasCollision)
                                 ProcessCollision(node, block, fixedDelta);
-                            else if (block == null)
-                                chunk.createBlock(1, p);
                         }
                     }
                 }
@@ -162,7 +212,7 @@ public class Physics {
     private Rectangle2D getBlockCollider(Block block) {
         double blockScale = Chunk.BLOCK_SCALE;
         Vector2D blockPosition = block.getPosition();
-        blockCollider.setRect(blockPosition.getX() - blockScale, blockPosition.getY() - blockScale, blockScale * 2.0, blockScale * 2.0);
+        blockCollider.setRect(blockPosition.getX(), blockPosition.getY(), blockScale, blockScale);
         return blockCollider;
     }
 
@@ -192,6 +242,13 @@ public class Physics {
 
         Vector2D position = node.transform.getPosition();
         Vector2D velocity = node.getRigidbody().getVelocity();
+
+        {
+            Rigidbody rb = other.getRigidbody();
+            if (rb != null) {
+                rb.addVelocity(velocity.scalarMultiply(node.getRigidbody().getBounce() / rb.getMass()));
+            }
+        }
 
         if (Math.abs(nodeDiffScaled.getY()) < Math.abs(nodeDiffScaled.getX())) {
             position = new Vector2D((position.getX() + (otherSize.getX() / 2.0 + nodeSize.getX() / 2.0 - Math.abs(nodeDiff.getX())) * Math.signum(nodeDiff.getX())), position.getY());

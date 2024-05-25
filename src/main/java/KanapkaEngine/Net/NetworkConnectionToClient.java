@@ -8,18 +8,27 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class NetworkConnectionToClient implements Runnable {
+
+    private final int id;
+
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
     private final Thread thread;
 
-    public NetworkConnectionToClient(Socket socket) {
+    public NetworkConnectionToClient(Socket socket, int id) {
         System.out.println("[SERVERCLIENT] Setting up server client connection.");
         this.socket = socket;
+
+        this.id = id;
 
         thread = new Thread(this);
         thread.start();
         System.out.println("[SERVERCLIENT] Set up server client connection.");
+    }
+
+    public final int getId() {
+        return id;
     }
 
     @Override
@@ -60,6 +69,8 @@ public class NetworkConnectionToClient implements Runnable {
         }
         finally {
             RouteManager.onServerClientDisconnect(this);
+
+
         }
     }
 
@@ -71,5 +82,9 @@ public class NetworkConnectionToClient implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isClosed() {
+        return socket.isClosed();
     }
 }

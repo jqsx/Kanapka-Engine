@@ -6,12 +6,14 @@ import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.Game.Window;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Vector;
 
 public class World implements RenderLayer {
     public static int Visible_Nodes = 0;
@@ -28,13 +30,7 @@ public class World implements RenderLayer {
         }
 
         try {
-            TSLinkedList<Node>.Element last = SceneManager.getSceneNodes().getRoot();
-
-            while (last != null) {
-                renderNode(main, last.getValue());
-
-                last = last.getNext();
-            }
+            SceneManager.getSceneNodes().foreach(node -> n_renderNode(main, node));
         } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
 
         }
@@ -74,6 +70,48 @@ public class World implements RenderLayer {
             }
         }
         renderChildNodes(main, node);
+    }
+
+    private void n_renderNode(Graphics2D main, Node node) {
+        if (node.getRenderer() == null) {
+            renderChildNodes(main, node);
+            return;
+        }
+        BufferedImage render = node.getRenderer().getRender();
+        if (render != null) {
+            AffineTransform at = getTransform(node);
+            main.drawImage(render, at, null);
+            drawOutline(main, at, new Vector2D(render.getWidth() - 1, render.getHeight() - 1));
+        }
+    }
+
+    private void drawOutline(Graphics2D main, AffineTransform at, Vector2D scale) {
+        double gSize = SceneManager.getGlobalSize();
+        main.setStroke(new BasicStroke(5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+        main.setColor(Color.black);
+        main.drawRect((int) at.getTranslateX(), (int) at.getTranslateY(), (int) (at.getScaleX() + scale.getX() * gSize), (int) (at.getScaleY() + scale.getY() * gSize));
+    }
+
+    private AffineTransform getTransform(Node node) {
+        AffineTransform at = new AffineTransform();
+
+        assert node.getRenderer() != null;
+        BufferedImage render = node.getRenderer().getRender();
+
+        double gSize = SceneManager.getGlobalSize();
+
+        Vector2D size = node.transform.getSize();
+        size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
+        Vector2D cameraPosition = Camera.main.getPosition();
+        Vector2D position = new Vector2D(Math.round(cameraPosition.getX() * gSize) / gSize, Math.round(cameraPosition.getY() * gSize) / gSize).add(node.transform.getPosition());
+        position = position.add(new Vector2D(0, node.transform.getSize().getY() / 2.0));
+
+        //position = new Vector2D(gSize / position.getX(), gSize / position.getY());
+
+        at.scale(size.getX() * gSize, size.getY() * gSize);
+        at.translate(position.getX() / size.getX(), -position.getY() / size.getY());
+
+        return at;
     }
 
     private void renderChildNodes(Graphics2D main, Node node) {

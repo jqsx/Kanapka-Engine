@@ -17,17 +17,14 @@ public class Debug implements RenderLayer {
     }
     @Override
     public void Render(Graphics2D main) {
-        drawText(main, "Game MS " + (Time.deltaTime() * 1000.0), new Point(0, 20));
-        drawText(main, "FPS " + Renderer.getFPS(), new Point(0, 40));
-
-        drawText(main, "Visible Nodes " + World.Visible_Nodes + " / " + Node.getNodeCount(), new Point(100, 40));
-        drawText(main, "Visible Chunks " + Chunks.VisibleChunks, new Point(400, 40));
+        drawText(main, "Game MS " + (Time.deltaTime() * 1000.0), new Point(0, 30));
+        drawText(main, "FPS " + Renderer.getFPS(), new Point(0, 60));
+//
+//        drawText(main, "Visible Nodes " + World.Visible_Nodes + " / " + Node.getNodeCount(), new Point(100, 40));
+//        drawText(main, "Visible Chunks " + Chunks.VisibleChunks, new Point(400, 40));
 
         {
             Dimension screen = Window.getWindowSize();
-
-            main.setColor(Color.red);
-            main.fillArc((int) (screen.width - 10f), (int) (screen.height - 10f), (int) 20f, (int) 20f, 0, 360);
         }
 
         if (Camera.main == null) {
@@ -43,7 +40,7 @@ public class Debug implements RenderLayer {
         Color color = new Color((int) (Math.abs(Math.cos(point.x + point.y)) * 255), (int) (Math.abs(Math.sin(point.x + point.y)) * 255), (int) (Math.abs(Math.sin(point.x - point.y)) * 255));
 
         main.setColor(color);
-        main.setFont(main.getFont().deriveFont(20f));
+        main.setFont(main.getFont().deriveFont(30f));
 
         main.drawString(text, point.x, point.y);
     }

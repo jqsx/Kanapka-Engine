@@ -3,6 +3,7 @@ package KanapkaEngine.Components;
 import KanapkaEngine.Game.SceneManager;
 import KanapkaEngine.RenderLayers.ChunkNodes;
 import KanapkaEngine.RenderLayers.Chunks;
+import KanapkaEngine.Time;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -36,6 +37,8 @@ public class Chunk {
     private long lastActive = System.currentTimeMillis();
 
     private final LinkedList<ChunkNode> chunkNodeList = new LinkedList<>();
+
+    private double lastCollisionCheck = Time.time();
 
     public final void appendBlock(Block block) {
         Objects.requireNonNull(block);
@@ -281,7 +284,7 @@ public class Chunk {
 
     public static void UpdateChunks() {
         try {
-            Chunks.getActiveChunks().forEach(Chunk::Update);
+            Chunks.getActiveChunks().foreach(Chunk::Update);
         } catch (ConcurrentModificationException ignore) {
 
         }
@@ -289,5 +292,13 @@ public class Chunk {
 
     public final LinkedList<ChunkNode> getChunkNodes() {
         return chunkNodeList;
+    }
+
+    protected void collisionCheck() {
+        this.lastCollisionCheck = Time.time();
+    }
+
+    public boolean recentlyCollisionChecked() {
+        return (lastCollisionCheck + 0.5) > Time.time();
     }
 }

@@ -1,13 +1,13 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.SceneManager;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
     private static int NodeCount = 0;
-
     private boolean alive = true;
     public String name = "Node_Instance";
     private Node parent;
@@ -26,6 +26,10 @@ public class Node {
     }
 
     private final List<Component> components = new ArrayList<>();
+
+    public Vector2D position() {
+        return transform.getPosition();
+    }
 
     public final void addComponent(Component component) {
         if (!alive) return;

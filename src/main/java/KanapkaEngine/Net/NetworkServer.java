@@ -10,7 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class NetworkServer implements Runnable {
     public static int PORT = 6969;
@@ -26,6 +28,8 @@ public class NetworkServer implements Runnable {
     private static Thread serverThread;
 
     private static NetworkServer instance;
+
+    private static HashMap<Integer, NetworkConnectionToClient> connections = new HashMap<>();
 
     public static void StartServer() {
         try {
@@ -57,7 +61,10 @@ public class NetworkServer implements Runnable {
                 System.out.println("[SERVER] Awaiting connection.");
                 Socket socket = serverSocket.accept();
                 System.out.println("[SERVER] Connection at " + socket.getInetAddress().getHostAddress());
-                NetworkConnectionToClient conn = new NetworkConnectionToClient(socket);
+                NetworkConnectionToClient conn = new NetworkConnectionToClient(socket, getFreeID());
+
+                connections.put(conn.getId(), conn);
+
                 clients.add(conn);
                 RouteManager.onServerClientConnect(conn);
             } catch (IOException e) {
@@ -77,7 +84,28 @@ public class NetworkServer implements Runnable {
         instance = null;
     }
 
+    public static NetworkConnectionToClient getConn(int id) {
+        if (connections.containsKey(id)) {
+            NetworkConnectionToClient conn = connections.get(id);
+
+            if (!conn.isClosed())
+                return conn;
+            else connections.remove(id);
+        }
+        return null;
+    }
+
     private NetworkServer() {
 
+    }
+
+    private int getFreeID() {
+        Random random = new Random();
+        int r;
+
+        while (connections.containsKey(r = Math.abs(random.nextInt()))) {
+
+        }
+        return r;
     }
 }

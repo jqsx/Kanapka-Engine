@@ -15,7 +15,6 @@ public class Transform {
     public Vector2D getPosition() {
         Node node_parent = parent.getParent();
         if (node_parent != null) {
-            assert node_parent.transform != null;
             return position.add(node_parent.transform.getPosition());
         }
         return position;
@@ -28,7 +27,6 @@ public class Transform {
     public void setPosition(Vector2D position) {
         Node node_parent = parent.getParent();
         if (node_parent != null) {
-            assert node_parent.transform != null;
             this.position = node_parent.transform.getPosition().subtract(position);
         }
         else

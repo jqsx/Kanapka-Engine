@@ -20,14 +20,10 @@ public class Chunks extends Plugin implements RenderLayer {
 
     public static double DEACTIVATIONDELAY = 5.0;
 
-    private static final LinkedList<Chunk> activeChunks = new LinkedList<>();
+    private static final TSLinkedList<Chunk> activeChunks = new TSLinkedList<>();
 
-    public static LinkedList<Chunk> getActiveChunks() {
-        try {
-            return new LinkedList<>(activeChunks);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return getActiveChunks();
-        }
+    public static TSLinkedList<Chunk> getActiveChunks() {
+        return activeChunks;
     }
 
     public Chunks() {
@@ -50,7 +46,7 @@ public class Chunks extends Plugin implements RenderLayer {
                 window_bounds.height / g_size * 2.0
         );
 
-        int dist = 1 + (int)Math.floor(5.0 / g_size);
+        int dist = 2 + (int)Math.floor(5.0 / g_size);
         int dist_w = (int)Math.round(dist * ((double)window_bounds.width / (double)window_bounds.height));
 
         for (int i = -dist_w; i <= dist_w; i++) {
@@ -58,7 +54,7 @@ public class Chunks extends Plugin implements RenderLayer {
                 Chunk c = SceneManager.getCurrentlyLoaded().scene_world.get(i - cameraOffset.x, j - cameraOffset.y);
                 if (c != null) {
                     c.activate();
-                    if (!activeChunks.contains(c)) activeChunks.add(c);
+                    if (!activeChunks.contains(c)) activeChunks.addEnd(c);
                     renderChunk(main, c, camView);
                 }
             }
@@ -113,6 +109,17 @@ public class Chunks extends Plugin implements RenderLayer {
         }
     }
 
+    private void drawOutline(Graphics2D main, AffineTransform at, Vector2D scale, Color color) {
+        double gSize = SceneManager.getGlobalSize();
+        main.setStroke(new BasicStroke(5f));
+        main.setColor(color);
+        main.drawRect((int) at.getTranslateX(), (int) at.getTranslateY(), (int) (at.getScaleX() + scale.getX() * gSize), (int) (at.getScaleY() + scale.getY() * gSize));
+    }
+
+    private void drawOutline(Graphics2D main, AffineTransform at, Vector2D scale) {
+        drawOutline(main, at, scale, Color.black);
+    }
+
     private void renderChunk(Graphics2D main, Chunk chunk, Rectangle2D camView) {
         BufferedImage render = chunk.getRender();
         if (render != null) {
@@ -129,6 +136,10 @@ public class Chunks extends Plugin implements RenderLayer {
                 at.translate(pos.getX(), pos.getY());
 
                 main.drawImage(render, at, null);
+
+                if (chunk.recentlyCollisionChecked()) {
+                    drawOutline(main, at, Chunk.getSize(), Color.red);
+                }
                 VisibleChunks++;
             }
         }

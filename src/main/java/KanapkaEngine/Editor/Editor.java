@@ -61,8 +61,6 @@ public class Editor {
         {
             Node node = new Node();
 
-            node.addComponent(new Collider());
-            node.addComponent(new Rigidbody());
             node.addComponent(new Renderer());
 
             node.getRenderer().setTexture(ResourceLoader.loadResource("wooden.png"));
@@ -70,35 +68,19 @@ public class Editor {
             node.transform.setSize(new Vector2D(16, 16));
             node.transform.setPosition(new Vector2D(20, 200));
 
-            node.addComponent(new Component() {
-                @Override
-                public void Update() {
-                    if (node.isAlive()) {
-                        if (node.transform.getPosition().getY() < -500)
-                            node.Destroy();
-                    }
-                }
-            });
-
-            node.getRigidbody().setBounce(0);
-
             node.append();
         }
 
         {
-            World world = SceneManager.getCurrentlyLoaded().scene_world;
-
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    Chunk chunk = Chunk.build(new Point(i, j), world);
-
-                    AddBlocks(chunk);
+            for (int i = -10; i < 10; i++) {
+                for (int j = -10; j < 10; j++) {
+                    createSampleChunk(new Point(i, j));
                 }
             }
         }
 
 //        engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
-        engine.getWindow().setWorldBackdrop(new Color(0, 0, 107));
+        engine.getWindow().setWorldBackdrop(new Color(220, 220, 220));
 
         SimpleViewController controller = new SimpleViewController();
         EditorActions editorActions = new EditorActions();
@@ -121,6 +103,17 @@ public class Editor {
             }
         }
         chunk.ready();
+    }
+
+    private static void createSampleChunk(Point at) {
+        Chunk chunk = Chunk.build(at, World.getCurrent());
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (Mathf.Noise.noise(i + at.x * 10, j + at.y * 10) > 0.2)
+                    chunk.createBlock(0, new Point(i, j));
+            }
+        }
     }
 
     public static boolean isEditor() {
