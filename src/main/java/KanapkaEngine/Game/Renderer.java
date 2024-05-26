@@ -44,9 +44,6 @@ public class Renderer extends Canvas implements MouseListener {
         target_size = engineConfiguration.target_size;
         setBackground(Color.black);
         setSize(320, 180);
-        is_custom_titlebar = engineConfiguration.custom_title_bar;
-        if (is_custom_titlebar)
-            addMouseListener(this);
     }
 
     public void Render() {
@@ -132,10 +129,13 @@ public class Renderer extends Canvas implements MouseListener {
     }
 
     private AffineTransform getWorldTransform() {
-        double div = Engine.isMacOS() ? 1.0 : 2.0;
+        double div = 2.0; // Engine.isMacOS() ? 1.0 : 2.0;
         AffineTransform at = new AffineTransform();
         Dimension target = Toolkit.getDefaultToolkit().getScreenSize();
-        double ratio = Math.min(getHeight() / (double)target.height, getWidth() / (double)target.width) / (double) Math.max(getHeight() / (double)target.height, getWidth() / (double)target.width);
+        double min = Math.min(getWidth(), getHeight());
+        double max = Math.max(getWidth(), getHeight());
+
+        double ratio = min / max; //Math.min(getHeight() / (double)target.height, getWidth() / (double)target.width) / (double) Math.max(getHeight() / (double)target.height, getWidth() / (double)target.width);
 
         at.scale(1.0 / ratio,  1.0 / ratio);
         at.translate(getWidth() * ratio / div, getHeight() * ratio / div);

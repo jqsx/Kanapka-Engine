@@ -161,7 +161,6 @@ public class Chunk {
                 render.flush();
                 render = null;
                 bounds = null;
-                System.out.println("Deactivated Chunk x: " + point.x + " y: " + point.y);
             }
     }
 
@@ -244,7 +243,6 @@ public class Chunk {
             return buffer.array();
         }
         Block[][] temp_blocks = Arrays.copyOf(blocks, blocks.length);
-        System.out.println("Getting save for chunk x: " + point.x + " y: " + point.y);
         int block_count = 0;
         for (Block[] block : temp_blocks) {
             for (Block value : block) {
@@ -254,8 +252,6 @@ public class Chunk {
         }
 
         ByteBuffer buffer = ByteBuffer.allocate(12 + block_count * 10);
-        System.out.println("Buffer size: " + buffer.capacity());
-        System.out.println("Block count: " + block_count);
 
         buffer.putInt(point.x);
         buffer.putInt(point.y);
@@ -271,7 +267,6 @@ public class Chunk {
                 buffer.put(y);
                 buffer.putInt(value.id);
                 buffer.putInt(value.special_id);
-                System.out.println("Limit: " + buffer.remaining());
             }
         }
 

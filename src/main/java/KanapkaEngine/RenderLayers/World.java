@@ -40,36 +40,9 @@ public class World implements RenderLayer {
         if (Camera.main == null) return;
         Vector2D camera_position = Camera.main.getPosition();
         Dimension window_bounds = KanapkaEngine.Game.Window.getWindowSize();
-        if (!Engine.isMacOS()) window_bounds.setSize(window_bounds.width / 2.0, window_bounds.height / 2.0);
+        window_bounds = new Dimension(window_bounds.width * 2, window_bounds.height * 2);
         double g_size = SceneManager.getGlobalSize();
-        cameraView.setBounds((int) (camera_position.getX() - window_bounds.width / g_size), (int) (camera_position.getY() - window_bounds.height / g_size), (int) (window_bounds.width * 2 / g_size), (int) (window_bounds.height * 2 / g_size));
-    }
-
-    private void renderNode(Graphics2D main, Node node) {
-        if (node.getRenderer() == null) {
-            renderChildNodes(main, node);
-            return;
-        }
-        BufferedImage render = node.getRenderer().getRender();
-        if (render != null) {
-            Vector2D camera_position = Camera.main.getPosition();
-            Vector2D position = node.transform.getPosition().subtract(new Vector2D(render.getWidth() / 2.0, render.getHeight() / 2.0));
-            double g_size = SceneManager.getGlobalSize();
-            Vector2D size = node.transform.getSize();
-            size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
-            boundingTextureBox.setBounds((int) -position.getX() - (int) (render.getWidth() * size.getX()), (int) -position.getY() - (int) (render.getHeight() * size.getY()), (int) (render.getWidth() * size.getX()) * 2, (int) (render.getHeight() * size.getY()) * 2);
-            if (cameraView.intersects(boundingTextureBox)) {
-                Vector2D pos = new Vector2D((camera_position.getX() + position.getX()) / size.getX(), -(camera_position.getY() + position.getY() + node.transform.getSize().getY() / 2.0) / size.getY());
-                AffineTransform at = new AffineTransform();
-                double rad = Math.toRadians(node.transform.getRotation());
-                at.scale(size.getX() * g_size, size.getY() * g_size);
-                at.translate(pos.getX(), pos.getY());
-                at.rotate(rad, render.getWidth() / 2.0, render.getHeight() / 2.0);
-                main.drawImage(render, at, null);
-                Visible_Nodes++;
-            }
-        }
-        renderChildNodes(main, node);
+        cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
     }
 
     private void n_renderNode(Graphics2D main, Node node) {
@@ -80,9 +53,15 @@ public class World implements RenderLayer {
         BufferedImage render = node.getRenderer().getRender();
         if (render != null) {
             AffineTransform at = getTransform(node);
-            main.drawImage(render, at, null);
-            drawOutline(main, at, new Vector2D(render.getWidth() - 1, render.getHeight() - 1));
+
+            boundingTextureBox.setBounds((int) at.getTranslateX(), (int) at.getTranslateY(), (int) (at.getScaleX() * render.getWidth()), (int) (at.getScaleY() * render.getWidth()));
+
+            if (cameraView.intersects(boundingTextureBox)) {
+                main.drawImage(render, at, null);
+                //drawOutline(main, at, new Vector2D(render.getWidth(),render.getWidth()));
+            }
         }
+        renderChildNodes(main, node);
     }
 
     private void drawOutline(Graphics2D main, AffineTransform at, Vector2D scale) {
@@ -116,7 +95,7 @@ public class World implements RenderLayer {
 
     private void renderChildNodes(Graphics2D main, Node node) {
         for (int i = 0; i < node.childCount(); i++) {
-            renderNode(main, node.getChild(i));
+            n_renderNode(main, node.getChild(i));
         }
     }
 
