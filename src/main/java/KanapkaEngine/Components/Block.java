@@ -38,8 +38,8 @@ public class Block {
     }
 
     public final Vector2D getPosition() {
-        double s = Chunk.BLOCK_SCALE / 2.0;
+        //double s = Chunk.BLOCK_SCALE / 2.0;
         Vector2D p = parent.getBlockPosition(point);
-        return p.add(new Vector2D(-s * (p.getX() < 0 ? 1.0 : 0.0), 0));
+        return p;//.add(new Vector2D(-s * (p.getX() < 0 ? 1.0 : 0.0), 0));
     }
 }

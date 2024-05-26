@@ -89,7 +89,7 @@ public class World implements RenderLayer {
         double gSize = SceneManager.getGlobalSize();
         main.setStroke(new BasicStroke(5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
         main.setColor(Color.black);
-        main.drawRect((int) at.getTranslateX(), (int) at.getTranslateY(), (int) (at.getScaleX() + scale.getX() * gSize), (int) (at.getScaleY() + scale.getY() * gSize));
+        main.drawRect((int) at.getTranslateX(), (int) at.getTranslateY(), (int) (at.getScaleX() * scale.getX()), (int) (at.getScaleY() * scale.getY()));
     }
 
     private AffineTransform getTransform(Node node) {

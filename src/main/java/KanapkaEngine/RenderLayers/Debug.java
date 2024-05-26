@@ -17,15 +17,10 @@ public class Debug implements RenderLayer {
     }
     @Override
     public void Render(Graphics2D main) {
-        drawText(main, "Game MS " + (Time.deltaTime() * 1000.0), new Point(0, 30));
-        drawText(main, "FPS " + Renderer.getFPS(), new Point(0, 60));
-//
-//        drawText(main, "Visible Nodes " + World.Visible_Nodes + " / " + Node.getNodeCount(), new Point(100, 40));
-//        drawText(main, "Visible Chunks " + Chunks.VisibleChunks, new Point(400, 40));
-
-        {
-            Dimension screen = Window.getWindowSize();
-        }
+        drawText(main, "Game MS " + Math.round(Time.deltaTime() * 1000.0), new Point(0, 30));
+        drawText(main, "Renderer MS " + Math.round(Renderer.getDelta() * 1000.0), new Point(0, 60));
+        drawText(main, "Total MS " + Math.round((Renderer.getDelta() + Time.deltaTime()) * 1000.0), new Point(0, 90));
+        drawText(main, "FPS " + Renderer.getFPS(), new Point(0, 120));
 
         if (Camera.main == null) {
             main.setColor(Color.red);

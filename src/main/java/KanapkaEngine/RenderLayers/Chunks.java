@@ -139,6 +139,21 @@ public class Chunks extends Plugin implements RenderLayer {
 
                 if (chunk.recentlyCollisionChecked()) {
                     drawOutline(main, at, Chunk.getSize(), Color.red);
+
+                    for (int i = 0; i < 10; i++) {
+                        for (int j = 0; j < 10; j++) {
+                            Block block = chunk.getBlock(i, j);
+
+                            if (block != null) {
+                                Vector2D block_p = block.getPosition();
+                                Vector2D bpos = new Vector2D((camera_position.getX() + block_p.getX()), -(camera_position.getY() + block_p.getY()));
+
+                                main.drawArc((int) ( bpos.getX() * g_size), (int) (bpos.getY() * g_size), (int) (g_size / 3.0), (int) (g_size / 3.0), 0, 360);
+
+
+                            }
+                        }
+                    }
                 }
                 VisibleChunks++;
             }

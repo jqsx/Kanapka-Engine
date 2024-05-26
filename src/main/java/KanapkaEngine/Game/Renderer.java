@@ -28,6 +28,8 @@ public class Renderer extends Canvas implements MouseListener {
     private final long Second = (long) Math.pow(10, 9);
     private static int FPS = 0;
 
+    private static double delta = 0.0;
+
     private Dimension target_size;
 
     private boolean is_custom_titlebar = false;
@@ -53,7 +55,7 @@ public class Renderer extends Canvas implements MouseListener {
 
         if (engine.getRenderThreadID() != Thread.currentThread().getId()) return;
         if (render_frame_delay + Second / engineConfiguration.FPSLIMIT > System.nanoTime()) return;
-        double delta = (System.nanoTime() - render_frame_delay) / (double) Second;
+        delta = (System.nanoTime() - render_frame_delay) / (double) Second;
         FPS = (int) (1.0 / delta);
         render_frame_delay = System.nanoTime();
         Frame();
@@ -62,6 +64,7 @@ public class Renderer extends Canvas implements MouseListener {
     public static int getFPS() {
         return FPS;
     }
+    public static double getDelta() {return delta;}
 
     private void Frame() {
         BufferStrategy bs = getBufferStrategy();
@@ -81,8 +84,8 @@ public class Renderer extends Canvas implements MouseListener {
         main.setClip(0, 0, getWidth(), getHeight());
 
 //        main.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-////        main.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        main.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        main.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        main.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 //        main.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 //        if (SceneManager.hasScene())
 //            if (SceneManager.getGlobalSize() < 2)

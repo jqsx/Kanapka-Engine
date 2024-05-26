@@ -19,7 +19,7 @@ public class EditorActions extends Plugin implements MouseListener {
 
             node.addComponent(new Renderer());
 
-            node.getRenderer().setTexture(ResourceLoader.loadResource("none.png"));
+            node.getRenderer().setTexture(ResourceLoader.loadResource("logo.png"));
 
             node.transform.setSize(new Vector2D(16, 16));
             node.transform.setPosition(Camera.main.getPosition().scalarMultiply(-1));

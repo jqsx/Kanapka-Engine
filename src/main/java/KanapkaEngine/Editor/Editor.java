@@ -89,9 +89,9 @@ public class Editor {
         engine.load(controller);
         engine.load(editorActions);
 
-//        engine.InitializeLayers();
-//        engine.RegisterRenderLayer(new EditorRenderLayer());
-//        engine.RegisterRenderLayer(new EditorRenderWorld());
+        engine.InitializeLayers();
+        engine.RegisterRenderLayer(new EditorRenderLayer());
+        engine.RegisterRenderLayer(new EditorRenderWorld());
         engine.RegisterRenderLayer(new TestWorldDraw());
     }
 
