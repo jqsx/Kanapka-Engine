@@ -14,6 +14,10 @@ import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is the game renderer, this shouldn't be extended in any way unless you know what you're doing. <br>
+ * The Renderer is responsible for the rendering stack and storing the render layers for the game.
+ */
 public class Renderer extends Canvas implements MouseListener {
     private final EngineConfiguration engineConfiguration;
     private final Engine engine;
@@ -129,7 +133,7 @@ public class Renderer extends Canvas implements MouseListener {
     }
 
     private AffineTransform getWorldTransform() {
-        double div = 2.0; // Engine.isMacOS() ? 1.0 : 2.0;
+        double div = Engine.isMacOS() ? 1.0 : 2.0;
         AffineTransform at = new AffineTransform();
         Dimension target = Toolkit.getDefaultToolkit().getScreenSize();
         double min = Math.min(getWidth(), getHeight());

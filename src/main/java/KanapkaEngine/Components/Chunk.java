@@ -21,6 +21,9 @@ import java.util.*;
 import java.util.List;
 
 public class Chunk {
+    /**
+     * Hardcoded block scale
+     */
     public static final int BLOCK_SCALE = 16;
     private Rectangle2D bounds;
     private BufferedImage render;
@@ -40,6 +43,11 @@ public class Chunk {
 
     private double lastCollisionCheck = Time.time();
 
+    /**
+     * Internally managed function for appending blocks <br>
+     * Will not append if block isn't parented tho this chunk.
+     * @param block
+     */
     public final void appendBlock(Block block) {
         Objects.requireNonNull(block);
         if (!isInRange(block.point)) return;
@@ -64,6 +72,10 @@ public class Chunk {
         chunkNodeList.remove(i);
     }
 
+    /**
+     * Setting the block at point to air.
+     * @param p
+     */
     public final void setAir(Point p) {
         if (isInRange(p)) {
             Block old = blocks[p.x][p.y];
@@ -74,6 +86,12 @@ public class Chunk {
         }
     }
 
+    /**
+     * Block creation function that allows for easy block creation for the chunk.
+     * @param id (block id) if negative -> set to air/null
+     * @param p (local block)
+     * @return Created block if id is more than 0
+     */
     public final Block createBlock(int id, Point p) {
         if (id < 0) {
             setAir(p);
@@ -123,15 +141,28 @@ public class Chunk {
         parent.set(this);
     }
 
+    /**
+     * Returns world position of the chunk
+     * @return
+     */
     public Vector2D getPosition() {
         int s = BLOCK_SCALE * SceneManager.getCurrentlyLoaded().getChunkSize();
         return new Vector2D(point.x * s, point.y * s);
     }
 
+    /**
+     *
+     * @param p
+     * @return World position of block at <strong>p</strong>
+     */
     public Vector2D getBlockPosition(Point p) {
         return getPosition().add(new Vector2D(p.x, -p.y).scalarMultiply(BLOCK_SCALE));
     }
 
+    /**
+     * Returns the size of the chunk in world scale
+     * @return
+     */
     public static Vector2D getSize() {
         int s = BLOCK_SCALE * SceneManager.getCurrentlyLoaded().getChunkSize();
         return new Vector2D(s, s);
@@ -195,6 +226,11 @@ public class Chunk {
         }).start();
     }
 
+    /**
+     * <strong style="color: red;">!!! IMPORTANT !!!</strong>
+     * <br><br> Needs to be called before the render thread is allowed to render the object. <br><br>
+     * <strong style="color: red;">!!! IMPORTANT !!!</strong>
+     */
     public final void ready() {
         isReadyForRender = true;
     }
@@ -225,7 +261,12 @@ public class Chunk {
         render_stage = Renderer.FINISHED;
     }
 
-
+    /**
+     * Chunk builder function
+     * @param point in world <strong style="color: rgb(255, 200, 30);">parent</strong>
+     * @param parent
+     * @return Generated chunk
+     */
     public static Chunk build(Point point, World parent) {
         return new Chunk(Objects.requireNonNull(point, "Missing chunk point."), Objects.requireNonNull(parent, "Missing parent."));
     }
@@ -234,6 +275,10 @@ public class Chunk {
         return parent;
     }
 
+    /**
+     * A bit save function that collects all chunk data into a single byte array to be saved into memory.
+     * @return Byte array of chunk's block data
+     */
     public byte[] getSave() {
         if (!isReadyForRender) {
             ByteBuffer buffer = ByteBuffer.allocate(12);
@@ -277,6 +322,9 @@ public class Chunk {
         chunkNodeList.forEach(ChunkNode::UpdateCall);
     }
 
+    /**
+     * Internal Update Call
+     */
     public static void UpdateChunks() {
         try {
             Chunks.getActiveChunks().foreach(Chunk::Update);
@@ -293,6 +341,10 @@ public class Chunk {
         this.lastCollisionCheck = Time.time();
     }
 
+    /**
+     * Debug
+     * @return
+     */
     public boolean recentlyCollisionChecked() {
         return (lastCollisionCheck + 0.5) > Time.time();
     }

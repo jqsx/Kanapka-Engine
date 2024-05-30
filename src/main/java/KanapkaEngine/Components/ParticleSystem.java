@@ -76,6 +76,9 @@ public class ParticleSystem<T extends Particle> extends Renderer {
         particles.removeIf(particle -> particle.isDead(getLifeTime()));
     }
     private void UpdateParticle(T particle, double fixedDelta) {
+
+        particle.addPosition(particle.getVelocity().scalarMultiply(fixedDelta));
+
         onParticleUpdate(particle, fixedDelta);
     }
 

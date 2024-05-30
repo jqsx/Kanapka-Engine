@@ -6,8 +6,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+/**
+ * Block class for the chunk system in place <br>
+ * Not recommended to extend this class unless writing a custom data save and load rather than the one provided <br>
+ * Contains one id for the block type and another for locating the special object.
+ */
 public class Block {
     public final Chunk parent;
+    /**
+     * Block position in the chunk, not world block position.
+     */
     public final Point point;
     public int id = 0;
     public int special_id = 0;
@@ -29,6 +37,10 @@ public class Block {
         this.id = id;
     }
 
+    /**
+     * Returns the render image of the block.
+     * @return
+     */
     public final BufferedImage getRender() {
         return BlockManager.getBlockData(id).getRender();
     }
@@ -37,6 +49,10 @@ public class Block {
         return BlockManager.getBlockData(id);
     }
 
+    /**
+     * Returns the world position of the block.
+     * @return
+     */
     public final Vector2D getPosition() {
         //double s = Chunk.BLOCK_SCALE / 2.0;
         Vector2D p = parent.getBlockPosition(point);
