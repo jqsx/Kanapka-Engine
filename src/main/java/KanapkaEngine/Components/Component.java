@@ -2,6 +2,9 @@ package KanapkaEngine.Components;
 
 import java.util.Objects;
 
+/**
+ * The parent class to all implementations at runtime. Need to be added to a node in order to receive function calls.
+ */
 public class Component {
     private Node parent;
 

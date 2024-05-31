@@ -3,13 +3,17 @@ package KanapkaEngine.Components;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 
 public class ResourceLoader {
     private static HashMap<String, BufferedImage> loadedImages = new HashMap<>();
+
+    /**
+     * Load resources from the project's resources folder.
+     * @param path
+     * @return The loaded resource as BufferedImage
+     */
     public static BufferedImage loadResource(String path) {
         if (loadedImages.containsKey(path)) return loadedImages.get(path);
         InputStream stream = ClassLoader.getSystemResourceAsStream(path);
@@ -26,11 +30,28 @@ public class ResourceLoader {
         return null;
     }
 
+    /**
+     *
+     * @param path
+     * @return An InputStream of file information from the resources folder of the project.
+     */
     public static InputStream loadStream(String path) {
         return ClassLoader.getSystemResourceAsStream(path);
     }
 
-    public static BufferedImage loadFile(String path) {
+    /**
+     *
+     * @param path
+     * @return A file loaded from persistent storage.
+     */
+    public static InputStream loadFile(String path) {
+        File file = new File(path);
+        if (file.exists())
+            try {
+                return new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                return null;
+            }
         return null;
     }
     private ResourceLoader() {}
