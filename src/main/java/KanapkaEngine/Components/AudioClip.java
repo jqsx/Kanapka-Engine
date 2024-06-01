@@ -5,14 +5,11 @@ import javax.sound.sampled.*;
 public class AudioClip implements LineListener {
     public final Clip clip;
     public final FloatControl fc;
-    private final FloatControl volume;
 
     public AudioClip(Clip clip) {
         this.clip = clip;
         this.fc = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         fc.setValue(0f);
-        this.clip.addLineListener(this);
-        this.volume = (FloatControl) clip.getControl(FloatControl.Type.VOLUME);
     }
 
     public void start() {
@@ -23,11 +20,6 @@ public class AudioClip implements LineListener {
     public void stop() {
         this.clip.stop();
     }
-
-    public void setVolume(float v) {
-        volume.setValue((float) Mathf.Clamp(v, volume.getMinimum(), volume.getMaximum()));
-    }
-
     public void onStopped() {
 
     }

@@ -59,10 +59,10 @@ public class World implements RenderLayer {
             if (cameraView.intersects(boundingTextureBox)) {
                 main.drawImage(render, at, null);
                 if (node instanceof Renderable renderable) {
-                    renderable.onRender(at);
+                    renderable.onRender(main, at);
                 }
                 if (node.getRenderer() instanceof Renderable renderable) {
-                    renderable.onRender(at);
+                    renderable.onRender(main, at);
                 }
                 //drawOutline(main, at, new Vector2D(render.getWidth(),render.getWidth()));
             }
