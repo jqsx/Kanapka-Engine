@@ -45,6 +45,10 @@ public class Particles implements RenderLayer {
 
             }
         }
+
+        for (int i = 0; i < node.childCount(); i++) {
+            renderParticleSystem(main, node.getChild(i));
+        }
     }
 
     private void recalculateCameraView() {
