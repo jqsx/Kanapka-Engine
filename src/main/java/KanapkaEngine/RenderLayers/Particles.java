@@ -19,14 +19,9 @@ public class Particles implements RenderLayer {
     public void Render(Graphics2D main) {
         recalculateCameraView();
         try {
-            TSLinkedList<Node>.Element last = SceneManager.getSceneNodes().getRoot();
-
             SceneManager.getSceneNodes().foreach(node -> {
-                Point point = new Point((int) node.transform.getPosition().getX(), (int) node.transform.getPosition().getY());
-                if (cameraView.contains(point)) {
-                    renderParticleSystem(main, node);
-                    World.Visible_Nodes++;
-                }
+                renderParticleSystem(main, node);
+                World.Visible_Nodes++;
             });
         } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
 
@@ -35,14 +30,18 @@ public class Particles implements RenderLayer {
 
     private void renderParticleSystem(Graphics2D main, Node node) {
         Renderer renderer = node.getRenderer();
-        if (renderer instanceof ParticleSystem particleSystem) {
-            try {
-                particleSystem.getList().foreach(particle -> {
-                    renderParticle(main, (Particle) particle, particleSystem);
-                });
 
-            } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
+        Point point = new Point((int) node.transform.getPosition().getX(), (int) node.transform.getPosition().getY());
+        if (cameraView.contains(point)) {
+            if (renderer instanceof ParticleSystem particleSystem) {
+                try {
+                    particleSystem.getList().foreach(particle -> {
+                        renderParticle(main, (Particle) particle, particleSystem);
+                    });
 
+                } catch (ConcurrentModificationException | NullPointerException | ArrayIndexOutOfBoundsException ignore) {
+
+                }
             }
         }
 
@@ -53,11 +52,11 @@ public class Particles implements RenderLayer {
 
     private void recalculateCameraView() {
         if (Camera.main == null) return;
-        Vector2D camera_position = Camera.main.getPosition();
+        Vector2D camera_position = Camera.main.getPosition().scalarMultiply(-1);
         Dimension window_bounds = KanapkaEngine.Game.Window.getWindowSize();
-        if (!Engine.isMacOS()) window_bounds.setSize(window_bounds.width / 2.0, window_bounds.height / 2.0);
+        window_bounds = new Dimension(window_bounds.width * 2, window_bounds.height * 2);
         double g_size = SceneManager.getGlobalSize();
-        cameraView.setBounds((int) (camera_position.getX() - window_bounds.width / g_size), (int) (camera_position.getY() - window_bounds.height / g_size), (int) (window_bounds.width * 2 / g_size), (int) (window_bounds.height * 2 / g_size));
+        cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
     }
 
     private void renderParticle(Graphics2D main, Particle node, ParticleSystem<Particle> system) {
@@ -78,6 +77,12 @@ public class Particles implements RenderLayer {
                 at.translate(pos.getX(), pos.getY());
                 at.rotate(rad, render.getWidth() / 2.0, render.getHeight() / 2.0);
                 main.drawImage(render, at, null);
+
+                if (node instanceof Renderable renderable)
+                    renderable.onRender(main, at);
+                if (system instanceof Renderable renderable) {
+                    renderable.onRender(main, at);
+                }
             }
         }
     }
