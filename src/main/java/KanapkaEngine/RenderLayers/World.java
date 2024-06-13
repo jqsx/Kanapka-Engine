@@ -42,7 +42,8 @@ public class World implements RenderLayer {
         Dimension window_bounds = KanapkaEngine.Game.Window.getWindowSize();
         window_bounds = new Dimension(window_bounds.width * 2, window_bounds.height * 2);
         double g_size = SceneManager.getGlobalSize();
-        cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
+        cameraView.setBounds((int) (-window_bounds.width / 2.0), (int) (-window_bounds.height / 2.0), window_bounds.width, window_bounds.height);
+        //cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
     }
 
     private void n_renderNode(Graphics2D main, Node node) {
@@ -58,11 +59,15 @@ public class World implements RenderLayer {
 
             if (cameraView.intersects(boundingTextureBox)) {
                 main.drawImage(render, at, null);
-                if (node instanceof Renderable renderable) {
-                    renderable.onRender(main, at);
-                }
-                if (node.getRenderer() instanceof Renderable renderable) {
-                    renderable.onRender(main, at);
+                {
+                    Vector2D screenPosition = new Vector2D(at.getTranslateX(), at.getTranslateY());
+                    Vector2D size = new Vector2D(render.getWidth() * at.getScaleX(), render.getHeight() * at.getScaleY());
+                    if (node instanceof Renderable renderable) {
+                        renderable.onRender(main, screenPosition, size);
+                    }
+                    if (node.getRenderer() instanceof Renderable renderable) {
+                        renderable.onRender(main, screenPosition, size);
+                    }
                 }
                 //drawOutline(main, at, new Vector2D(render.getWidth(),render.getWidth()));
             }

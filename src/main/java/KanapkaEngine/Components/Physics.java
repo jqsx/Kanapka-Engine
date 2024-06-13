@@ -200,8 +200,11 @@ public class Physics {
         {
             Rigidbody rb = other.getRigidbody();
             if (rb != null) {
-                rb.addVelocity(velocity.scalarMultiply(node.getRigidbody().getBounce() / rb.getMass()));
+                Vector2D v = velocity.scalarMultiply(node.getRigidbody().getBounce() / rb.getMass());
+                rb.addVelocity(v);
             }
+
+
         }
 
         if (Math.abs(nodeDiffScaled.getY()) < Math.abs(nodeDiffScaled.getX())) {

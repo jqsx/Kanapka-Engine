@@ -65,6 +65,8 @@ public class TSLinkedList<T> {
     public void removeIf(Predicate<T> predicate) {
         Element last = getRoot();
 
+        if (last == null) return;
+
         while (last != null) {
             if (predicate.test(last.getValue()))
                 last.remove();
@@ -172,7 +174,8 @@ public class TSLinkedList<T> {
             if (removed) return;
             if (root == this) {
                 root = this.next;
-                root.last = null;
+                if (root != null)
+                    root.last = null;
             }
             if (last != null)
                 last.next = next;
@@ -185,6 +188,10 @@ public class TSLinkedList<T> {
 
         public final T getValue() {
             return value;
+        }
+
+        protected final Element clone() {
+            return new Element(value, last, next);
         }
     }
 }

@@ -31,7 +31,7 @@ public class Particles implements RenderLayer {
     private void renderParticleSystem(Graphics2D main, Node node) {
         Renderer renderer = node.getRenderer();
 
-        Point point = new Point((int) node.transform.getPosition().getX(), (int) node.transform.getPosition().getY());
+        Point point = Camera.main.WorldToScreenPosition(node.transform.getPosition());
         if (cameraView.contains(point)) {
             if (renderer instanceof ParticleSystem particleSystem) {
                 try {
@@ -52,39 +52,60 @@ public class Particles implements RenderLayer {
 
     private void recalculateCameraView() {
         if (Camera.main == null) return;
-        Vector2D camera_position = Camera.main.getPosition().scalarMultiply(-1);
+        Vector2D camera_position = Camera.main.getPosition();
         Dimension window_bounds = KanapkaEngine.Game.Window.getWindowSize();
-        window_bounds = new Dimension(window_bounds.width * 2, window_bounds.height * 2);
         double g_size = SceneManager.getGlobalSize();
-        cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
+        window_bounds = new Dimension((int) (window_bounds.width * 2 / g_size), (int) (window_bounds.height * 2 / g_size));
+        cameraView.setBounds((int) (-window_bounds.width / 2.0), (int) (-window_bounds.height / 2.0), window_bounds.width, window_bounds.height);
+        //cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
     }
 
     private void renderParticle(Graphics2D main, Particle node, ParticleSystem<Particle> system) {
         BufferedImage render = system.getRender(node);
         if (render != null) {
-            Vector2D camera_position = Camera.main.getPosition();
-            Vector2D position = node.getPosition().subtract(new Vector2D(render.getWidth() / 2.0, render.getHeight() / 2.0));
-            double g_size = SceneManager.getGlobalSize();
-            Vector2D size = system.getParent().transform.getSize();
-            size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
-            boundingTextureBox.setBounds((int) -position.getX() - (int) (render.getWidth() * size.getX()), (int) -position.getY() - (int) (render.getHeight() * size.getY()), (int) (render.getWidth() * size.getX()) * 2, (int) (render.getHeight() * size.getY()) * 2);
+
+            AffineTransform at = getTransform(node, system);
+
+            boundingTextureBox.setBounds((int) at.getTranslateX(), (int) at.getTranslateY(), (int) (render.getWidth() * at.getScaleX()), (int) (render.getHeight() * at.getScaleY()));
 
             if (cameraView.intersects(boundingTextureBox)) {
-                Vector2D pos = new Vector2D((camera_position.getX() + position.getX() - system.getParent().transform.getSize().getX() / 2.0) / size.getX(), -(camera_position.getY() + position.getY() - system.getParent().transform.getSize().getY() / 2.0) / size.getY());
-                AffineTransform at = new AffineTransform();
-                double rad = Math.toRadians(system.getParent().transform.getRotation());
-                at.scale(size.getX() * g_size, size.getY() * g_size);
-                at.translate(pos.getX(), pos.getY());
-                at.rotate(rad, render.getWidth() / 2.0, render.getHeight() / 2.0);
+
+
                 main.drawImage(render, at, null);
 
-                if (node instanceof Renderable renderable)
-                    renderable.onRender(main, at);
-                if (system instanceof Renderable renderable) {
-                    renderable.onRender(main, at);
+                {
+                    Vector2D screenPosition = new Vector2D(at.getTranslateX(), at.getTranslateY());
+                    Vector2D _size = new Vector2D(render.getWidth() * at.getScaleX(), render.getHeight() * at.getScaleY());
+                    if (node instanceof Renderable renderable) {
+                        renderable.onRender(main, screenPosition, _size);
+                    }
+                    if (system instanceof Renderable renderable) {
+                        renderable.onRender(main, screenPosition, _size);
+                    }
                 }
             }
         }
+    }
+
+    private AffineTransform getTransform(Particle node, ParticleSystem<Particle> system) {
+        AffineTransform at = new AffineTransform();
+
+        BufferedImage render = system.getRender(node);
+
+        double gSize = SceneManager.getGlobalSize();
+
+        Vector2D size = system.getParent().transform.getSize();
+        size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
+        Vector2D cameraPosition = Camera.main.getPosition();
+        Vector2D position = new Vector2D(Math.round(cameraPosition.getX() * gSize) / gSize, Math.round(cameraPosition.getY() * gSize) / gSize).add(system.getParent().transform.getPosition());
+        position = position.add(new Vector2D(0, system.getParent().transform.getSize().getY() / 2.0));
+
+        //position = new Vector2D(gSize / position.getX(), gSize / position.getY());
+
+        at.scale(size.getX() * gSize, size.getY() * gSize);
+        at.translate(position.getX() / size.getX(), -position.getY() / size.getY());
+
+        return at;
     }
 
     @Override

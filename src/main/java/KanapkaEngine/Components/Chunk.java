@@ -1,7 +1,6 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.SceneManager;
-import KanapkaEngine.RenderLayers.ChunkNodes;
 import KanapkaEngine.RenderLayers.Chunks;
 import KanapkaEngine.Time;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
@@ -10,15 +9,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.List;
 
 public class Chunk {
     /**
@@ -59,9 +51,15 @@ public class Chunk {
         }
     }
 
+    /**
+     * Appends a ChunkNode to the chunk.
+     * @param node
+     */
     public final void appendNode(ChunkNode node) {
-        if (!chunkNodeList.contains(node))
-            chunkNodeList.add(node);
+        Objects.requireNonNull(node);
+        if (node.getChunkParent() == this)
+            if (!chunkNodeList.contains(node))
+                chunkNodeList.add(node);
     }
 
     public final void removeNode(ChunkNode node) {
@@ -100,6 +98,10 @@ public class Chunk {
         return new Block(this, p, id);
     }
 
+    /**
+     * Internal chunk bounds method.
+     * @return The bounds of the chunk relative to the camera view.
+     */
     public Rectangle2D getBounds() {
         Vector2D camera_position = Camera.main.getPosition();
         Vector2D position = getPosition();
@@ -341,10 +343,6 @@ public class Chunk {
         this.lastCollisionCheck = Time.time();
     }
 
-    /**
-     * Debug
-     * @return
-     */
     public boolean recentlyCollisionChecked() {
         return (lastCollisionCheck + 0.5) > Time.time();
     }

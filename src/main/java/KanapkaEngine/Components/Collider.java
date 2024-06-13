@@ -4,6 +4,9 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.geom.Rectangle2D;
 
+/**
+ * Standard AABB box collider. The collider scales along with the object size and can have an additional offset and size as well.
+ */
 public class Collider extends Component {
     private Vector2D size = new Vector2D(1, 1);
     private Vector2D offset = new Vector2D(0, 0);

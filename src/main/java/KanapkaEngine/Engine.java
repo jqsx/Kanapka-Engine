@@ -68,6 +68,7 @@ public class Engine {
         init_game_thread();
 
         load(new Input());
+        load(new Scheduler());
 
         window.setVisible(true);
     }

@@ -13,8 +13,6 @@ public class ParticleSystem<T extends Particle> extends Renderer {
 
     private double last_update = Time.time();
 
-    private Iterator<T> _iterator;
-
     public ParticleSystem() {
 
     }
@@ -23,14 +21,16 @@ public class ParticleSystem<T extends Particle> extends Renderer {
         return particles;
     }
 
-    public final void Spawn() {
-        SpawnOffset(new Vector2D(0, 0));
+    public final T Spawn() {
+        return SpawnOffset(new Vector2D(0, 0));
     }
 
-    public final void SpawnOffset(Vector2D offset) {
+    public final T SpawnOffset(Vector2D offset) {
         T t = createParticle(offset);
-        particles.addEnd(t);
+        particles.addStart(t);
         onSpawn(t);
+
+        return t;
     }
 
     public T createParticle(Vector2D offset) {
