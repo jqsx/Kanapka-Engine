@@ -142,7 +142,7 @@ public class Renderer extends Canvas implements MouseListener {
         double ratio = min / max; //Math.min(getHeight() / (double)target.height, getWidth() / (double)target.width) / (double) Math.max(getHeight() / (double)target.height, getWidth() / (double)target.width);
 
         at.scale(1.0 / ratio,  1.0 / ratio);
-        at.translate(getWidth() * ratio / div, getHeight() * ratio / div);
+        at.translate(getWidth() * (ratio / div), getHeight() * (ratio / div));
         if (Camera.main != null)
             at.rotate(Camera.main.getRotation());
 
