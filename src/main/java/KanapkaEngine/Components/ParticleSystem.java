@@ -9,12 +9,20 @@ import java.util.LinkedList;
 
 public class ParticleSystem<T extends Particle> extends Renderer {
     private final TSLinkedList<T> particles = new TSLinkedList<>();
-    private static final int UPDATE_RATE = 60;
+    private int UPDATE_RATE = 60;
 
     private double last_update = Time.time();
 
     public ParticleSystem() {
 
+    }
+
+    public final int getFPS() {
+        return UPDATE_RATE;
+    }
+
+    public final void setFPS(int f) {
+        this.UPDATE_RATE = f;
     }
 
     public final TSLinkedList<T> getList() {
@@ -34,7 +42,7 @@ public class ParticleSystem<T extends Particle> extends Renderer {
     }
 
     public T createParticle(Vector2D offset) {
-        return null;
+        return (T) new Particle(offset);
     }
 
     public void onSpawn(T instance) {
@@ -53,12 +61,11 @@ public class ParticleSystem<T extends Particle> extends Renderer {
     public final void Update() {
         if (last_update + 1.0 / UPDATE_RATE < Time.time()) {
             double fixedDelta = Time.time() - last_update;
-
-            Loop(fixedDelta);
-            CheckExpired();
-            onUpdate(fixedDelta);
-
             last_update = Time.time();
+
+            CheckExpired();
+            Loop(fixedDelta);
+            onUpdate(fixedDelta);
         }
     }
 
