@@ -28,6 +28,14 @@ public class Camera {
         return position;
     }
 
+    /**
+     * Shitty fix because camera coordinates are inverted idk this should work in world coordinates now tho
+     * @return
+     */
+    public Vector2D getWorldPosition() {
+        return position.scalarMultiply(-1);
+    }
+
     public void setPosition(Vector2D position) {
         this.position = position;
     }
@@ -42,9 +50,9 @@ public class Camera {
         double gSize = SceneManager.getGlobalSize();
 
         Vector2D cameraPosition = Camera.main.getPosition();
-        Vector2D position = new Vector2D(Math.round(cameraPosition.getX() * gSize) / gSize, Math.round(cameraPosition.getY() * gSize) / gSize).add(world);
+        Vector2D position = cameraPosition.add(world);
 
-        return new Point((int) position.getX(), (int) position.getY());
+        return new Point((int) (position.getX() * gSize), (int) (-position.getY() * gSize));
     }
 
     public double getRotation() {

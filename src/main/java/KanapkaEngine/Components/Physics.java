@@ -54,6 +54,81 @@ public class Physics {
         return intersections;
     }
 
+    public static Block[] castBlocks(Vector2D position, Vector2D size) {
+        List<Block> blocks = new ArrayList<>();
+
+        Vector2D chunkSize = Chunk.getSize();
+
+        World world = World.getCurrent();
+
+        int block_row = SceneManager.getCurrentlyLoaded().getChunkSize();
+
+        if (world == null)
+            return new Block[0];
+
+        Point chunkPoint = new Point(
+                (int) (Math.floor(position.getX() / chunkSize.getX()) + round(Mathf.Clamp01(-position.getX()))),
+                (int) (Math.floor(position.getY() / chunkSize.getY()) + 1));
+
+        for (int x = -2; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                Chunk check = world.get(chunkPoint.x + x, chunkPoint.y + y);
+
+                if (check != null) {
+
+                    check.collisionCheck();
+
+                    for (int i = 0; i < block_row; i++) {
+                        for (int j = 0; j < block_row; j++) {
+                            Point p = new Point( i, j);
+                            Block block = check.getBlock(p);
+
+                            if (block != null && !block.getBlockData().floor) {
+                                if (getRect(position, size).intersects(getBlockCollider(block)))
+                                    blocks.add(block);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Block[] arr = new Block[blocks.size()];
+
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = blocks.get(i);
+        }
+
+        return arr;
+    }
+
+    public static Node[] castNode(Vector2D position, Vector2D size) {
+        List<Node> nodes = new ArrayList<>();
+        SceneManager.getSceneNodes().foreach((other) -> {
+            if (other.getCollider() == null) return;
+            if (other.getCollider().getRectangle().intersects(getRect(position, size)))
+                nodes.add(other);
+        });
+
+        Node[] arr = new Node[nodes.size()];
+
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = nodes.get(i);
+        }
+
+        return arr;
+    }
+
+    private static Rectangle2D getRect(Vector2D position, Vector2D scale) {
+        double w = scale.getX();
+        double h = scale.getY();
+
+        double x = (position.getX() - scale.getX() / 2.0);
+        double y = (position.getY() - scale.getY() / 2.0);
+
+        return new Rectangle2D.Double(x, y, w, h);
+    }
+
     private static Vector2D checkSide(Ray ray, Vector2D A, Vector2D B) {
         Vector2D C = ray.origin;
         Vector2D D = ray.origin.add(ray.direction);
@@ -159,11 +234,11 @@ public class Physics {
         }
     }
 
-    private double round(double a) {
+    private static double round(double a) {
         return Math.floor(Math.abs(a) + 0.5) * Math.signum(a);
     }
 
-    private Rectangle2D getBlockCollider(Block block) {
+    private static Rectangle2D getBlockCollider(Block block) {
         double blockScale = Chunk.BLOCK_SCALE;
         Vector2D blockPosition = block.getPosition();
         blockCollider.setRect(blockPosition.getX(), blockPosition.getY() - blockScale, blockScale, blockScale);
@@ -187,6 +262,10 @@ public class Physics {
 
         if (nodeCollider == null || otherCollider == null) return;
 
+        if (!(nodeCollider.collideNodes && otherCollider.collideNodes)) return;
+
+        if (otherCollider.noMass && !nodeCollider.noMass) return;
+
         Vector2D nodeSize = nodeCollider.getScaledSize();
         Vector2D otherSize = otherCollider.getScaledSize();
 
@@ -197,7 +276,7 @@ public class Physics {
         Vector2D position = node.transform.getPosition();
         Vector2D velocity = node.getRigidbody().getVelocity();
 
-        {
+/*        {
             Rigidbody rb = other.getRigidbody();
             if (rb != null) {
                 Vector2D v = velocity.scalarMultiply(node.getRigidbody().getBounce() / rb.getMass());
@@ -205,7 +284,7 @@ public class Physics {
             }
 
 
-        }
+        }*/
 
         if (Math.abs(nodeDiffScaled.getY()) < Math.abs(nodeDiffScaled.getX())) {
             position = new Vector2D((position.getX() + (otherSize.getX() / 2.0 + nodeSize.getX() / 2.0 - Math.abs(nodeDiff.getX())) * Math.signum(nodeDiff.getX())), position.getY());
@@ -264,7 +343,7 @@ public class Physics {
 
         if (total > 0.01) {
             hit.clip.setFramePosition(0);
-            hit.fc.setValue((float)Math.random() / 4f);
+            hit.setVolume((float)Math.random() / 4f);
             hit.clip.start();
         }
     }

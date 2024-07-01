@@ -1,5 +1,6 @@
 package KanapkaEngine.Game;
 
+import KanapkaEngine.Components.TSLinkedList;
 import KanapkaEngine.Time;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Scheduler extends Plugin {
-    private static final LinkedList<delayed> list = new LinkedList<>();
+    private static final TSLinkedList<delayed> list = new TSLinkedList<>();
 
     @Override
     public void Update() {
@@ -16,7 +17,7 @@ public class Scheduler extends Plugin {
     }
 
     public static void delay(Runnable task, double delay) {
-        list.add(new delayed(task, delay));
+        list.addStart(new delayed(task, delay));
     }
 
     static class delayed {

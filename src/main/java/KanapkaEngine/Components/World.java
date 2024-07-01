@@ -105,27 +105,19 @@ public class World {
                         byte[] data = chunk.getSave();
                         chunkData.add(data);
                         chunkCount++;
-                        System.out.println(chunkCount);
                     }
                 }
             }
 
-            System.out.println("Prepared " + chunkCount + " for save.");
-
             File path = new File(worldName + "/rx"+x+"y"+y+".rg");
             try (FileOutputStream stream = new FileOutputStream(path)) {
                 stream.write(chunkCount);
-                int i = 0;
                 for (byte[] data : chunkData) {
                     stream.write(data);
-                    i++;
-                    System.out.println("Saving chunk N" + i);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            System.out.println("Saved region x: " + x + " y: " + y);
         }
     }
 
@@ -212,5 +204,42 @@ public class World {
             new Block(chunk, new Point(x, y), id).special_id = buffer.getInt();
         }
         return chunk;
+    }
+
+    public static void setBlock(Vector2D position, int id) {
+        World world = getCurrent();
+
+        if (!SceneManager.hasScene()) return;
+        int csize = SceneManager.getCurrentlyLoaded().getChunkSize() * Chunk.BLOCK_SCALE;
+
+        if (world != null) {
+            Vector2D scaled = position.scalarMultiply(1.0 / (double)csize);
+
+            Point c = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+
+            Chunk chunk = world.get(c.x, c.y);
+
+            if (chunk != null) {
+                scaled = position.scalarMultiply(1.0 / Chunk.BLOCK_SCALE);
+
+                scaled = chunk.getPosition().subtract(scaled);
+
+                Point b = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+
+                b = new Point(b.x % csize, b.y % csize);
+
+                if (id >= 0)
+                    chunk.createBlock(id, b);
+                else
+                    chunk.setAir(b);
+            }
+        }
+    }
+
+    private static double floor(double v) {
+        if (v < 0) {
+            return -Math.floor(Math.abs(v) + 1);
+        }
+        else return Math.floor(v);
     }
 }

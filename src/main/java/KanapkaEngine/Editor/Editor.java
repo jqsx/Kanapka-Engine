@@ -50,7 +50,7 @@ public class Editor {
 
             @Override
             public void Update() {
-
+                World.setBlock(Camera.main.getWorldPosition(), 0);
             }
 
             @Override
@@ -78,6 +78,19 @@ public class Editor {
                     createSampleChunk(new Point(i, j));
                 }
             }
+        }
+
+        {
+            Text text = new Text();
+            text.setText("Big boy");
+
+            text.setSize(30);
+
+            Image image = new Image();
+
+            image.size = new Vector2D(200, 200);
+
+            image.setImage(ResourceLoader.loadResource("none.png"));
         }
 
 //        engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));

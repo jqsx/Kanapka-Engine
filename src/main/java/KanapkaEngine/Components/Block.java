@@ -20,6 +20,8 @@ public class Block {
     public int id = 0;
     public int special_id = 0;
 
+    public int damage = 0;
+
     public Block(Chunk parent, Point point) {
         Objects.requireNonNull(point, "Missing chunk point.");
         Objects.requireNonNull(parent, "Missing parent.");
@@ -57,5 +59,9 @@ public class Block {
         //double s = Chunk.BLOCK_SCALE / 2.0;
         Vector2D p = parent.getBlockPosition(point);
         return p;//.add(new Vector2D(-s * (p.getX() < 0 ? 1.0 : 0.0), 0));
+    }
+
+    public final Vector2D getCenter() {
+        return getPosition().add(new Vector2D(Chunk.BLOCK_SCALE / 4.0, -Chunk.BLOCK_SCALE / 2.0));
     }
 }

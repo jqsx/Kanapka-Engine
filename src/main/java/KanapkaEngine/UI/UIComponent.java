@@ -5,9 +5,11 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class UIComponent {
     private List<UIComponent> children = new ArrayList<>();
@@ -16,6 +18,8 @@ public class UIComponent {
     public Vector2D origin = new Vector2D(0.5, 0.5);
     public Vector2D position = Vector2D.ZERO;
     public Vector2D size = new Vector2D(100, 100);
+
+    private final List<Runnable> onClick = new ArrayList<>();
 
     public final UIComponent getParent() {
         return parent;
@@ -38,6 +42,20 @@ public class UIComponent {
         for (int i = 0; i < children.size(); i++) {
             children.get(i).Render(main);
         }
+    }
+
+    public final void addClickListener(Runnable r) {
+        onClick.add(r);
+    }
+
+    public final boolean onClick() {
+        Rectangle2D bounds = new Rectangle2D.Double();
+        if (true) {
+            for (Runnable r : onClick)
+                r.run();
+        }
+
+        return true;
     }
 
     private AffineTransform getTransformation() {

@@ -23,16 +23,11 @@ public class Chunk {
     private final World parent;
     private final Point point;
     private final Block[][] blocks;
-
     private boolean isReadyForRender = false;
-
     private boolean isActive = false;
     private boolean needReRender = false;
-
     private long lastActive = System.currentTimeMillis();
-
     private final LinkedList<ChunkNode> chunkNodeList = new LinkedList<>();
-
     private double lastCollisionCheck = Time.time();
 
     /**

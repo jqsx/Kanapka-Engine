@@ -1,12 +1,16 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Time;
+
 public class AudioSource extends Component {
 
     public AudioClip clip;
 
     public boolean playOnAwake = false;
 
-    public float distanceFalloff = 0.1f;
+    public float falloffDistance = 100f;
+
+    private double udv_delay = Time.time();
 
     @Override
     public void Awake() {
@@ -18,15 +22,35 @@ public class AudioSource extends Component {
         if (getParent() == null) return;
         if (Camera.main == null) return;
         if (isPlaying()) return;
+        if (getP() > 0.99f) return;
         if (clip != null) {
             clip.clip.setFramePosition(0);
-            float distance = (float) Mathf.distance(Camera.main.getPosition(), getParent().transform.getPosition());
-            float p = (float) Mathf.Clamp((distance) / 1000.0f, 0.0, 1.0);
-            clip.fc.setValue(p);
-            System.out.println(clip.fc.getValue());
-            clip.clip.start();
 
+            updateDistanceVolume();
+            clip.clip.start();
         }
+    }
+
+    @Override
+    public void Update() {
+        if (udv_delay < Time.time()) {
+            updateDistanceVolume();
+
+            udv_delay = Time.time() + 0.02;
+        }
+    }
+
+    private void updateDistanceVolume() {
+
+        float p = getP();
+
+        clip.setVolume(1f - p);
+    }
+
+    private float getP() {
+        float distance = (float) Mathf.aDistance(Camera.main.getWorldPosition(), getParent().transform.getPosition());
+        return (float) Mathf.Clamp((distance) / falloffDistance, 0.0, 1.0);
+
     }
 
     public final boolean isPlaying() {

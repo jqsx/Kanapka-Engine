@@ -13,6 +13,10 @@ public class Collider extends Component {
 
     private Rectangle2D rect = new Rectangle2D.Double();
 
+    public boolean collideNodes = true;
+
+    public boolean noMass = false;
+
     public Collider() {
 
     }

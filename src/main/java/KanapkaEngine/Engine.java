@@ -50,7 +50,6 @@ public class Engine {
         System.out.println();
         System.out.println();
         System.out.println("Thank you for using KanapkaEngine!");
-        System.out.println("Version: " + getClass().getPackage().getImplementationVersion());
         System.out.println();
         for (int i = 0; i < 10; i++)
             System.out.print("-");
@@ -186,7 +185,7 @@ public class Engine {
         load(chunks);
         RegisterRenderLayer(new ChunkNodes());
         RegisterRenderLayer(new UI());
-        RegisterRenderLayer(new Debug());
+//        RegisterRenderLayer(new Debug());
         RegisterRenderLayer(new World());
         RegisterRenderLayer(new Particles());
     }

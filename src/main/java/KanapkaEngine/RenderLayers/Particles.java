@@ -54,8 +54,8 @@ public class Particles implements RenderLayer {
         if (Camera.main == null) return;
         Vector2D camera_position = Camera.main.getPosition();
         Dimension window_bounds = KanapkaEngine.Game.Window.getWindowSize();
+        window_bounds = new Dimension(window_bounds.width * 2, window_bounds.height * 2);
         double g_size = SceneManager.getGlobalSize();
-        window_bounds = new Dimension((int) (window_bounds.width * 2 / g_size), (int) (window_bounds.height * 2 / g_size));
         cameraView.setBounds((int) (-window_bounds.width / 2.0), (int) (-window_bounds.height / 2.0), window_bounds.width, window_bounds.height);
         //cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
     }
@@ -69,8 +69,6 @@ public class Particles implements RenderLayer {
             boundingTextureBox.setBounds((int) at.getTranslateX(), (int) at.getTranslateY(), (int) (render.getWidth() * at.getScaleX()), (int) (render.getHeight() * at.getScaleY()));
 
             if (cameraView.intersects(boundingTextureBox)) {
-
-
                 main.drawImage(render, at, null);
 
                 {
@@ -97,7 +95,7 @@ public class Particles implements RenderLayer {
         Vector2D size = system.getParent().transform.getSize();
         size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
         Vector2D cameraPosition = Camera.main.getPosition();
-        Vector2D position = new Vector2D(Math.round(cameraPosition.getX() * gSize) / gSize, Math.round(cameraPosition.getY() * gSize) / gSize).add(system.getParent().transform.getPosition());
+        Vector2D position = cameraPosition.add(node.getPosition());
         position = position.add(new Vector2D(0, system.getParent().transform.getSize().getY() / 2.0));
 
         //position = new Vector2D(gSize / position.getX(), gSize / position.getY());

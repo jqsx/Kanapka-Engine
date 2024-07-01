@@ -11,9 +11,12 @@ public class BlockData {
      * Do nodes with the rigidbody component collide with this block?
      */
     public boolean hasCollision = true;
+    public boolean floor = false;
     private BufferedImage render;
     private String texture;
     int render_stage = Renderer.NOT_STARTED;
+
+    public int blockStrength = 1;
 
     @Deprecated
     public boolean scale_render = true;
