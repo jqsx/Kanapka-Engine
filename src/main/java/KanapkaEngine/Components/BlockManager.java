@@ -15,8 +15,10 @@ public class BlockManager {
      * Registers a new block into the global list.
      * @param data
      */
-    public static void createBlock(BlockData data) {
+    public static int createBlock(BlockData data) {
         blockData.add(data);
+        data.setBlockID(blockData.size() - 1);
+        return data.getID();
     }
 
     /**
@@ -30,7 +32,7 @@ public class BlockManager {
 
     private static ArrayList<BlockData> init() {
         ArrayList<BlockData> data = new ArrayList<>();
-        data.add(new BlockData("wooden.png"));
+        data.add(new BlockData("logo.png"));
         return data;
     }
 

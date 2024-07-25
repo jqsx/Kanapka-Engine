@@ -57,7 +57,9 @@ public class Window extends JFrame {
     }
 
     public static Dimension getWindowSize() {
-        return new Dimension(main.getWidth(), main.getHeight());
+        if (Engine.isMacOS())
+            return new Dimension(main.getWidth(), main.getHeight());
+        else return new Dimension((int) (main.getWidth() / 2.0), (int) (main.getHeight() / 2.0));
     }
 
     public final void setWorldBackdrop(Color color) {

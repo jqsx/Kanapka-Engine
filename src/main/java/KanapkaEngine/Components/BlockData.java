@@ -16,6 +16,8 @@ public class BlockData {
     private String texture;
     int render_stage = Renderer.NOT_STARTED;
 
+    private int block_id;
+
     public int blockStrength = 1;
 
     @Deprecated
@@ -29,6 +31,14 @@ public class BlockData {
     }
     public BlockData() {
 
+    }
+
+    protected void setBlockID(int id) {
+        this.block_id = id;
+    }
+
+    public final int getID() {
+        return block_id;
     }
 
     /**
