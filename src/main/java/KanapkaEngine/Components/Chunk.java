@@ -239,11 +239,11 @@ public class Chunk {
         Vector2D p = new Vector2D(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
         if (block.getBlockData().scale_render) {
             at.scale(BLOCK_SCALE / (double) block_render.getWidth(), BLOCK_SCALE / (double) block_render.getHeight());
-            at.translate(p.getX(), p.getY());
+            at.translate(p.getX() * ((double) block_render.getWidth() / BLOCK_SCALE), p.getY() * ((double) block_render.getHeight() / BLOCK_SCALE));
         }
         else {
-            Vector2D m = new Vector2D(BLOCK_SCALE / 2.0 - block_render.getWidth() / 2.0, BLOCK_SCALE - block_render.getHeight() / 2.0);
-            at.translate(block.point.x * BLOCK_SCALE + m.getX(), block.point.y * BLOCK_SCALE + m.getY());
+            //Vector2D m = new Vector2D(BLOCK_SCALE / 2.0 - block_render.getWidth() / 2.0, BLOCK_SCALE - block_render.getHeight() / 2.0);
+            at.translate(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
         }
         return at;
     }

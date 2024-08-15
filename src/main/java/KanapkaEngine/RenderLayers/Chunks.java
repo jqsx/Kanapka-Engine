@@ -87,6 +87,7 @@ public class Chunks extends Plugin implements RenderLayer {
         }
     }
 
+    @Deprecated
     private void oldrenderChunk(Graphics2D main, Chunk chunk) {
         BufferedImage render = chunk.getRender();
         if (render != null) {

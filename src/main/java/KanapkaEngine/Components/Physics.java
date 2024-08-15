@@ -269,7 +269,7 @@ public class Physics {
         Vector2D nodeSize = nodeCollider.getScaledSize();
         Vector2D otherSize = otherCollider.getScaledSize();
 
-        Vector2D nodeDiff = node.transform.getPosition().add(new Vector2D( node.transform.getSize().getX() / 2.0, 0)).subtract(other.transform.getPosition().add(new Vector2D( other.transform.getSize().getX() / 2.0, 0)));
+        Vector2D nodeDiff = node.transform.getPosition().subtract(other.transform.getPosition());//.add(new Vector2D( node.transform.getSize().getX() / 2.0, 0)).subtract(other.transform.getPosition().add(new Vector2D( other.transform.getSize().getX() / 2.0, 0)));
         Vector2D combinedScale = nodeSize.add(otherSize);
         Vector2D nodeDiffScaled = new Vector2D(nodeDiff.getX() / combinedScale.getX(), nodeDiff.getY() / combinedScale.getY());
 
@@ -316,7 +316,8 @@ public class Physics {
 
         Vector2D otherColliderPosition = new Vector2D(otherCollider.getX(), otherCollider.getY() + otherCollider.getHeight() / 2.0);
 
-        Vector2D nodeDiff = node.transform.getPosition().add(new Vector2D( node.transform.getSize().getX() / 2.0, 0)).subtract(new Vector2D(otherColliderPosition.getX(), otherColliderPosition.getY()).add(new Vector2D( otherSize.getX() / 2.0, 0)));
+//.add(new Vector2D( node.transform.getSize().getX() / 2.0, 0))
+        Vector2D nodeDiff = node.transform.getPosition().subtract(new Vector2D(otherColliderPosition.getX(), otherColliderPosition.getY()));
         Vector2D combinedScale = nodeSize.add(otherSize);
         Vector2D nodeDiffScaled = new Vector2D(nodeDiff.getX() / combinedScale.getX(), nodeDiff.getY() / combinedScale.getY());
 

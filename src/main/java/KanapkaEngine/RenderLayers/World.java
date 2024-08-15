@@ -94,13 +94,13 @@ public class World implements RenderLayer {
         size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
         Vector2D cameraPosition = Camera.main.getPosition();
         Vector2D position = cameraPosition.add(node.transform.getPosition());
-        position = position.add(new Vector2D(0, node.transform.getSize().getY() / 2.0));
+        position = position.add(new Vector2D(-node.transform.getSize().getX() / 2.0, node.transform.getSize().getY() / 2.0));
 
         //position = new Vector2D(gSize / position.getX(), gSize / position.getY());
 
         at.scale(size.getX() * gSize, size.getY() * gSize);
         at.translate(position.getX() / size.getX(), -position.getY() / size.getY());
-        at.rotate(node.transform.getRotation(), at.getTranslateX(), at.getTranslateY());
+        at.rotate(node.transform.getRotation(), -size.getX() * gSize, -size.getY() * gSize);
 
         return at;
     }

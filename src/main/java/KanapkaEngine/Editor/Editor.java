@@ -50,7 +50,7 @@ public class Editor {
 
             @Override
             public void Update() {
-                World.setBlock(Camera.main.getWorldPosition(), 0);
+
             }
 
             @Override
@@ -67,16 +67,15 @@ public class Editor {
             node.getRenderer().setTexture(ResourceLoader.loadResource("wooden.png"));
 
             node.transform.setSize(new Vector2D(16, 16));
-            node.transform.setPosition(new Vector2D(20, 200));
+
+            node.addComponent(new Collider());
 
             node.append();
         }
 
-        {
-            for (int i = -10; i < 10; i++) {
-                for (int j = -10; j < 10; j++) {
-                    createSampleChunk(new Point(i, j));
-                }
+        for (int i = -5; i <= 5; i++) {
+            for (int j = -5; j <= 5; j++) {
+                createSampleChunk(new Point(i, j));
             }
         }
 

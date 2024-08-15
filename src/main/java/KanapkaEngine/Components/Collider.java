@@ -38,12 +38,25 @@ public class Collider extends Component {
         return getRectangle().intersects(other.getRectangle());
     }
 
-    public Rectangle2D getRectangle() {
+    @Deprecated
+    public Rectangle2D _getRectangle() {
         Vector2D scaledSize = getScaledSize();
         double w = scaledSize.getX();
         double h = scaledSize.getY();
 
         double x = (offset.getX() + (getParent().transform.getPosition().getX() + getParent().transform.getSize().getX() / 2.0) - scaledSize.getX() / 2.0);
+        double y = (offset.getY() + getParent().transform.getPosition().getY() - scaledSize.getY() / 2.0);
+
+        rect.setRect(x, y, w, h);
+        return rect;
+    }
+
+    public Rectangle2D getRectangle() {
+        Vector2D scaledSize = getScaledSize();
+        double w = scaledSize.getX();
+        double h = scaledSize.getY();
+
+        double x = (offset.getX() + getParent().transform.getPosition().getX() - scaledSize.getX() / 2.0);
         double y = (offset.getY() + getParent().transform.getPosition().getY() - scaledSize.getY() / 2.0);
 
         rect.setRect(x, y, w, h);
