@@ -314,10 +314,10 @@ public class Physics {
         Vector2D nodeSize = nodeCollider.getScaledSize();
         Vector2D otherSize = new Vector2D(Chunk.BLOCK_SCALE, Chunk.BLOCK_SCALE);
 
-        Vector2D otherColliderPosition = new Vector2D(otherCollider.getX(), otherCollider.getY() + otherCollider.getHeight() / 2.0);
+        Vector2D otherColliderPosition = new Vector2D(otherCollider.getX() + otherCollider.getWidth() / 2.0, otherCollider.getY() + otherCollider.getHeight() / 2.0);
 
 //.add(new Vector2D( node.transform.getSize().getX() / 2.0, 0))
-        Vector2D nodeDiff = node.transform.getPosition().subtract(new Vector2D(otherColliderPosition.getX(), otherColliderPosition.getY()));
+        Vector2D nodeDiff = node.transform.getPosition().subtract(otherColliderPosition);
         Vector2D combinedScale = nodeSize.add(otherSize);
         Vector2D nodeDiffScaled = new Vector2D(nodeDiff.getX() / combinedScale.getX(), nodeDiff.getY() / combinedScale.getY());
 
