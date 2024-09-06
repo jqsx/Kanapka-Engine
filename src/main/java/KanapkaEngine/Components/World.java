@@ -236,6 +236,34 @@ public class World {
         }
     }
 
+    public static Block getBlock(Vector2D position) {
+        World world = getCurrent();
+
+        if (!SceneManager.hasScene()) return null;
+        int csize = SceneManager.getCurrentlyLoaded().getChunkSize() * Chunk.BLOCK_SCALE;
+
+        if (world != null) {
+            Vector2D scaled = position.scalarMultiply(1.0 / (double)csize);
+
+            Point c = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+
+            Chunk chunk = world.get(c.x, c.y);
+
+            if (chunk != null) {
+                scaled = position.scalarMultiply(1.0 / Chunk.BLOCK_SCALE);
+
+                scaled = chunk.getPosition().subtract(scaled);
+
+                Point b = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+
+                b = new Point(b.x % csize, b.y % csize);
+
+                return chunk.getBlock(b);
+            }
+        }
+        return null;
+    }
+
     private static double floor(double v) {
         if (v < 0) {
             return -Math.floor(Math.abs(v) + 1);

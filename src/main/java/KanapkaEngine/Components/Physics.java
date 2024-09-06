@@ -247,6 +247,8 @@ public class Physics {
 
     private void VelocityUpdate(Node node, double fixedDelta) {
         node.getRigidbody().addVelocity(gravity.scalarMultiply(fixedDelta));
+
+        node.getRigidbody().setVelocity(Mathf.Lerp(node.getRigidbody().getVelocity(), Vector2D.ZERO, fixedDelta / 15.0));
     }
 
     private void ApplyVelocity(Node node, double fixedDelta) {

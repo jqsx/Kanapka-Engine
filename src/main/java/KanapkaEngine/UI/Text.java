@@ -1,6 +1,7 @@
 package KanapkaEngine.UI;
 
 import KanapkaEngine.Engine;
+import KanapkaEngine.Game.Input;
 import KanapkaEngine.Game.Window;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -14,10 +15,15 @@ import java.awt.image.BufferedImage;
 public class Text extends UIComponent {
     private String text = "";
     private float size = 10f;
-    private Color color = Color.white;
+    private int color = 0xffffff;
+    private int background = 0x000000;
     private Font font;
 
     private Rectangle2D bounds;
+
+    public Text() {
+
+    }
 
     @Override
     public void render(Graphics2D main, AffineTransform at) {
@@ -25,7 +31,11 @@ public class Text extends UIComponent {
             main.setFont(font.deriveFont(size));
         else
             main.setFont(main.getFont().deriveFont(size));
-        bounds = drawText(main, text, color.getRGB(), 0x000000, pivot, new Point((int) position.getX(), (int) position.getY()));
+
+        Vector2D p = getTPosition();
+
+        //bounds != null ? bounds.toString() + "\n" + Input.getMousePosition().toString() : "Bonkers"
+        bounds = drawText(main, text, color, background, pivot, new Point((int) p.getX(), (int) p.getY()));
     }
 
     private Rectangle2D drawText(Graphics2D g, String text, int color, int color2, Pivot pivot, Point offset) {
@@ -46,6 +56,17 @@ public class Text extends UIComponent {
         g.drawRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
         g.setColor(c);
         g.drawString(text, (int) bounds.getX(), (int) (bounds.getY() + g.getFont().getSize()));
+
+        Vector2D mouse = Input.getMousePosition();
+
+        if (bounds.contains(mouse.getX(), mouse.getY())) {
+            g.setColor(new Color(255, 255, 255, 150));
+        }
+        else {
+            g.setColor(new Color(255, 255, 255, 50));
+        }
+
+        g.fillRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
 
         return bounds;
     }
@@ -74,11 +95,23 @@ public class Text extends UIComponent {
         this.font = font;
     }
 
-    public Color getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(int color) {
         this.color = color;
+    }
+
+    public int getBackground() {
+        return background;
+    }
+
+    public void setBackground(int background) {
+        this.background = background;
+    }
+
+    public Rectangle2D getBounds() {
+        return bounds;
     }
 }

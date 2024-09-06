@@ -31,6 +31,8 @@ public class NetworkServer implements Runnable {
 
     private static HashMap<Integer, NetworkConnectionToClient> connections = new HashMap<>();
 
+    public static boolean isServer = false;
+
     public static void StartServer() {
         try {
             if (serverSocket != null)
@@ -47,6 +49,8 @@ public class NetworkServer implements Runnable {
             System.out.println("[SERVER] Starting server thread.");
             serverThread = new Thread(instance = new NetworkServer());
             serverThread.start();
+
+            isServer = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,6 +86,8 @@ public class NetworkServer implements Runnable {
         serverSocket = null;
         serverThread = null;
         instance = null;
+
+        isServer = false;
     }
 
     public static NetworkConnectionToClient getConn(int id) {

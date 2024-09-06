@@ -9,7 +9,7 @@ public class HelloWorld extends Route {
 
     @Override
     public void ServerClient_IN(NetworkConnectionToClient connectionToClient, byte[] data) {
-        System.out.println("Hello to the server.");
+        System.out.println("Hello to the server. " + connectionToClient.getId());
     }
 
     @Override

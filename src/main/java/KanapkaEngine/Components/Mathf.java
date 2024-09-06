@@ -1,9 +1,13 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.SceneManager;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.Random;
+import static java.lang.Math.*;
 
 public class Mathf {
     private Mathf() {}
@@ -86,6 +90,26 @@ public class Mathf {
     private static double sqrt_iteration(double a, double previous) {
         double m = (a / previous - previous) / 2.0;
         return previous + m;
+    }
+
+    public static AffineTransform getTransform(final Vector2D in_position, final Vector2D in_size) {
+        AffineTransform at = new AffineTransform();
+
+        double gSize = SceneManager.getGlobalSize();
+
+        Vector2D size = in_size.scalarMultiply(1);
+        //size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
+        Vector2D cameraPosition = Camera.main.getPosition();
+        Vector2D position = cameraPosition.add(in_position);
+        position = position.add(new Vector2D(-in_size.getX() / 2.0, in_size.getY() / 2.0));
+
+        //position = new Vector2D(gSize / position.getX(), gSize / position.getY());
+
+        at.scale(size.getX() * gSize, size.getY() * gSize);
+        at.translate(position.getX() / size.getX(), -position.getY() / size.getY());
+        //at.rotate(0, -size.getX() * gSize, -size.getY() * gSize);
+
+        return at;
     }
 
     public static class NoiseGenerator {

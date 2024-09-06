@@ -23,7 +23,9 @@ public class Image extends UIComponent {
             ata.translate(x, y);
             main.drawImage(render, at, null);*/
 
-            drawImage(main, render, pivot, new Point((int) position.getX(), (int) position.getY()));
+            Vector2D p = getTPosition();
+
+            drawImage(main, render, pivot, new Point((int) p.getX(), (int) p.getY()));
         }
     }
 

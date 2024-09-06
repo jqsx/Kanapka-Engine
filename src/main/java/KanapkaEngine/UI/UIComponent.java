@@ -1,5 +1,6 @@
 package KanapkaEngine.UI;
 
+import KanapkaEngine.Game.Input;
 import KanapkaEngine.Game.Window;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -7,9 +8,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 public class UIComponent {
     private List<UIComponent> children = new ArrayList<>();
@@ -31,31 +32,45 @@ public class UIComponent {
 
     public void setParent(UIComponent parent) {
         Objects.requireNonNull(parent);
-        if (this.parent != null)
-            this.parent.children.remove(this);
-        this.parent = parent;
-        parent.children.add(this);
+        try {
+            if (this.parent != null)
+                this.parent.children.remove(this);
+            this.parent = parent;
+            parent.children.add(this);
+        } catch (ConcurrentModificationException e) {
+            setParent(parent);
+        }
     }
 
     public final void Render(Graphics2D main) {
         render(main, getTransformation());
-        for (int i = 0; i < children.size(); i++) {
-            children.get(i).Render(main);
+        for (UIComponent child : children) {
+            child.Render(main);
         }
+    }
+
+    public Vector2D getTPosition() {
+        if (parent != null)
+            return getParent().getTPosition().add(position);
+        else return position;
     }
 
     public final void addClickListener(Runnable r) {
-        onClick.add(r);
+        if (!onClick.contains(r))
+            onClick.add(r);
     }
 
-    public final boolean onClick() {
+    public final void removeClickListener(Runnable r) {
+        onClick.remove(r);
+    }
+
+    private void onClick() {
         Rectangle2D bounds = new Rectangle2D.Double();
-        if (true) {
+        Vector2D mouse = Input.getMousePosition();
+        if (bounds.contains(mouse.getX(), mouse.getY())) {
             for (Runnable r : onClick)
                 r.run();
         }
-
-        return true;
     }
 
     private AffineTransform getTransformation() {
@@ -66,6 +81,12 @@ public class UIComponent {
         at.translate(x, y);
         //at.translate(origin.getX() * size.getX(), origin.getY() * size.getY());
         return at;
+    }
+
+    protected void buttonClickUpdate() {
+        onClick();
+        for (UIComponent component : children)
+            component.buttonClickUpdate();
     }
 
     public void render(Graphics2D main, AffineTransform at) {
