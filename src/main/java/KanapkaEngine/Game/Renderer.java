@@ -1,14 +1,11 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Components.Camera;
 import KanapkaEngine.Components.RenderLayer;
 import KanapkaEngine.Components.RenderStage;
-import KanapkaEngine.Engine;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
@@ -54,7 +51,6 @@ public class Renderer extends Canvas implements MouseListener {
         if (is_custom_titlebar)
             update_window_position();
 
-        if (engine.getRenderThreadID() != Thread.currentThread().getId()) return;
         if (render_frame_delay + Second / engineConfiguration.FPSLIMIT > System.nanoTime()) return;
         delta = (System.nanoTime() - render_frame_delay) / (double) Second;
         FPS = (int) (1.0 / delta);
@@ -66,6 +62,9 @@ public class Renderer extends Canvas implements MouseListener {
         return FPS;
     }
     public static double getDelta() {return delta;}
+
+    double size_X = 0;
+    double size_Y = 0;
 
     private void Frame() {
         BufferStrategy bs = getBufferStrategy();
@@ -81,6 +80,8 @@ public class Renderer extends Canvas implements MouseListener {
 
         Graphics2D main = (Graphics2D) bs.getDrawGraphics();
         main.setColor(getBackground());
+        size_X = getWidth();
+        size_Y = getHeight();
         main.fillRect(0, 0, getWidth(), getHeight());
         main.setClip(0, 0, getWidth(), getHeight());
 
@@ -107,20 +108,9 @@ public class Renderer extends Canvas implements MouseListener {
         Render_Layer(main, FOREGROUND);
 
         main.setTransform(new AffineTransform());
-        if (is_custom_titlebar)
-            render_custom_titlebar(main);
 
         bs.show();
         main.dispose();
-    }
-
-    private void render_custom_titlebar(Graphics2D main) {
-        main.setColor(new Color(100, 100, 100, 100));
-
-        main.fillRect(0, 0, getWidth() * 2, 30);
-
-        main.setColor(Color.darkGray);
-        main.fillRect(0, 0, 60, 30);
     }
 
     private void update_window_position() {
@@ -133,18 +123,15 @@ public class Renderer extends Canvas implements MouseListener {
     }
 
     private AffineTransform getWorldTransform() {
-        double div = Engine.isMacOS() ? 1.0 : 2.0;
+        double div = 1; //Engine.isMacOS() ? 1.0 : 2.0;
         AffineTransform at = new AffineTransform();
-        Dimension target = Toolkit.getDefaultToolkit().getScreenSize();
+
         double min = Math.min(getWidth(), getHeight());
         double max = Math.max(getWidth(), getHeight());
 
         double ratio = min / max; //Math.min(getHeight() / (double)target.height, getWidth() / (double)target.width) / (double) Math.max(getHeight() / (double)target.height, getWidth() / (double)target.width);
 
-        at.scale(1.0 / ratio,  1.0 / ratio);
-        at.translate(getWidth() * (ratio / div), getHeight() * (ratio / div));
-        if (Camera.main != null)
-            at.rotate(Camera.main.getRotation());
+        at.translate(size_X / 2.0, size_Y / 2.0);
 
         return at;
     }

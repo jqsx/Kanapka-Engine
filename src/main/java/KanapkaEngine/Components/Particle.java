@@ -1,9 +1,7 @@
 package KanapkaEngine.Components;
 
-import KanapkaEngine.Time;
+import KanapkaEngine.Game.Time;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-
-import java.io.Serial;
 
 public class Particle {
     private Vector2D position = new Vector2D(0.0, 0.0);

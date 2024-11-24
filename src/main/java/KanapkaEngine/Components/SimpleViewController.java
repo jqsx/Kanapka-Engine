@@ -1,12 +1,11 @@
 package KanapkaEngine.Components;
 
-import KanapkaEngine.Engine;
+import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.Input;
 import KanapkaEngine.Game.Plugin;
 import KanapkaEngine.Game.Scene;
 import KanapkaEngine.Game.SceneManager;
-import KanapkaEngine.Time;
-import KanapkaEngine.UI.UIComponent;
+import KanapkaEngine.Game.Time;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -23,7 +22,7 @@ public class SimpleViewController extends Plugin implements MouseWheelListener, 
 
     @Override
     public void Apply(Engine engine) {
-        engine.addListener(this);
+//        engine.addListener(this);
     }
 
     @Override

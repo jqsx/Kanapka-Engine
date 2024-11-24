@@ -1,16 +1,10 @@
 package KanapkaEngine.UI;
 
-import KanapkaEngine.Engine;
-import KanapkaEngine.Game.Input;
-import KanapkaEngine.Game.Window;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 public class Text extends UIComponent {
     private String text = "";
@@ -39,36 +33,37 @@ public class Text extends UIComponent {
     }
 
     private Rectangle2D drawText(Graphics2D g, String text, int color, int color2, Pivot pivot, Point offset) {
-        Dimension screen = Window.getWindowSize();
-        Point move = new Point(screen.width + pivot.getX() * screen.width + offset.x, screen.height + pivot.getY() * screen.height + offset.y);
-
-        Rectangle2D bounds = g.getFontMetrics().getStringBounds(text, g);
-
-        bounds.setRect(move.x - (bounds.getWidth() / 2.0) * (1 + pivot.getX()), move.y - (bounds.getHeight() / 2.0) * (1 + pivot.getY()), bounds.getWidth(), bounds.getHeight());
-
-        Color c = new Color(color);
-        Color darker = new Color(color2);
-
-        g.setColor(darker);
-        g.fillRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
-        g.setColor(darker.brighter());
-        g.setStroke(new BasicStroke(3f));
-        g.drawRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
-        g.setColor(c);
-        g.drawString(text, (int) bounds.getX(), (int) (bounds.getY() + g.getFont().getSize()));
-
-        Vector2D mouse = Input.getMousePosition();
-
-        if (bounds.contains(mouse.getX(), mouse.getY())) {
-            g.setColor(new Color(255, 255, 255, 150));
-        }
-        else {
-            g.setColor(new Color(255, 255, 255, 50));
-        }
-
-        g.fillRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
-
-        return bounds;
+//        Dimension screen = Window.getWindowSize();
+//        Point move = new Point(screen.width + pivot.getX() * screen.width + offset.x, screen.height + pivot.getY() * screen.height + offset.y);
+//
+//        Rectangle2D bounds = g.getFontMetrics().getStringBounds(text, g);
+//
+//        bounds.setRect(move.x - (bounds.getWidth() / 2.0) * (1 + pivot.getX()), move.y - (bounds.getHeight() / 2.0) * (1 + pivot.getY()), bounds.getWidth(), bounds.getHeight());
+//
+//        Color c = new Color(color);
+//        Color darker = new Color(color2);
+//
+//        g.setColor(darker);
+//        g.fillRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
+//        g.setColor(darker.brighter());
+//        g.setStroke(new BasicStroke(3f));
+//        g.drawRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
+//        g.setColor(c);
+//        g.drawString(text, (int) bounds.getX(), (int) (bounds.getY() + g.getFont().getSize()));
+//
+//        Vector2D mouse = Input.getMousePosition();
+//
+//        if (bounds.contains(mouse.getX(), mouse.getY())) {
+//            g.setColor(new Color(255, 255, 255, 150));
+//        }
+//        else {
+//            g.setColor(new Color(255, 255, 255, 50));
+//        }
+//
+//        g.fillRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
+//
+//        return bounds;
+        return null;
     }
 
     public String getText() {

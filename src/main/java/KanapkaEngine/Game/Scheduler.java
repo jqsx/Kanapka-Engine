@@ -1,11 +1,6 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.TSLinkedList;
-import KanapkaEngine.Time;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Scheduler extends Plugin {
     private static final TSLinkedList<delayed> list = new TSLinkedList<>();

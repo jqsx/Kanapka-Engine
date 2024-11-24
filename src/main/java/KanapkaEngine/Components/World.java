@@ -1,19 +1,15 @@
 package KanapkaEngine.Components;
 
-import KanapkaEngine.Game.Scene;
+import KanapkaEngine.Game.Chunk;
 import KanapkaEngine.Game.SceneManager;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

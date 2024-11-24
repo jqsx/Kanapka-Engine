@@ -1,5 +1,6 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Chunk;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;

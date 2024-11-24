@@ -55,17 +55,17 @@ public class Transform {
     }
 
     public AffineTransform worldToScreenTransform() {
-        if (Camera.main == null)
-            return null;
-        Dimension viewport = Window.getWindowSize();
-        double scale = SceneManager.getGlobalSize();
+//        if (Camera.main == null)
+//            return null;
+//        Dimension viewport = Window.getWindowSize();
+//        double scale = SceneManager.getGlobalSize();
         AffineTransform transform = new AffineTransform();
-        Vector2D worldPoint = getPosition();
-        Vector2D camera = Camera.main.getPosition();
-        transform.translate(worldPoint.getX() - camera.getX(), worldPoint.getY() - camera.getY()); // Translate to camera space
-        // Perform combined scaling and rotation in screen space
-        transform.concatenate(createRotationAndScaleTransform(size.getX() * scale, size.getY() * scale, rotation));
-        transform.translate(viewport.width / 2.0, viewport.height / 2.0); // Center in viewport
+//        Vector2D worldPoint = getPosition();
+//        Vector2D camera = Camera.main.getPosition();
+//        transform.translate(worldPoint.getX() - camera.getX(), worldPoint.getY() - camera.getY()); // Translate to camera space
+//        // Perform combined scaling and rotation in screen space
+//        transform.concatenate(createRotationAndScaleTransform(size.getX() * scale, size.getY() * scale, rotation));
+//        transform.translate(viewport.width / 2.0, viewport.height / 2.0); // Center in viewport
         return transform;
     }
 

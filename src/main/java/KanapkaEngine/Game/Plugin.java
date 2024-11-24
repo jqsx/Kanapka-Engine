@@ -1,7 +1,5 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Engine;
-
 public class Plugin {
     public void Apply(Engine engine) {
 

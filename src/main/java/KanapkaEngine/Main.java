@@ -17,12 +17,4 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Editor.StartEditor();
     }
-
-    public static class Test {
-        public int a = 0;
-
-        public Test() {
-
-        }
-    }
 }

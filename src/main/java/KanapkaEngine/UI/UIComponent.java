@@ -75,10 +75,10 @@ public class UIComponent {
 
     private AffineTransform getTransformation() {
         AffineTransform at = new AffineTransform();
-        Dimension windowSize = Window.getWindowSize();
-        float x = (float)(position.getX() + (pivot.getX() >= 0 ? windowSize.width / (2.0 - pivot.getX()) : 0));
-        float y = (float)(position.getY() + (pivot.getY() >= 0 ? windowSize.height / (2.0 - pivot.getY()) : 0));
-        at.translate(x, y);
+//        Dimension windowSize = Window.getWindowSize();
+//        float x = (float)(position.getX() + (pivot.getX() >= 0 ? windowSize.width / (2.0 - pivot.getX()) : 0));
+//        float y = (float)(position.getY() + (pivot.getY() >= 0 ? windowSize.height / (2.0 - pivot.getY()) : 0));
+//        at.translate(x, y);
         //at.translate(origin.getX() * size.getX(), origin.getY() * size.getY());
         return at;
     }

@@ -1,11 +1,9 @@
 package KanapkaEngine.Components;
 
-import KanapkaEngine.Time;
+import KanapkaEngine.Game.Time;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.image.BufferedImage;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 public class ParticleSystem<T extends Particle> extends Renderer {
     private final TSLinkedList<T> particles = new TSLinkedList<>();

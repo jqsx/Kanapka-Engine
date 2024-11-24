@@ -1,7 +1,6 @@
 package KanapkaEngine.RenderLayers;
 
 import KanapkaEngine.Components.*;
-import KanapkaEngine.Engine;
 import KanapkaEngine.Game.SceneManager;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ConcurrentModificationException;
-import java.util.LinkedList;
 
 public class Particles implements RenderLayer {
 
@@ -51,12 +49,12 @@ public class Particles implements RenderLayer {
     }
 
     private void recalculateCameraView() {
-        if (Camera.main == null) return;
-        Vector2D camera_position = Camera.main.getPosition();
-        Dimension window_bounds = KanapkaEngine.Game.Window.getWindowSize();
-        window_bounds = new Dimension(window_bounds.width * 2, window_bounds.height * 2);
-        double g_size = SceneManager.getGlobalSize();
-        cameraView.setBounds((int) (-window_bounds.width / 2.0), (int) (-window_bounds.height / 2.0), window_bounds.width, window_bounds.height);
+//        if (Camera.main == null) return;
+//        Vector2D camera_position = Camera.main.getPosition();
+//        Dimension window_bounds = KanapkaEngine.Game.Window.getWindowSize();
+//        window_bounds = new Dimension(window_bounds.width * 2, window_bounds.height * 2);
+//        double g_size = SceneManager.getGlobalSize();
+//        cameraView.setBounds((int) (-window_bounds.width / 2.0), (int) (-window_bounds.height / 2.0), window_bounds.width, window_bounds.height);
         //cameraView.setBounds((int) (camera_position.getX() - window_bounds.width * 2 / g_size), (int) (camera_position.getY() - window_bounds.height * 2 / g_size), (int) (window_bounds.width * 4 / g_size), (int) (window_bounds.height * 4 / g_size));
     }
 

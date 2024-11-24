@@ -1,13 +1,11 @@
 package KanapkaEngine.Editor;
 
 import KanapkaEngine.Components.*;
-import KanapkaEngine.Engine;
+import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.Plugin;
-import KanapkaEngine.Game.SceneManager;
-import KanapkaEngine.Time;
+import KanapkaEngine.Game.Time;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;

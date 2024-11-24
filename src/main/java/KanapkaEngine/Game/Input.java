@@ -1,14 +1,10 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.TSLinkedList;
-import KanapkaEngine.Engine;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class Input extends Plugin implements KeyListener, MouseMotionListener, MouseListener {
     private static final TSLinkedList<Character> keysDown = new TSLinkedList<>();

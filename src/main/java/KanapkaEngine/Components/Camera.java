@@ -41,8 +41,9 @@ public class Camera {
     }
 
     public Vector2D ScreenToWorldPosition(Point screen_position) {
-        Dimension screen = Window.getWindowSize();
-        return position.subtract(new Vector2D(screen.getWidth() / 2.0, screen.getHeight() / 2.0)).add(new Vector2D(screen_position.x, -screen_position.y));
+//        Dimension screen = Window.getWindowSize();
+//        return position.subtract(new Vector2D(screen.getWidth() / 2.0, screen.getHeight() / 2.0)).add(new Vector2D(screen_position.x, -screen_position.y));
+        return null;
     }
 
     public Point WorldToScreenPosition(Vector2D world) {

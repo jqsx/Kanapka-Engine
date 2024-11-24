@@ -1,25 +1,17 @@
 package KanapkaEngine.Editor;
 
 import KanapkaEngine.Components.*;
-import KanapkaEngine.Components.Component;
 import KanapkaEngine.Components.Renderer;
-import KanapkaEngine.Engine;
+import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.*;
-import KanapkaEngine.Game.Window;
-import KanapkaEngine.RenderLayers.TestWorldDraw;
-import KanapkaEngine.UI.Image;
 import KanapkaEngine.UI.Text;
-import KanapkaEngine.UI.UI;
-import KanapkaEngine.UI.UIComponent;
-import org.apache.commons.math3.analysis.function.Add;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import javax.tools.Tool;
 import java.awt.*;
-import java.util.Arrays;
 
 public class Editor {
     private static boolean editor = false;
+    static Text text;
     public static void StartEditor() throws Exception {
         editor = true;
         EditorScene scene = new EditorScene();
@@ -42,10 +34,16 @@ public class Editor {
         engineConfiguration.width = screenHeight;
         engineConfiguration.height = screenHeight;
         engineConfiguration.window_title = "Editor";
+
         Engine engine = new Engine(new GameLogic() {
             @Override
             public void Start() {
+                {
+                    text = new Text();
+                    text.setText("Big boy");
 
+                    text.setSize(30);
+                }
             }
 
             @Override
@@ -79,26 +77,11 @@ public class Editor {
             }
         }
 
-        {
-            Text text = new Text();
-            text.setText("Big boy");
-
-            text.setSize(30);
-        }
-
-//        engine.getWindow().setWorldBackdrop(new Color(99, 153, 107));
-        engine.getWindow().setWorldBackdrop(new Color(220, 220, 220));
-
         SimpleViewController controller = new SimpleViewController();
         EditorActions editorActions = new EditorActions();
 
         engine.load(controller);
         engine.load(editorActions);
-
-        engine.InitializeLayers();
-        engine.RegisterRenderLayer(new EditorRenderLayer());
-        engine.RegisterRenderLayer(new EditorRenderWorld());
-        engine.RegisterRenderLayer(new TestWorldDraw());
     }
 
     private static void AddBlocks(Chunk chunk) {

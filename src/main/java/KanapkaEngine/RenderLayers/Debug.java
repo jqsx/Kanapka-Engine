@@ -2,14 +2,10 @@ package KanapkaEngine.RenderLayers;
 
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Game.Renderer;
-import KanapkaEngine.Game.SceneManager;
-import KanapkaEngine.Game.Window;
-import KanapkaEngine.Time;
+import KanapkaEngine.Game.Time;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-
-import static KanapkaEngine.Game.Window.getWindowSize;
 
 public class Debug implements RenderLayer {
     public Debug() {
@@ -26,8 +22,6 @@ public class Debug implements RenderLayer {
             main.setColor(Color.red);
             main.setFont(main.getFont().deriveFont(20f));
             Rectangle2D rect = main.getFont().getStringBounds("No cameras drawing.", main.getFontRenderContext());
-            main.drawString("No cameras drawing.", (int) (getWindowSize().width / 2 - rect.getWidth() / 2), (int) (getWindowSize().height / 2 - rect.getHeight() / 2));
-            main.drawArc(0, 0, getWindowSize().width, getWindowSize().height, 0, 360);
         }
     }
 
