@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL30.*;
-public class AttributeBuffer {
-    protected static final List<AttributeBuffer> LoadedAttributeBuffers = new ArrayList<>();
+public final class AttributeBuffer {
+    static final List<AttributeBuffer> LoadedAttributeBuffers = new ArrayList<>();
 
     private final int VAO;
     private final int EBO;
@@ -24,6 +24,8 @@ public class AttributeBuffer {
     private final HashMap<String, AttribLocationData> AttributeBuffers = new HashMap<>();
 
     private boolean isDisposed = false;
+
+    private int vertexCount = 0;
 
     public AttributeBuffer() {
         int[] vaoptr = new int[1];
@@ -128,6 +130,8 @@ public class AttributeBuffer {
     public final void BufferTriangles(int[] triangles) {
         bind();
 
+        vertexCount = triangles.length;
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer buffer = stack.callocInt(triangles.length);
 
@@ -161,7 +165,8 @@ public class AttributeBuffer {
         }
     }
 
-    public final void Dispose() {
+    void Dispose(boolean removeFromLoaded) {
+        unbind();
         for (AttribLocationData data : AttributeBuffers.values()) {
             glDeleteBuffers(data.VBO);
         }
@@ -170,8 +175,17 @@ public class AttributeBuffer {
 
         glDeleteVertexArrays(VAO);
 
-        LoadedAttributeBuffers.remove(this);
+        if (removeFromLoaded)
+            LoadedAttributeBuffers.remove(this);
 
         isDisposed = true;
+    }
+
+    public void Dispose() {
+        Dispose(true);
+    }
+
+    public int getVertexCount() {
+        return vertexCount;
     }
 }

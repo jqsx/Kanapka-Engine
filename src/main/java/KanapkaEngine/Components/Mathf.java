@@ -1,13 +1,12 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Camera;
 import KanapkaEngine.Game.SceneManager;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.Random;
-import static java.lang.Math.*;
 
 public class Mathf {
     private Mathf() {}
@@ -19,6 +18,9 @@ public class Mathf {
 
     public static double Lerp(double a, double b, double t) {
         return a + (b - a) * Clamp(t, 0, 1);
+    }
+    public static float Lerp(float a, float b, float t) {
+        return (float) (a + (b - a) * Clamp(t, 0, 1));
     }
 
     public static Vector2D Lerp(Vector2D a, Vector2D b, double t) {

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SceneManager {
+    private static final Logger logger = new Logger("SCENE");
     private static Scene currentlyLoaded;
 
     private SceneManager() {
@@ -27,7 +28,7 @@ public class SceneManager {
     public static Scene loadScene(Scene scene) {
         if (scene.loaded())
             return currentlyLoaded = scene;
-        System.out.println("Scene isn't loaded");
+        logger.warn("Scene isn't loaded");
         return null;
     }
 

@@ -1,8 +1,8 @@
-package KanapkaEngine.Components;
+package KanapkaEngine.Game;
 
-import KanapkaEngine.Game.SceneManager;
-import KanapkaEngine.Game.Window;
+import KanapkaEngine.Components.Mathf;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Matrix4f;
 
 import java.awt.*;
 
@@ -18,6 +18,15 @@ public class Camera {
     private Vector2D position = new Vector2D(0, 0);
     private double rotation = 0f;
     public double size = 1;
+
+    public float NEAR = 0.01f;
+    public float FAR = 1000.f;
+    public float FOV = 60.f;
+
+    private Matrix4f projectionMatrix = new Matrix4f();
+
+    public Projection projection = Projection.ORTHOGRAPHIC;
+
     public Camera() {
         if (main == null) {
             main = this;
@@ -62,5 +71,36 @@ public class Camera {
 
     public void setRotation(double rotation) {
         this.rotation = rotation;
+    }
+
+    public static Matrix4f getProjectionMatrix() {
+        if (Camera.main == null)
+            return null;
+
+        return Camera.main.projectionMatrix;
+    }
+
+    static void createProjectionMatrix(float ratio) {
+        if (Camera.main == null)
+            return;
+
+        Matrix4f proj = Camera.main.projectionMatrix;
+        float size = (float) Camera.main.size;
+
+        float reverseRatio = 1.f / ratio;
+
+        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 2.0);
+        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 2.0);
+
+        if (main.projection == Projection.ORTHOGRAPHIC)
+            proj = proj.identity().ortho2D(-size * widthMult, size * widthMult, -size * heightMult, size * heightMult);
+        else if (main.projection == Projection.PERSPECTIVE)
+            proj = proj.identity().perspective((float)Math.toRadians(main.FOV), ratio, main.NEAR, main.FAR);
+
+        Camera.main.projectionMatrix = proj;
+    }
+
+    public enum Projection {
+        ORTHOGRAPHIC, PERSPECTIVE
     }
 }

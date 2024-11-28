@@ -1,11 +1,6 @@
 package KanapkaEngine.Components;
 
-import KanapkaEngine.Game.Engine;
-import KanapkaEngine.Game.Input;
-import KanapkaEngine.Game.Plugin;
-import KanapkaEngine.Game.Scene;
-import KanapkaEngine.Game.SceneManager;
-import KanapkaEngine.Game.Time;
+import KanapkaEngine.Game.*;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -14,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+@Deprecated
 public class SimpleViewController extends Plugin implements MouseWheelListener, KeyListener {
     Vector2D velocity = new Vector2D(0, 0);
     Vector2D range = new Vector2D(0.001, 30.0);

@@ -1,6 +1,5 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Components.RenderLayer;
 import KanapkaEngine.Components.RenderStage;
 
 import java.awt.*;
@@ -144,7 +143,7 @@ public class Renderer extends Canvas implements MouseListener {
 
     private void Render_Layer(Graphics2D main, List<RenderLayer> renderStage) {
         for (int i = 0; i < renderStage.size(); i++) {
-            renderStage.get(i).Render(main);
+            renderStage.get(i).Render();
         }
     }
 

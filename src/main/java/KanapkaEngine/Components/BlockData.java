@@ -14,7 +14,6 @@ public class BlockData {
     public boolean floor = false;
     private BufferedImage render;
     private String texture;
-    int render_stage = Renderer.NOT_STARTED;
 
     private int block_id;
 
@@ -47,14 +46,13 @@ public class BlockData {
     public final void Derender() {
         render.flush();
         render = null;
-        render_stage = Renderer.NOT_STARTED;
     }
 
     public final BufferedImage getRender() {
-        if (render_stage == Renderer.NOT_STARTED) {
+/*        if (render_stage == Renderer.NOT_STARTED) {
             render_stage = Renderer.STARTED;
             beginRender();
-        }
+        }*/
         return render;
     }
 
@@ -65,12 +63,12 @@ public class BlockData {
     public final void setImage(BufferedImage image) {
         Objects.requireNonNull(image);
         this.render = image;
-        this.render_stage = Renderer.FINISHED;
+/*        this.render_stage = Renderer.FINISHED;*/
     }
 
     private void beginRender() {
         if (texture == null) return;
         render = ResourceLoader.loadResource(texture);
-        render_stage = Renderer.FINISHED;
+      /*  render_stage = Renderer.FINISHED;*/
     }
 }

@@ -2,7 +2,6 @@ package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Components.Renderer;
-import KanapkaEngine.RenderLayers.Chunks;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -19,7 +18,7 @@ public class Chunk {
     public static final int BLOCK_SCALE = 16;
     private Rectangle2D bounds;
     private BufferedImage render;
-    private int render_stage = 0;
+    private Renderer.Stage render_stage = Renderer.Stage.NOTSTARTED;
     private final World parent;
     private final Point point;
     private final Block[][] blocks;
@@ -170,8 +169,8 @@ public class Chunk {
 
     public BufferedImage getRender() {
         if (!isActive) return null;
-        if (render_stage == KanapkaEngine.Components.Renderer.NOT_STARTED || needReRender) beginRender();
-        if (render_stage == KanapkaEngine.Components.Renderer.FINISHED) return render;
+        if (render_stage == Renderer.Stage.NOTSTARTED || needReRender) beginRender();
+        if (render_stage == Renderer.Stage.FINISHED || render_stage == Renderer.Stage.READYTOBIND || render_stage == Renderer.Stage.BOUND) return render;
         else return null;
     }
 
@@ -181,9 +180,11 @@ public class Chunk {
     }
 
     private void deactivate() {
-        if (isActive && render != null)
-            if (lastActive + 1000L * Chunks.DEACTIVATIONDELAY < System.currentTimeMillis()) {
-                render_stage = KanapkaEngine.Components.Renderer.NOT_STARTED;
+        if (isActive && render != null) {
+
+        }
+            if (lastActive + 50L < System.currentTimeMillis()) {
+                render_stage = Renderer.Stage.NOTSTARTED;
                 isActive = false;
                 render.flush();
                 render = null;
@@ -218,7 +219,7 @@ public class Chunk {
 
             render = image;
             g.dispose();
-            render_stage = KanapkaEngine.Components.Renderer.FINISHED;
+            render_stage = Renderer.Stage.FINISHED;
         }).start();
     }
 
@@ -254,7 +255,7 @@ public class Chunk {
     }
 
     private void finishedRender() {
-        render_stage = Renderer.FINISHED;
+//        render_stage = Renderer.FINISHED;
     }
 
     /**
@@ -301,9 +302,7 @@ public class Chunk {
             for (Block value : block) {
                 if (value == null) continue;
                 byte x = (byte) Mathf.Clamp(value.point.x, 0, 127);
-                System.out.println(x);
                 byte y = (byte) Mathf.Clamp(value.point.y, 0, 127);
-                System.out.println(y);
                 buffer.put(x);
                 buffer.put(y);
                 buffer.putInt(value.id);
@@ -323,7 +322,7 @@ public class Chunk {
      */
     protected static void UpdateChunks() {
         try {
-            Chunks.getActiveChunks().foreach(Chunk::Update);
+//            Chunks.getActiveChunks().foreach(Chunk::Update);
         } catch (ConcurrentModificationException ignore) {
 
         }

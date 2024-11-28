@@ -1,6 +1,6 @@
-package KanapkaEngine.Components;
+package KanapkaEngine.Game;
 
-import java.awt.*;
+import KanapkaEngine.Components.RenderStage;
 
 /**
  * A layer to the rendering stack to be rendered during the render process of the scene <br>
@@ -9,13 +9,20 @@ import java.awt.*;
 public interface RenderLayer {
     /**
      * Main graphics rendering interface where the render layer is able to access the Graphics2D component of the renderer.
-     * @param main
      */
-    void Render(Graphics2D main);
+    void Render();
 
     /**
      *
      * @return The internal stage telling the renderer in what order stack should this layer be rendered.
      */
     RenderStage getStage();
+
+    /**
+     * Register new render layer to the currently active engine
+     * @param layer
+     */
+    static void register(RenderLayer layer) {
+        Engine.registerLayer(layer);
+    }
 }

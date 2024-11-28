@@ -7,11 +7,19 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Window {
     private long window;
 
-    private int width;
-    private int height;
+    public int width;
+    public int height;
 
     public Window(long window) {
         this.window = window;
+
+        int[] widthptr = new int[1];
+        int[] heightptr = new int[1];
+
+        glfwGetWindowSize(window, widthptr, heightptr);
+
+        width = widthptr[0];
+        height = heightptr[0];
 
         glfwSetWindowSizeCallback(window, this::WindowSizeCallBack);
     }

@@ -46,10 +46,10 @@ public class ParticleSystem<T extends Particle> extends Renderer {
     public void onSpawn(T instance) {
 
     }
-
-    public BufferedImage getRender(Particle particle) {
-        return rendered_visual;
-    }
+// Todo
+//    public BufferedImage getRender(Particle particle) {
+//        return rendered_visual;
+//    }
 
     public double getLifeTime() {
         return 5.0;

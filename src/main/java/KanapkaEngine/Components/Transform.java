@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.SceneManager;
+import KanapkaEngine.Game.Transformation;
 import KanapkaEngine.Game.Window;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 public class Transform {
+    private final Transformation transformation;
     public final Node parent;
     private Vector2D position = new Vector2D(0, 0);
     private double rotation = 0;
@@ -15,6 +17,7 @@ public class Transform {
 
     protected Transform(Node parent) {
         this.parent = parent;
+        transformation = new Transformation(getPosition(), new Vector2D(1, 1), 0.f);
     }
 
     public Vector2D getPosition() {
@@ -74,5 +77,11 @@ public class Transform {
         transform.scale(scaleX, scaleY); // Apply scaling first
         transform.rotate(angle);          // Then rotate
         return transform;
+    }
+
+    public Transformation getTransformation() {
+        transformation.Update(getPosition(), size, (float) rotation);
+
+        return transformation;
     }
 }

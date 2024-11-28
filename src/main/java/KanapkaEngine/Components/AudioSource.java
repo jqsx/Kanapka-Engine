@@ -1,5 +1,6 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Camera;
 import KanapkaEngine.Game.Time;
 
 public class AudioSource extends Component {

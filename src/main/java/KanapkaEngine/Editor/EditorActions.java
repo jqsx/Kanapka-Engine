@@ -1,6 +1,7 @@
 package KanapkaEngine.Editor;
 
 import KanapkaEngine.Components.*;
+import KanapkaEngine.Game.Camera;
 import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.Plugin;
 import KanapkaEngine.Game.Time;
@@ -19,26 +20,7 @@ public class EditorActions extends Plugin implements MouseListener {
     private double delay = 0.0;
     @Override
     public void mouseClicked(MouseEvent e) {
-        {
-            Node node = new Node();
 
-            node.addComponent(new Renderer());
-
-            node.getRenderer().setTexture(ResourceLoader.loadResource("wooden.png"));
-
-            Random random = new Random();
-
-            node.transform.setSize(new Vector2D(16 + random.nextInt(16), 16 + random.nextInt(16)));
-            node.transform.setPosition(Camera.main.getWorldPosition());
-
-            node.addComponent(new Rigidbody());
-
-            node.addComponent(new Collider());
-
-            node.append();
-
-            sandwiches.add(node);
-        }
     }
 
     @Override

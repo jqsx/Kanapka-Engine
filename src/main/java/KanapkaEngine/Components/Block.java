@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Chunk;
+import KanapkaEngine.Game.Logger;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -13,6 +14,7 @@ import java.util.Objects;
  * Contains one id for the block type and another for locating the special object.
  */
 public class Block {
+    private static final Logger logger = new Logger("BLOCK");
     public final Chunk parent;
     /**
      * Block position in the chunk, not world block position.
@@ -36,7 +38,7 @@ public class Block {
         if (id < 0)
             return;
         if (id >= BlockManager.getBlockCount())
-            System.out.println("[WARN] Block id " + id + " is not registered in the BlockManager. Will default to block id 0 instead.");
+            logger.warn("Block id " + id + " is not registered in the BlockManager. Will default to block id 0 instead.");
         this.id = id;
     }
 

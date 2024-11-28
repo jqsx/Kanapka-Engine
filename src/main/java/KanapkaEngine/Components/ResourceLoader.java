@@ -4,6 +4,8 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 public class ResourceLoader {
@@ -68,6 +70,25 @@ public class ResourceLoader {
 
             return new AudioClip(clip);
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String loadStringFromFile(String path) {
+        try {
+            InputStream stream = loadStream(path);
+
+            StringBuilder builder = new StringBuilder();
+
+            int value;
+            while((value = stream.read()) != -1) {
+                char c = (char) value;
+
+                builder.append(c);
+            }
+
+            return builder.toString();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
