@@ -5,12 +5,7 @@ import KanapkaEngine.Components.Renderer;
 import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.*;
 import KanapkaEngine.RenderLayers.NodeLayer;
-import KanapkaEngine.UI.Text;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+import org.joml.Vector2d;
 
 public class Editor {
     private static boolean editor = false;
@@ -55,7 +50,7 @@ public class Editor {
 
             @Override
             public void Update() {
-                node.transform.setPosition(new Vector2D(Math.cos(Time.time()), Math.sin(Time.time())));
+                node.transform.setPosition(new Vector2d(Math.cos(Time.time()), Math.sin(Time.time())));
             }
 
             @Override

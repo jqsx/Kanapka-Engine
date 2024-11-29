@@ -1,6 +1,6 @@
 package KanapkaEngine.RenderLayers;
 
-import KanapkaEngine.Components.Node;
+import KanapkaEngine.Game.Node;
 import KanapkaEngine.Game.RenderLayer;
 import KanapkaEngine.Components.RenderStage;
 import KanapkaEngine.Components.Renderer;

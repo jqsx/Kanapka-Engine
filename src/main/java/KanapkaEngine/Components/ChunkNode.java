@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Chunk;
+import KanapkaEngine.Game.Node;
 
 import java.util.Objects;
 

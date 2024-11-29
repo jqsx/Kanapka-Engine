@@ -1,7 +1,7 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.TSLinkedList;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -64,8 +64,8 @@ public class Input extends Plugin implements KeyListener, MouseMotionListener, M
         mousePosition = e.getPoint();
     }
 
-    public static Vector2D getMousePosition() {
-        return new Vector2D(instance.mousePosition.x, instance.mousePosition.y);
+    public static Vector2d getMousePosition() {
+        return new Vector2d(instance.mousePosition.x, instance.mousePosition.y);
     }
 
     @Override

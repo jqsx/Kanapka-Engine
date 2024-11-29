@@ -2,7 +2,7 @@ package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Chunk;
 import KanapkaEngine.Game.SceneManager;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.io.File;
@@ -59,9 +59,9 @@ public class World {
      * @param position
      * @return World position region
      */
-    public static Point getRegionPoint(Vector2D position) {
+    public static Point getRegionPoint(Vector2d position) {
         double chunkSize = (Chunk.BLOCK_SCALE * SceneManager.getCurrentlyLoaded().getChunkSize());
-        return new Point((int) Math.floor(position.getX() / chunkSize / 32.0), (int) Math.floor(position.getY() / chunkSize / 32.0));
+        return new Point((int) Math.floor(position.x / chunkSize / 32.0), (int) Math.floor(position.y / chunkSize / 32.0));
     }
 
     /**
@@ -202,25 +202,25 @@ public class World {
         return chunk;
     }
 
-    public static void setBlock(Vector2D position, int id) {
+    public static void setBlock(Vector2d position, int id) {
         World world = getCurrent();
 
         if (!SceneManager.hasScene()) return;
         int csize = SceneManager.getCurrentlyLoaded().getChunkSize() * Chunk.BLOCK_SCALE;
 
         if (world != null) {
-            Vector2D scaled = position.scalarMultiply(1.0 / (double)csize);
+            Vector2d scaled = position.mul(1.0 / (double)csize);
 
-            Point c = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+            Point c = new Point((int) floor(scaled.x), (int) floor(scaled.y));
 
             Chunk chunk = world.get(c.x, c.y);
 
             if (chunk != null) {
-                scaled = position.scalarMultiply(1.0 / Chunk.BLOCK_SCALE);
+                scaled = position.mul(1.0 / Chunk.BLOCK_SCALE);
 
-                scaled = chunk.getPosition().subtract(scaled);
+                scaled = chunk.getPosition().sub(scaled);
 
-                Point b = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+                Point b = new Point((int) floor(scaled.x), (int) floor(scaled.y));
 
                 b = new Point(b.x % csize, b.y % csize);
 
@@ -232,25 +232,25 @@ public class World {
         }
     }
 
-    public static Block getBlock(Vector2D position) {
+    public static Block getBlock(Vector2d position) {
         World world = getCurrent();
 
         if (!SceneManager.hasScene()) return null;
         int csize = SceneManager.getCurrentlyLoaded().getChunkSize() * Chunk.BLOCK_SCALE;
 
         if (world != null) {
-            Vector2D scaled = position.scalarMultiply(1.0 / (double)csize);
+            Vector2d scaled = position.mul(1.0 / (double)csize);
 
-            Point c = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+            Point c = new Point((int) floor(scaled.x), (int) floor(scaled.y));
 
             Chunk chunk = world.get(c.x, c.y);
 
             if (chunk != null) {
-                scaled = position.scalarMultiply(1.0 / Chunk.BLOCK_SCALE);
+                scaled = position.mul(1.0 / Chunk.BLOCK_SCALE);
 
-                scaled = chunk.getPosition().subtract(scaled);
+                scaled = chunk.getPosition().sub(scaled);
 
-                Point b = new Point((int) floor(scaled.getX()), (int) floor(scaled.getY()));
+                Point b = new Point((int) floor(scaled.x), (int) floor(scaled.y));
 
                 b = new Point(b.x % csize, b.y % csize);
 

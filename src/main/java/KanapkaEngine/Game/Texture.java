@@ -33,14 +33,20 @@ public final class Texture {
         LoadedTextures.add(this);
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public void setTexture(BufferedImage image) {
         if (isDisposed)
             return;
 
         glBindTexture(GL_TEXTURE_2D, textureId);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-        Engine.ErrorCheck("bind tex");
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -67,7 +73,7 @@ public final class Texture {
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
-        Engine.ErrorCheck("Buffer");
+        Engine.ErrorCheck("Buffering Texture Data");
     }
 
     public void Dispose() {

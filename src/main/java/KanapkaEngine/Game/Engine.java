@@ -11,8 +11,6 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Objects;
 
-import org.joml.Vector3d;
-import org.joml.Vector3f;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -23,7 +21,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class Engine {
+public final class Engine {
     private static final Logger logger = new Logger("ENGINE");
     private static Engine instance;
 
@@ -99,7 +97,7 @@ public class Engine {
         InitializeOpenGLUpdate();
     }
 
-    public final void load(Plugin plugin) {
+    public void load(Plugin plugin) {
         plugins.add(plugin);
         plugin.Apply(this);
     }
@@ -159,7 +157,7 @@ public class Engine {
         }
     }
 
-    public final void End() {
+    public void End() {
         isRunning = false;
 
         logger.log("Engine stopped running, freeing OpenGL data.");
@@ -203,10 +201,7 @@ public class Engine {
         logger.log("Finished running end logic.");
     }
 
-    /**
-     * There are inconsistencies when it comes to window size on a mac and windows computers. Mac window size get calls are 2x smaller for some reason.
-     * @return If the operating system is a mac.
-     */
+    @Deprecated
     public static boolean isMacOS() {
         return System.getProperty("os.name").toLowerCase().contains("mac");
     }
@@ -215,6 +210,7 @@ public class Engine {
         if (!glfwInit()) {
             throw new RuntimeException("Problem while initializing GLFW");
         }
+        logger.log("Initialized GLFW");
 
         window = glfwCreateWindow(engineConfiguration.width, engineConfiguration.height, engineConfiguration.window_title, NULL, NULL);
 
@@ -224,9 +220,16 @@ public class Engine {
         glfwWindowHint(GLFW_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_VERSION_MINOR, 2);
 
+        if (isMacOS()) {
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        }
+
         if (window == NULL) {
             throw new RuntimeException("Problem while creating GLFW window.");
         }
+
+        logger.log("Initialized GLFW window");
 
         WindowObject = new Window(window);
 
@@ -263,11 +266,15 @@ public class Engine {
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+        logger.log("Initialized LWJGL, ready to draw");
+
         Camera.main = new Camera();
 
         logic.Start();
 
         ErrorCheck("General");
+
+        logger.log("Finished Initialization");
     }
 
     private void InitializeOpenGLUpdate() {
@@ -299,13 +306,13 @@ public class Engine {
         }
     }
 
-    protected static void registerLayer(RenderLayer layer) {
+    static void registerLayer(RenderLayer layer) {
         instance.RegisterRenderLayer(layer, layer.getStage());
     }
 
     private void Render_Layer(List<RenderLayer> renderStage) {
-        for (int i = 0; i < renderStage.size(); i++) {
-            renderStage.get(i).Render();
+        for (RenderLayer renderLayer : renderStage) {
+            renderLayer.Render();
         }
     }
 

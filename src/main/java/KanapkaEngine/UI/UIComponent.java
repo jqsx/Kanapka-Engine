@@ -2,7 +2,7 @@ package KanapkaEngine.UI;
 
 import KanapkaEngine.Game.Input;
 import KanapkaEngine.Game.Window;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -16,9 +16,9 @@ public class UIComponent {
     private List<UIComponent> children = new ArrayList<>();
     private UIComponent parent;
     public Pivot pivot = Pivot.Center;
-    public Vector2D origin = new Vector2D(0.5, 0.5);
-    public Vector2D position = Vector2D.ZERO;
-    public Vector2D size = new Vector2D(100, 100);
+    public Vector2d origin = new Vector2d(0.5, 0.5);
+    public Vector2d position = new Vector2d();
+    public Vector2d size = new Vector2d(100, 100);
 
     private final List<Runnable> onClick = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class UIComponent {
         }
     }
 
-    public Vector2D getTPosition() {
+    public Vector2d getTPosition() {
         if (parent != null)
             return getParent().getTPosition().add(position);
         else return position;
@@ -66,8 +66,8 @@ public class UIComponent {
 
     private void onClick() {
         Rectangle2D bounds = new Rectangle2D.Double();
-        Vector2D mouse = Input.getMousePosition();
-        if (bounds.contains(mouse.getX(), mouse.getY())) {
+        Vector2d mouse = Input.getMousePosition();
+        if (bounds.contains(mouse.x, mouse.y)) {
             for (Runnable r : onClick)
                 r.run();
         }

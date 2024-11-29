@@ -1,8 +1,8 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.Mathf;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.joml.Matrix4f;
+import org.joml.Vector2d;
 
 import java.awt.*;
 
@@ -15,7 +15,7 @@ public class Camera {
      */
     public static Camera main = new Camera();
 
-    private Vector2D position = new Vector2D(0, 0);
+    private Vector2d position = new Vector2d(0, 0);
     private double rotation = 0f;
     public double size = 1;
 
@@ -33,7 +33,7 @@ public class Camera {
         }
     }
 
-    public Vector2D getPosition() {
+    public Vector2d getPosition() {
         return position;
     }
 
@@ -41,28 +41,28 @@ public class Camera {
      * Shitty fix because camera coordinates are inverted idk this should work in world coordinates now tho
      * @return
      */
-    public Vector2D getWorldPosition() {
-        return position.scalarMultiply(-1);
+    public Vector2d getWorldPosition() {
+        return position.mul(-1);
     }
 
-    public void setPosition(Vector2D position) {
+    public void setPosition(Vector2d position) {
         this.position = position;
     }
 
-    public Vector2D ScreenToWorldPosition(Point screen_position) {
+    public Vector2d ScreenToWorldPosition(Point screen_position) {
 //        Dimension screen = Window.getWindowSize();
-//        return position.subtract(new Vector2D(screen.getWidth() / 2.0, screen.getHeight() / 2.0)).add(new Vector2D(screen_position.x, -screen_position.y));
+//        return position.subtract(new Vector2d(screen.getWidth() / 2.0, screen.getHeight() / 2.0)).add(new Vector2d(screen_position.x, -screen_position.y));
         return null;
     }
 
-    public Point WorldToScreenPosition(Vector2D world) {
+    public Point WorldToScreenPosition(Vector2d world) {
 
         double gSize = SceneManager.getGlobalSize();
 
-        Vector2D cameraPosition = Camera.main.getPosition();
-        Vector2D position = cameraPosition.add(world);
+        Vector2d cameraPosition = Camera.main.getPosition();
+        Vector2d position = cameraPosition.add(world);
 
-        return new Point((int) (position.getX() * gSize), (int) (-position.getY() * gSize));
+        return new Point((int) (position.x * gSize), (int) (-position.x * gSize));
     }
 
     public double getRotation() {

@@ -37,7 +37,7 @@ public final class Graphics {
 
         shader.bind();
 
-        shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().getX(), Camera.main.getPosition().getY(), 0.0), Camera.getProjectionMatrix()));
+        shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
         shader.setUniform("uTime", (float)Time.time());
 
         mesh.bind();

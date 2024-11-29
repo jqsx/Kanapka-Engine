@@ -18,19 +18,53 @@ public final class ANSI {
         return "\033[38;2;" + r + ";" + g + ";" + b + "m";
     }
 
+    private static int Clamp(int n, int min, int max) {
+        return Math.max(Math.min(n, max), min);
+    }
+
     public static String getAnsiColor(float r, float g, float b) {
-        return getAnsiColor((int)Mathf.Clamp(255 * r, 0, 255), (int)Mathf.Clamp(255 * g, 0, 255), (int)Mathf.Clamp(255 * b, 0, 255));
+        return getAnsiColor(Clamp((int) (255 * r), 0, 255), Clamp((int) (255 * g), 0, 255), Clamp((int) (255 * b), 0, 255));
     }
 
     private static float[] lerpColor(float[] a, float[] b, float t) {
         float[] result = new float[3];
+        t = Math.max(Math.min(t, 1.f), 0.f);
         for (int i = 0; i < result.length; i++) {
-            result[i] = Mathf.Lerp(a[i], b[i], t);
+            float x = a[i];
+            float y = b[i];
+            result[i] = (x + (y - x) * t);
         }
 
         return result;
     }
 
+    public static float[] rgb(float r, float g, float b) {
+        float[] result = new float[3];
+
+        result[0] = Math.max(Math.min(r, 1.f), 0.f);
+        result[1] = Math.max(Math.min(g, 1.f), 0.f);
+        result[2] = Math.max(Math.min(b, 1.f), 0.f);
+
+        return result;
+    }
+
+    public static int[] rgb(int r, int g, int b) {
+        int[] result = new int[3];
+
+        result[0] = Math.max(Math.min(r, 255), 0);
+        result[1] = Math.max(Math.min(g, 255), 0);
+        result[2] = Math.max(Math.min(b, 255), 0);
+
+        return result;
+    }
+
+    /**
+     * Gradient
+     * @param text
+     * @param a from
+     * @param b to
+     * @return formatted text as gradient
+     */
     public static String g(String text, int[] a, int[] b) {
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
@@ -48,9 +82,17 @@ public final class ANSI {
         return g(text, _a, _b);
     }
 
+    /**
+     * Gradient
+     * @param text
+     * @param a from
+     * @param b to
+     * @return formatted text as gradient
+     */
     public static String g(String text, float[] a, float[] b) {
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
+        Objects.requireNonNull(text);
         if (a.length != 3 || b.length != 3)
             return text;
         StringBuilder builder = new StringBuilder();

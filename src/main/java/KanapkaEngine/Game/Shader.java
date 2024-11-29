@@ -1,10 +1,7 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.ResourceLoader;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -16,6 +13,7 @@ import java.util.Objects;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
+    private final static Matrix4f model = new Matrix4f().identity();
     private static final Logger logger = new Logger("SHADER");
     static final HashMap<String, Shader> LoadedShaders = new HashMap<>();
 
@@ -196,6 +194,15 @@ public class Shader {
         glBindTexture(programId, texture.textureId);
 
         unbind();
+    }
+
+    /**
+     * Shorthand to setting a mat4 via the Transformation object.
+     * @param uniform
+     * @param transformation
+     */
+    public final void setUniform(String uniform, Transformation transformation) {
+        setUniform(uniform, transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
     }
 
     public void bind() {

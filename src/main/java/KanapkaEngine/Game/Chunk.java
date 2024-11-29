@@ -2,7 +2,7 @@ package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Components.Renderer;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -96,14 +96,14 @@ public class Chunk {
      * @return The bounds of the chunk relative to the camera view.
      */
     public Rectangle2D getBounds() {
-        Vector2D camera_position = Camera.main.getPosition();
-        Vector2D position = getPosition();
+        Vector2d camera_position = Camera.main.getPosition();
+        Vector2d position = getPosition();
         double g_size = SceneManager.getGlobalSize();
-        Vector2D pos = new Vector2D((camera_position.getX() + position.getX()), -(camera_position.getY() + position.getY()));
+        Vector2d pos = new Vector2d((camera_position.x + position.x), -(camera_position.y + position.y));
         if (bounds == null)
-            bounds = new Rectangle2D.Double(pos.getX(), pos.getY(), render.getWidth(), render.getHeight());
+            bounds = new Rectangle2D.Double(pos.x, pos.y, render.getWidth(), render.getHeight());
         else
-            bounds.setFrame(pos.getX(), pos.getY(), render.getWidth(), render.getHeight());
+            bounds.setFrame(pos.x, pos.y, render.getWidth(), render.getHeight());
         return bounds;
     }
 
@@ -140,9 +140,9 @@ public class Chunk {
      * Returns world position of the chunk
      * @return
      */
-    public Vector2D getPosition() {
+    public Vector2d getPosition() {
         int s = BLOCK_SCALE * SceneManager.getCurrentlyLoaded().getChunkSize();
-        return new Vector2D(point.x * s, point.y * s);
+        return new Vector2d(point.x * s, point.y * s);
     }
 
     /**
@@ -150,17 +150,17 @@ public class Chunk {
      * @param p
      * @return World position of block at <strong>p</strong>
      */
-    public Vector2D getBlockPosition(Point p) {
-        return getPosition().add(new Vector2D(p.x, -p.y).scalarMultiply(BLOCK_SCALE));
+    public Vector2d getBlockPosition(Point p) {
+        return getPosition().add(new Vector2d(p.x, -p.y).sub(new Vector2d(BLOCK_SCALE, BLOCK_SCALE)));
     }
 
     /**
      * Returns the size of the chunk in world scale
      * @return
      */
-    public static Vector2D getSize() {
+    public static Vector2d getSize() {
         int s = BLOCK_SCALE * SceneManager.getCurrentlyLoaded().getChunkSize();
-        return new Vector2D(s, s);
+        return new Vector2d(s, s);
     }
 
     public final Point getPoint() {
@@ -236,13 +236,13 @@ public class Chunk {
         if (block_render == null)
             return new AffineTransform();
         AffineTransform at = new AffineTransform();
-        Vector2D p = new Vector2D(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
+        Vector2d p = new Vector2d(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
         if (block.getBlockData().scale_render) {
             at.scale(BLOCK_SCALE / (double) block_render.getWidth(), BLOCK_SCALE / (double) block_render.getHeight());
-            at.translate(p.getX() * ((double) block_render.getWidth() / BLOCK_SCALE), p.getY() * ((double) block_render.getHeight() / BLOCK_SCALE));
+            at.translate(p.x * ((double) block_render.getWidth() / BLOCK_SCALE), p.y * ((double) block_render.getHeight() / BLOCK_SCALE));
         }
         else {
-            //Vector2D m = new Vector2D(BLOCK_SCALE / 2.0 - block_render.getWidth() / 2.0, BLOCK_SCALE - block_render.getHeight() / 2.0);
+            //Vector2d m = new Vector2d(BLOCK_SCALE / 2.0 - block_render.getWidth() / 2.0, BLOCK_SCALE - block_render.getHeight() / 2.0);
             at.translate(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
         }
         return at;

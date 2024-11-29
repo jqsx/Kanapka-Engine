@@ -1,7 +1,8 @@
 package KanapkaEngine.Game;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 import org.joml.Matrix4f;
+import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -16,13 +17,13 @@ public final class Transformation {
         this.rotation = rotation;
     }
 
-    public Transformation(Vector2D position2d, Vector2D scale2d, float rotation) {
-        this(new Vector3d(position2d.getX(), position2d.getY(), 0.0), new Vector3d(scale2d.getX(), scale2d.getY(), 1.0), new Vector3f(0, 0, rotation));
+    public Transformation(Vector2d position2d, Vector2d scale2d, float rotation) {
+        this(new Vector3d(position2d.x, position2d.y, 0.0), new Vector3d(scale2d.x, scale2d.y, 1.0), new Vector3f(0, 0, rotation));
     }
 
-    public void Update(Vector2D position2d, Vector2D scale2d, float rotation) {
-        position.set(position2d.getX(), position2d.getY(), 0.0);
-        scale.set(scale2d.getX(), scale2d.getY(), 1.0);
+    public void Update(Vector2d position2d, Vector2d scale2d, float rotation) {
+        position.set(position2d.x, position2d.y, 0.0);
+        scale.set(scale2d.x, scale2d.y, 1.0);
         this.rotation.set(0, 0, rotation);
     }
 

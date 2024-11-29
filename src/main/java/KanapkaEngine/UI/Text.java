@@ -1,6 +1,6 @@
 package KanapkaEngine.UI;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -26,10 +26,10 @@ public class Text extends UIComponent {
         else
             main.setFont(main.getFont().deriveFont(size));
 
-        Vector2D p = getTPosition();
+        Vector2d p = getTPosition();
 
         //bounds != null ? bounds.toString() + "\n" + Input.getMousePosition().toString() : "Bonkers"
-        bounds = drawText(main, text, color, background, pivot, new Point((int) p.getX(), (int) p.getY()));
+        bounds = drawText(main, text, color, background, pivot, new Point((int) p.x, (int) p.x));
     }
 
     private Rectangle2D drawText(Graphics2D g, String text, int color, int color2, Pivot pivot, Point offset) {
@@ -51,7 +51,7 @@ public class Text extends UIComponent {
 //        g.setColor(c);
 //        g.drawString(text, (int) bounds.getX(), (int) (bounds.getY() + g.getFont().getSize()));
 //
-//        Vector2D mouse = Input.getMousePosition();
+//        Vector2d mouse = Input.getMousePosition();
 //
 //        if (bounds.contains(mouse.getX(), mouse.getY())) {
 //            g.setColor(new Color(255, 255, 255, 150));

@@ -1,7 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Time;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.image.BufferedImage;
 
@@ -28,10 +28,10 @@ public class ParticleSystem<T extends Particle> extends Renderer {
     }
 
     public final T Spawn() {
-        return SpawnOffset(new Vector2D(0, 0));
+        return SpawnOffset(new Vector2d(0, 0));
     }
 
-    public final T SpawnOffset(Vector2D offset) {
+    public final T SpawnOffset(Vector2d offset) {
         T t = createParticle(offset);
         particles.addStart(t);
         onSpawn(t);
@@ -39,7 +39,7 @@ public class ParticleSystem<T extends Particle> extends Renderer {
         return t;
     }
 
-    public T createParticle(Vector2D offset) {
+    public T createParticle(Vector2d offset) {
         return (T) new Particle(offset);
     }
 
@@ -82,7 +82,7 @@ public class ParticleSystem<T extends Particle> extends Renderer {
     }
     private void UpdateParticle(T particle, double fixedDelta) {
 
-        particle.addPosition(particle.getVelocity().scalarMultiply(fixedDelta));
+        particle.addPosition(particle.getVelocity().mul(fixedDelta));
 
         onParticleUpdate(particle, fixedDelta);
     }

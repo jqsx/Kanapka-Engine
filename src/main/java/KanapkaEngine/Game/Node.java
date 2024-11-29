@@ -1,7 +1,10 @@
-package KanapkaEngine.Components;
+package KanapkaEngine.Game;
 
-import KanapkaEngine.Game.SceneManager;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import KanapkaEngine.Components.Collider;
+import KanapkaEngine.Components.Component;
+import KanapkaEngine.Components.Renderer;
+import KanapkaEngine.Components.Rigidbody;
+import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +15,7 @@ public class Node {
     public String name = "Node_Instance";
     private Node parent;
     public final Transform transform = new Transform(this);
-    private Renderer renderer;
+    private KanapkaEngine.Components.Renderer renderer;
     private Collider collider;
     private Rigidbody rigidbody;
     private final List<Node> children = new ArrayList<>();
@@ -27,15 +30,15 @@ public class Node {
 
     private final List<Component> components = new ArrayList<>();
 
-    public Vector2D position() {
+    public Vector2d position() {
         return transform.getPosition();
     }
 
     public final void addComponent(Component component) {
         if (!alive) return;
         components.add(component);
-        if (component instanceof Renderer)
-            renderer = (Renderer) component;
+        if (component instanceof KanapkaEngine.Components.Renderer)
+            renderer = (KanapkaEngine.Components.Renderer) component;
         else if (component instanceof Collider)
             collider = (Collider) component;
         else if (component instanceof Rigidbody)
@@ -170,7 +173,7 @@ public class Node {
         return rigidbody;
     }
 
-    public final void UpdateCall() {
+    protected final void UpdateCall() {
         if (!alive) return;
         Update();
         for (Component component : components) {

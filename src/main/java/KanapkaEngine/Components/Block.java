@@ -2,7 +2,7 @@ package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Chunk;
 import KanapkaEngine.Game.Logger;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -58,13 +58,13 @@ public class Block {
      * Returns the world position of the block.
      * @return
      */
-    public final Vector2D getPosition() {
+    public final Vector2d getPosition() {
         //double s = Chunk.BLOCK_SCALE / 2.0;
-        Vector2D p = parent.getBlockPosition(point);
-        return p;//.add(new Vector2D(-s * (p.getX() < 0 ? 1.0 : 0.0), 0));
+        Vector2d p = parent.getBlockPosition(point);
+        return p;//.add(new Vector2d(-s * (p.getX() < 0 ? 1.0 : 0.0), 0));
     }
 
-    public final Vector2D getCenter() {
-        return getPosition().add(new Vector2D(Chunk.BLOCK_SCALE / 4.0, -Chunk.BLOCK_SCALE / 2.0));
+    public final Vector2d getCenter() {
+        return getPosition().add(new Vector2d(Chunk.BLOCK_SCALE / 4.0, -Chunk.BLOCK_SCALE / 2.0));
     }
 }

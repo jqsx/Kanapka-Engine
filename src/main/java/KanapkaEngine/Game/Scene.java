@@ -1,12 +1,7 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Components.Node;
 import KanapkaEngine.Components.TSLinkedList;
 import KanapkaEngine.Components.World;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Scene {
     private String loadPath;

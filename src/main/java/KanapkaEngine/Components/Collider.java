@@ -1,6 +1,6 @@
 package KanapkaEngine.Components;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.geom.Rectangle2D;
 
@@ -8,8 +8,8 @@ import java.awt.geom.Rectangle2D;
  * Standard AABB box collider. The collider scales along with the object size and can have an additional offset and size as well.
  */
 public class Collider extends Component {
-    private Vector2D size = new Vector2D(1, 1);
-    private Vector2D offset = new Vector2D(0, 0);
+    private Vector2d size = new Vector2d(1, 1);
+    private Vector2d offset = new Vector2d(0, 0);
 
     private Rectangle2D rect = new Rectangle2D.Double();
 
@@ -21,16 +21,16 @@ public class Collider extends Component {
 
     }
 
-    public Collider(Vector2D size) {
+    public Collider(Vector2d size) {
         setSize(size);
     }
 
-    public Vector2D getSize() {
+    public Vector2d getSize() {
         return size;
     }
 
-    public void setSize(Vector2D size) {
-        this.size = new Vector2D(Math.abs(size.getX()), Math.abs(size.getY()));
+    public void setSize(Vector2d size) {
+        this.size = new Vector2d(Math.abs(size.x), Math.abs(size.y));
         getRectangle();
     }
 
@@ -40,38 +40,38 @@ public class Collider extends Component {
 
     @Deprecated
     public Rectangle2D _getRectangle() {
-        Vector2D scaledSize = getScaledSize();
-        double w = scaledSize.getX();
-        double h = scaledSize.getY();
+        Vector2d scaledSize = getScaledSize();
+        double w = scaledSize.x;
+        double h = scaledSize.y;
 
-        double x = (offset.getX() + (getParent().transform.getPosition().getX() + getParent().transform.getSize().getX() / 2.0) - scaledSize.getX() / 2.0);
-        double y = (offset.getY() + getParent().transform.getPosition().getY() - scaledSize.getY() / 2.0);
+        double x = (offset.x + (getParent().transform.getPosition().x + getParent().transform.getSize().x / 2.0) - scaledSize.x / 2.0);
+        double y = (offset.y + getParent().transform.getPosition().y - scaledSize.y / 2.0);
 
         rect.setRect(x, y, w, h);
         return rect;
     }
 
     public Rectangle2D getRectangle() {
-        Vector2D scaledSize = getScaledSize();
-        double w = scaledSize.getX();
-        double h = scaledSize.getY();
+        Vector2d scaledSize = getScaledSize();
+        double w = scaledSize.x;
+        double h = scaledSize.y;
 
-        double x = (offset.getX() + getParent().transform.getPosition().getX() - scaledSize.getX() / 2.0);
-        double y = (offset.getY() + getParent().transform.getPosition().getY() - scaledSize.getY() / 2.0);
+        double x = (offset.x + getParent().transform.getPosition().x - scaledSize.x / 2.0);
+        double y = (offset.y + getParent().transform.getPosition().y - scaledSize.y / 2.0);
 
         rect.setRect(x, y, w, h);
         return rect;
     }
 
-    public Vector2D getScaledSize() {
-        return new Vector2D(size.getX() * getParent().transform.getSize().getX(), size.getY() * getParent().transform.getSize().getY());
+    public Vector2d getScaledSize() {
+        return new Vector2d(size.x * getParent().transform.getSize().x, size.y * getParent().transform.getSize().y);
     }
 
-    public Vector2D getOffset() {
+    public Vector2d getOffset() {
         return offset;
     }
 
-    public void setOffset(Vector2D offset) {
+    public void setOffset(Vector2d offset) {
         this.offset = offset;
         getRectangle();
     }

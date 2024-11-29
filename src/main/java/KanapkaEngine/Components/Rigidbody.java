@@ -1,23 +1,23 @@
 package KanapkaEngine.Components;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 public class Rigidbody extends Component {
-    private Vector2D velocity = new Vector2D(0,0);
+    private Vector2d velocity = new Vector2d(0,0);
 
     private double Mass = 1.0;
 
     private double Bounce = 0.3;
 
-    public Vector2D getVelocity() {
+    public Vector2d getVelocity() {
         return velocity;
     }
 
-    public void setVelocity(Vector2D velocity) {
+    public void setVelocity(Vector2d velocity) {
         this.velocity = velocity;
     }
 
-    public Vector2D addVelocity(Vector2D force) {
+    public Vector2d addVelocity(Vector2d force) {
         return velocity = velocity.add(force);
     }
 

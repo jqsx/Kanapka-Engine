@@ -1,5 +1,7 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Node;
+
 import java.util.Objects;
 
 /**

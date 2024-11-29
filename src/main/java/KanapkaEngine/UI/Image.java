@@ -2,7 +2,7 @@ package KanapkaEngine.UI;
 
 import KanapkaEngine.Components.ResourceLoader;
 import KanapkaEngine.Game.Window;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -23,17 +23,17 @@ public class Image extends UIComponent {
             ata.translate(x, y);
             main.drawImage(render, at, null);*/
 
-            Vector2D p = getTPosition();
+            Vector2d p = getTPosition();
 
-            drawImage(main, render, pivot, new Point((int) p.getX(), (int) p.getY()));
+            drawImage(main, render, pivot, new Point((int) p.x, (int) p.y));
         }
     }
 
     private void drawImage(Graphics2D g, BufferedImage image, Pivot pivot, Point offset) {
 //        Dimension screen = Window.getWindowSize();
 //        Dimension dImage = new Dimension(image.getWidth(), image.getHeight());
-//        Vector2D scaledDimensions = new Vector2D(size.getX() / dImage.width, size.getY() / dImage.height);
-//        Vector2D relative_offset = new Vector2D((size.getX() / 2.0) * (1 + pivot.getX()) , (size.getY() / 2.0) * (1 + pivot.getY()));
+//        Vector2d scaledDimensions = new Vector2d(size.getX() / dImage.width, size.getY() / dImage.height);
+//        Vector2d relative_offset = new Vector2d((size.getX() / 2.0) * (1 + pivot.getX()) , (size.getY() / 2.0) * (1 + pivot.getY()));
 //        Point move = new Point((int) (screen.width + pivot.getX() * screen.width + offset.x - relative_offset.getX()),
 //                (int) (screen.height + pivot.getY() * screen.height + offset.y - relative_offset.getY()));
 //

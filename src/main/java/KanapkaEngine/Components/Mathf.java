@@ -2,7 +2,7 @@ package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Camera;
 import KanapkaEngine.Game.SceneManager;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -23,11 +23,11 @@ public class Mathf {
         return (float) (a + (b - a) * Clamp(t, 0, 1));
     }
 
-    public static Vector2D Lerp(Vector2D a, Vector2D b, double t) {
-        double x = Lerp(a.getX(), b.getX(), t);
-        double y = Lerp(a.getY(), b.getY(), t);
+    public static Vector2d Lerp(Vector2d a, Vector2d b, double t) {
+        double x = Lerp(a.x, b.x, t);
+        double y = Lerp(a.y, b.y, t);
 
-        return new Vector2D(x, y);
+        return new Vector2d(x, y);
     }
 
     /**
@@ -74,44 +74,26 @@ public class Mathf {
      * dy = abs(y1 - y0)<br>
      * <br>
      * dist = 0.5 * (dx + dy + max(dx, dy))
+     *
+     * Octagonal distance formula (should be super efficient, but it does lose a lot of precision compared to the normal distance formula)
      * @param one
      * @param two
      * @return
      */
-    public static double aDistance(Vector2D one, Vector2D two) {
-        double dx = Math.abs(two.getX() - one.getX());
-        double dy = Math.abs(two.getY() - one.getY());
+    public static double aDistance(Vector2d one, Vector2d two) {
+        double dx = Math.abs(two.x - one.x);
+        double dy = Math.abs(two.y - one.y);
 
         return 0.5 * (dx + dy + Math.max(dx, dy));
     }
 
-    public static double distance(Vector2D one, Vector2D two) {
-        return Sqrt(Math.pow(one.getX() - two.getX(), 2) + Math.pow(one.getY() - two.getY(), 2));
+    public static double distance(Vector2d one, Vector2d two) {
+        return Sqrt(Math.pow(one.x - two.x, 2) + Math.pow(one.y - two.y, 2));
     }
 
     private static double sqrt_iteration(double a, double previous) {
         double m = (a / previous - previous) / 2.0;
         return previous + m;
-    }
-
-    public static AffineTransform getTransform(final Vector2D in_position, final Vector2D in_size) {
-        AffineTransform at = new AffineTransform();
-
-        double gSize = SceneManager.getGlobalSize();
-
-        Vector2D size = in_size.scalarMultiply(1);
-        //size = new Vector2D(size.getX() / render.getWidth(), size.getY() / render.getHeight());
-        Vector2D cameraPosition = Camera.main.getPosition();
-        Vector2D position = cameraPosition.add(in_position);
-        position = position.add(new Vector2D(-in_size.getX() / 2.0, in_size.getY() / 2.0));
-
-        //position = new Vector2D(gSize / position.getX(), gSize / position.getY());
-
-        at.scale(size.getX() * gSize, size.getY() * gSize);
-        at.translate(position.getX() / size.getX(), -position.getY() / size.getY());
-        //at.rotate(0, -size.getX() * gSize, -size.getY() * gSize);
-
-        return at;
     }
 
     public static class NoiseGenerator {

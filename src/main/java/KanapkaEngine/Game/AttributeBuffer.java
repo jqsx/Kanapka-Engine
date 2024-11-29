@@ -51,7 +51,12 @@ public final class AttributeBuffer {
         LoadedAttributeBuffers.add(this);
     }
 
-    public final void createAttribute(String identifier) {
+    /**
+     *
+     * @param identifier String used to identify the buffer array location
+     * @return The location of the buffer object.
+     */
+    public int createAttribute(String identifier) {
         Objects.requireNonNull(identifier);
         if (identifier.isEmpty())
             throw new RuntimeException("Attribute identifier cannot be empty.");
@@ -60,15 +65,18 @@ public final class AttributeBuffer {
 
         glGenBuffers(vboptr);
 
-        AttributeBuffers.put(identifier, new AttribLocationData(vboptr[0], _attribCount));
+        int attrib_location = _attribCount;
+
+        AttributeBuffers.put(identifier, new AttribLocationData(vboptr[0], attrib_location));
         _attribCount++;
+        return attrib_location;
     }
 
-    public final void BufferFloats(String identifier, float[] floats) {
+    public void BufferFloats(String identifier, float[] floats) {
         _bufferFloatArray(identifier, floats, 1);
     }
 
-    public final void BufferVec2(String identifier, Vector2f[] vector2fs) {
+    public void BufferVec2(String identifier, Vector2f[] vector2fs) {
         float[] floats = new float[vector2fs.length * 2];
 
         for (int index = 0; index < vector2fs.length; index++) {
@@ -79,7 +87,7 @@ public final class AttributeBuffer {
         _bufferFloatArray(identifier, floats, 2);
     }
 
-    public final void BufferVec3(String identifier, Vector3f[] vector3fs) {
+    public void BufferVec3(String identifier, Vector3f[] vector3fs) {
         float[] floats = new float[vector3fs.length * 3];
 
         for (int index = 0; index < vector3fs.length; index++) {
@@ -91,7 +99,7 @@ public final class AttributeBuffer {
         _bufferFloatArray(identifier, floats, 3);
     }
 
-    public final void BufferVec4(String identifier, Vector4f[] vector4fs) {
+    public void BufferVec4(String identifier, Vector4f[] vector4fs) {
         float[] floats = new float[vector4fs.length * 4];
 
         for (int index = 0; index < vector4fs.length; index++) {
@@ -127,7 +135,7 @@ public final class AttributeBuffer {
         unbind();
     }
 
-    public final void BufferTriangles(int[] triangles) {
+    public void BufferTriangles(int[] triangles) {
         bind();
 
         vertexCount = triangles.length;
