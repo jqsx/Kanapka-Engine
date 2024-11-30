@@ -36,9 +36,6 @@ public class Component {
     public void onOrphan() {
 
     }
-    public void Update() {
-
-    }
 
     public final void DestroyComponent() {
 

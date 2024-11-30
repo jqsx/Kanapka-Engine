@@ -5,7 +5,7 @@ import org.joml.Vector2d;
 
 import java.awt.image.BufferedImage;
 
-public class ParticleSystem<T extends Particle> extends Renderer {
+public class ParticleSystem<T extends Particle> extends Renderer implements IUpdate {
     private final TSLinkedList<T> particles = new TSLinkedList<>();
     private int UPDATE_RATE = 60;
 

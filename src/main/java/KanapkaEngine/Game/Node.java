@@ -1,9 +1,7 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Components.Collider;
-import KanapkaEngine.Components.Component;
+import KanapkaEngine.Components.*;
 import KanapkaEngine.Components.Renderer;
-import KanapkaEngine.Components.Rigidbody;
 import org.joml.Vector2d;
 
 import java.util.ArrayList;
@@ -177,7 +175,9 @@ public class Node {
         if (!alive) return;
         Update();
         for (Component component : components) {
-            component.Update();
+            if (component instanceof IUpdate update) {
+                update.Update();
+            }
         }
         synchronized (children) {
             children.removeIf(child -> !child.isAlive());

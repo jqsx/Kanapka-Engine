@@ -1,24 +1,17 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Texture;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class TextureAtlas {
-    private final BufferedImage textures;
+    private final Texture textures;
 
     private final HashMap<String, BufferedImage> subTextures = new HashMap<>();
 
-    public TextureAtlas(BufferedImage textures) {
+    public TextureAtlas(Texture textures) {
         this.textures = textures;
-    }
-
-    public final void createSubTexture(String name, Rectangle rect) {
-        if (textures != null)
-            subTextures.put(name, textures.getSubimage(rect.x, rect.y, rect.width, rect.height));
-    }
-
-    public final BufferedImage getSubTexture(String name) {
-        return subTextures.get(name);
     }
 }

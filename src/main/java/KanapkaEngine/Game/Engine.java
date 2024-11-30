@@ -61,7 +61,7 @@ public final class Engine {
     }
 
     private void credits() {
-        BufferedImage image = ResourceLoader.loadResource("logo.png");
+        BufferedImage image = ResourceLoader.loadResource("maciej.jpg");
 
         BufferedImage logo = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
 
