@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * The parent class to all implementations at runtime. Need to be added to a node in order to receive function calls.
  */
-public class Component {
+public abstract class Component {
     private Node parent;
 
     public final Node getParent() {
@@ -30,13 +30,12 @@ public class Component {
     public void Awake() {
 
     }
+
     public void onParent() {
 
     }
-    public void onOrphan() {
 
-    }
-    public void Update() {
+    public void onOrphan() {
 
     }
 

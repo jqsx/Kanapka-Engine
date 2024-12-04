@@ -48,6 +48,13 @@ public class Material {
     }
 
     /**
+     * Executes after setting uniforms before render.
+     */
+    public void onSet() {
+
+    }
+
+    /**
      * Sets the located uniform values before rendering (Executed by the renderer before drawing elements)
      */
     public final void Set() {
@@ -90,6 +97,9 @@ public class Material {
 
             }
         }
+
+        onSet();
+
         target.unbind();
     }
 

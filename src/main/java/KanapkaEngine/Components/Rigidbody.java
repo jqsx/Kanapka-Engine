@@ -21,6 +21,10 @@ public class Rigidbody extends Component {
         return velocity = velocity.add(force);
     }
 
+    /**
+     *
+     * @return the mass that will be relevant once i rework the physics engine rectangle collisions to add accurate bounces idk ill go see for now it works.
+     */
     public double getMass() {
         return Mass;
     }

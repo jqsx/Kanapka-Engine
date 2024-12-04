@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL46.glClearTexImage;
 import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
 
 public final class Texture {
@@ -19,18 +20,26 @@ public final class Texture {
     int width;
     int height;
 
+    private boolean hasTexture = false;
+
     boolean isDisposed = false;
 
-    public Texture(BufferedImage image) {
-        Objects.requireNonNull(image);
+    public Texture() {
+        generateTextureID();
 
+        LoadedTextures.add(this);
+    }
+
+    private void generateTextureID() {
         textureId = glGenTextures();
 
         Engine.ErrorCheck("Gen tex " + textureId);
+    }
+
+    public Texture(BufferedImage image) {
+        this();
 
         setTexture(image);
-
-        LoadedTextures.add(this);
     }
 
     public int getWidth() {
@@ -44,6 +53,12 @@ public final class Texture {
     public void setTexture(BufferedImage image) {
         if (isDisposed)
             return;
+
+        if (image == null) {
+            image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        hasTexture = true;
 
         glBindTexture(GL_TEXTURE_2D, textureId);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -73,6 +88,8 @@ public final class Texture {
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         Engine.ErrorCheck("Buffering Texture Data");
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -89,5 +106,9 @@ public final class Texture {
 
         if (removeFromList)
             LoadedTextures.remove(this);
+    }
+
+    public boolean HasTexture() {
+        return hasTexture;
     }
 }

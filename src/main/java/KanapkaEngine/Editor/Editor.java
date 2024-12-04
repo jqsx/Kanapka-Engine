@@ -32,7 +32,7 @@ public class Editor {
             public void Start() {
                 RenderLayer.register(new NodeLayer());
 
-                Texture texture = new Texture(ResourceLoader.loadResource("wooden.png"));
+                Texture texture = new Texture(ResourceLoader.loadResource("logo.png"));
 
                 material = new TextureMaterial();
                 material.MainTex = texture;
@@ -50,7 +50,7 @@ public class Editor {
 
             @Override
             public void Update() {
-                node.transform.setPosition(new Vector2d(Math.cos(Time.time()), Math.sin(Time.time())));
+                //node.transform.setRotation((Math.cos((Time.time() % 1.0) * Math.PI) + 1.0) * Math.PI * 2.0);
             }
 
             @Override
