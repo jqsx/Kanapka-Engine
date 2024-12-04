@@ -2,6 +2,7 @@ package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.ResourceLoader;
 import org.joml.*;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -124,7 +125,9 @@ public class Shader {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer fb = stack.mallocFloat(16);
             mat.get(fb);
+            bind();
             glUniformMatrix4fv(location, false, fb);
+            unbind();
         }
     }
 
@@ -137,7 +140,9 @@ public class Shader {
 
         int location = UniformLocations.get(uniform);
 
+        bind();
         glUniform1f(location, value);
+        unbind();
     }
 
     public final void setUniform(String uniform, Vector2f value) {
@@ -150,7 +155,9 @@ public class Shader {
 
         int location = UniformLocations.get(uniform);
 
+        bind();
         glUniform2f(location, value.x, value.y);
+        unbind();
     }
 
     public final void setUniform(String uniform, Vector3f value) {
@@ -163,7 +170,9 @@ public class Shader {
 
         int location = UniformLocations.get(uniform);
 
+        bind();
         glUniform3f(location, value.x, value.y, value.z);
+        unbind();
     }
 
     public final void setUniform(String uniform, Vector4f value) {
@@ -176,7 +185,30 @@ public class Shader {
 
         int location = UniformLocations.get(uniform);
 
+        bind();
         glUniform4f(location, value.x, value.y, value.z, value.w);
+        unbind();
+    }
+
+    public final void setUniformArray(String uniform, Vector4f[] value) {
+        Objects.requireNonNull(value);
+        Objects.requireNonNull(uniform);
+        if (isDisposed)
+            return;
+        if (!UniformLocations.containsKey(uniform))
+            return;
+
+        bind();
+
+        for (int index = 0; index < value.length; index++) {
+            String uniform_index = uniform + "[" + index + "]";
+
+            Vector4f v = value[index];
+
+            glUniform4f(glGetUniformLocation(programId, uniform_index), v.x, v.y, v.z, v.w);
+        }
+
+        unbind();
     }
 
     public final void setUniform(String uniform, Texture texture) {
@@ -205,17 +237,17 @@ public class Shader {
         setUniform(uniform, transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
     }
 
-    public void bind() {
+    public final void bind() {
         if (isDisposed)
             return;
         glUseProgram(programId);
     }
 
-    public void unbind() {
+    public final void unbind() {
         glUseProgram(0);
     }
 
-    void Dispose() {
+    public final void Dispose() {
         if (isDisposed)
             return;
         unbind();

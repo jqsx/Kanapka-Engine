@@ -10,7 +10,10 @@ import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public final class Graphics {
+/*
+I left this class as not final so that you can write your own custom graphics implementations
+ */
+public class Graphics {
 
     private final static Matrix4f model = new Matrix4f().identity();
 
@@ -40,6 +43,7 @@ public final class Graphics {
         shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
         shader.setUniform("uTime", (float)Time.time());
 
+        shader.bind();
         mesh.bind();
 
         glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
@@ -56,6 +60,12 @@ public final class Graphics {
 
         shader.setUniform("uMainTex", texture);
         DrawMesh(spriteMesh, transformation, shader);
+    }
+
+    public static void DrawSprite(RenderTexture texture, Transformation transformation, Shader shader) {
+        Objects.requireNonNull(texture);
+
+        DrawSprite(texture.getTexture(), transformation, shader);
     }
 
     public static void DrawSprite(Transformation transformation, TextureMaterial material) {
