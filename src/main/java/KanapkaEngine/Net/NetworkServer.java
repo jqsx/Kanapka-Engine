@@ -1,5 +1,6 @@
 package KanapkaEngine.Net;
 
+import KanapkaEngine.Game.Logger;
 import KanapkaEngine.Net.Router.RouteManager;
 
 import javax.net.ServerSocketFactory;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 public class NetworkServer implements Runnable {
+    private static final Logger logger = new Logger("NETWORK_SERVER");
     public static int PORT = 6969;
 
     public static String hostName = "localhost";
@@ -40,13 +42,13 @@ public class NetworkServer implements Runnable {
             serverSocket = ServerSocketFactory.getDefault().createServerSocket();
             System.out.println("[SERVER] Created server socket.");
             serverSocket.bind(new InetSocketAddress(hostName != null && !hostName.isEmpty() ? hostName : "localhost", PORT));
-            System.out.println("[SERVER] Bound server to correct hostName and port.");
+            logger.log("Bound server to correct hostName and port.");
             clients.clear();
-            System.out.println("[SERVER] Cleared existing clients.");
+            logger.log("Cleared existing clients.");
             if (serverThread != null)
                 instance.isRunning = false;
 
-            System.out.println("[SERVER] Starting server thread.");
+            logger.log("Starting server thread.");
             serverThread = new Thread(instance = new NetworkServer());
             serverThread.start();
 
@@ -58,13 +60,13 @@ public class NetworkServer implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("[SERVER] Started server thread.");
+        logger.log("Started server thread.");
         RouteManager.onServerStart();
         while (isRunning && !serverSocket.isClosed()) {
             try {
-                System.out.println("[SERVER] Awaiting connection.");
+                logger.log("Awaiting connection.");
                 Socket socket = serverSocket.accept();
-                System.out.println("[SERVER] Connection at " + socket.getInetAddress().getHostAddress());
+                logger.log("Connection at " + socket.getInetAddress().getHostAddress());
                 NetworkConnectionToClient conn = new NetworkConnectionToClient(socket, getFreeID());
 
                 connections.put(conn.getId(), conn);

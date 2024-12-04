@@ -1,5 +1,6 @@
 package KanapkaEngine.Net.Router;
 
+import KanapkaEngine.Game.Logger;
 import KanapkaEngine.Net.NetworkClient;
 import KanapkaEngine.Net.NetworkConnectionToClient;
 import KanapkaEngine.Net.NetworkServer;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Route {
+    private static final Logger logger = new Logger("ROUTER");
     protected boolean isReady = false;
     private short id;
 
@@ -69,14 +71,14 @@ public class Route {
         if (NetworkServer.clients.contains(connectionToClient))
             connectionToClient.send(getID(), data);
         else
-            System.out.println("[MSG>SERVERCLIENT] Server client isn't registered in current context.");
+            logger.warn("[MSG>SERVERCLIENT] Server client isn't registered in current context.");
     }
 
     public final void sendToServer(byte[] data) {
         if (NetworkClient.isConnected())
             NetworkClient.send(getID(), data);
         else
-            System.out.println("[MSG>SERVER] Client isn't connected to a server.");
+            logger.warn("[MSG>SERVER] Client isn't connected to a server.");
     }
 
     protected final void define(short id) {

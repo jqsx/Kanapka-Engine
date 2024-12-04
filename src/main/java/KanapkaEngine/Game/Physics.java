@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 
-public class Physics {
+public final class Physics {
     public static Vector2d gravity = new Vector2d(0, -9.81);
 
     public static AudioClip hit = ResourceLoader.loadAudio("Audio/boxHit.wav");
@@ -47,6 +47,10 @@ public class Physics {
         }
 
         return intersections;
+    }
+
+    Physics() {
+
     }
 
     public static Block[] castBlocks(Vector2d position, Vector2d size) {
@@ -96,8 +100,10 @@ public class Physics {
     }
 
     public static Node[] castNode(Vector2d position, Vector2d size) {
+        if (!SceneManager.hasScene())
+            return new Node[0];
         List<Node> nodes = new ArrayList<>();
-        SceneManager.getSceneNodes().foreach((other) -> {
+        SceneManager.getSceneNodes().forEach((other) -> {
             if (other.getCollider() == null) return;
             if (other.getCollider().getRectangle().intersects(getRect(position, size)))
                 nodes.add(other);
@@ -152,23 +158,12 @@ public class Physics {
 
     }
 
-    protected final void FixedUpdate(double fixedDelta) {
+    void FixedUpdate(double fixedDelta) {
         if (SceneManager.hasScene()) {
-            try {
-                TSLinkedList<Node>.Element last = SceneManager.getSceneNodes().getRoot();
-
-                while (last != null) {
-                    Node node = last.getValue();
-
-                    CheckCollisionFor(node, fixedDelta);
-
-                    _CheckCollisionForChunk(node, fixedDelta);
-
-                    last = last.getNext();
-                }
-            } catch (ConcurrentModificationException ignore) {
-
-            }
+            SceneManager.getSceneNodes().forEach(node -> {
+                CheckCollisionFor(node, fixedDelta);
+                CheckCollisionForChunk(node, fixedDelta);
+            });
         }
     }
 
@@ -177,7 +172,7 @@ public class Physics {
         VelocityUpdate(node, fixedDelta);
 
         if (node.getCollider() == null) return;
-        SceneManager.getSceneNodes().foreach((other) -> {
+        SceneManager.getSceneNodes().forEach((other) -> {
             if (other.getCollider() == null) return;
             if (other == node) return;
             if (other.getCollider().isColliding(node.getCollider()))
@@ -186,7 +181,7 @@ public class Physics {
         ApplyVelocity(node, fixedDelta);
     }
 
-    private void _CheckCollisionForChunk(Node node, double fixedDelta) {
+    private void CheckCollisionForChunk(Node node, double fixedDelta) {
 
         if (node.getRigidbody() == null) return;
 

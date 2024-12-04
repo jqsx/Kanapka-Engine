@@ -1,5 +1,6 @@
 package KanapkaEngine.Net;
 
+import KanapkaEngine.Game.Logger;
 import KanapkaEngine.Net.Router.Route;
 import KanapkaEngine.Net.Router.RouteManager;
 
@@ -8,6 +9,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class NetworkClient implements Runnable {
+    private static final Logger logger = new Logger("NETWORK_CLIENT");
     private Thread thread;
     private Socket socket;
 
@@ -28,7 +30,7 @@ public class NetworkClient implements Runnable {
     }
 
     public static void Connect(String hostName, int port) {
-        System.out.println("[CLIENT] Connecting to server.");
+        logger.error("Connecting to server.");
 
         if (instance != null) {
             instance.isRunning = false;
@@ -47,7 +49,7 @@ public class NetworkClient implements Runnable {
             throw new RuntimeException(e);
         }
 
-        System.out.println("[CLIENT] Connected to server.");
+        logger.log("Connected to server.");
     }
 
     public static void Connect(String hostName) {
@@ -70,8 +72,8 @@ public class NetworkClient implements Runnable {
                 int length = in.readInt();
                 Route route = RouteManager.getRoute(ID);
                 if (route == null) {
-                    System.out.println("[CLIENT] ROUTE NOT FOUND " + ID);
-                    socket.close();
+                    logger.error("ROUTE NOT FOUND " + ID);
+                    //socket.close();
                     return;
                 }
                 byte[] data = new byte[length];
@@ -103,7 +105,7 @@ public class NetworkClient implements Runnable {
             out.writeInt(data.length);
             out.write(data);
         } catch (IOException e) {
-            System.out.println("[CLIENT] Problem");
+            logger.error("Problem");
         }
     }
 

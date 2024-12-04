@@ -43,6 +43,8 @@ public final class Engine {
     private long last_fixed_update = System.nanoTime();
     private final double Second = (long) Math.pow(10, 9);
 
+    private Input input;
+
     private final List<RenderLayer> BACKGROUND = new ArrayList<>();
     private final List<RenderLayer> WORLD = new ArrayList<>();
     private final List<RenderLayer> PARTICLES = new ArrayList<>();
@@ -95,11 +97,18 @@ public final class Engine {
 
         InitializeLWJGL();
         InitializeOpenGLUpdate();
+
+        load(new Scheduler());
+        load(input = new Input());
     }
 
     public void load(Plugin plugin) {
         plugins.add(plugin);
         plugin.Apply(this);
+    }
+
+    public Window getWindow() {
+        return WindowObject;
     }
 
     private void Draw() {
@@ -135,7 +144,7 @@ public final class Engine {
             }
             Chunk.UpdateChunks();
             try {
-                SceneManager.getSceneNodes().foreach(Node::UpdateCall);
+                SceneManager.getSceneNodes().forEach(Node::UpdateCall);
             } catch (ConcurrentModificationException ignore) {
 
             }
@@ -231,9 +240,11 @@ public final class Engine {
 
         logger.log("Initialized GLFW window");
 
-        WindowObject = new Window(window);
+        WindowObject = new Window(window, engineConfiguration);
 
         glfwSetKeyCallback(window, this::KeyCallBack);
+        glfwSetCursorPosCallback(window, this::MouseCallback);
+        glfwSetMouseButtonCallback(window, this::MouseButtonCallback);
 
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1);
@@ -287,6 +298,7 @@ public final class Engine {
 
             glfwSwapBuffers(window);
 
+            input.InputReset();
             glfwPollEvents();
         }
 
@@ -294,8 +306,19 @@ public final class Engine {
     }
 
     private void KeyCallBack(long window, int key, int scancode, int action, int mods) {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, true);
+        if (action == GLFW_PRESS) {
+            input.keyPressed(key);
+        } else if (action == GLFW_RELEASE) {
+            input.keyReleased(key);
+        }
+    }
+
+    private void MouseCallback(long window, double x, double y) {
+        input.mouseMoved((int) x, (int) y);
+    }
+
+    private void MouseButtonCallback(long window, int i, int i1, int i2) {
+
     }
 
     public static void ErrorCheck(String namespace) {

@@ -2,97 +2,71 @@ package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.TSLinkedList;
 import org.joml.Vector2d;
+import org.joml.Vector2i;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Input extends Plugin implements KeyListener, MouseMotionListener, MouseListener {
-    private static final TSLinkedList<Character> keysDown = new TSLinkedList<>();
-    private static final TSLinkedList<Integer> keysDownInt = new TSLinkedList<>();
+public final class Input extends Plugin {
+    private static final List<Integer> keysDown = new ArrayList<>();
 
-    private static Input instance;
+    private static Vector2i mousePosition = new Vector2i(0, 0);
 
-    private Point mousePosition = new Point(0, 0);
+    private static final List<Integer> buttonDown = new ArrayList<>();
+    private static final List<Integer> keyDownFrame = new ArrayList<>();
+    private static final List<Integer> keyUpFrame = new ArrayList<>();
 
-    private static final TSLinkedList<Integer> buttonDown = new TSLinkedList<>();
+    Input() {
+
+    }
+
+    void InputReset() {
+        keyDownFrame.clear();
+        keyUpFrame.clear();
+    }
 
     @Override
     public void Apply(Engine engine) {
-        if (instance == null)
-            instance = this;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
 
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (instance != this) return;
-        if (!keysDown.contains(e.getKeyChar()))
-            keysDown.addStart(e.getKeyChar());
-        if (keysDownInt.contains(e.getKeyCode()))
-            keysDownInt.addStart(e.getKeyCode());
+    void keyPressed(int key) {
+        if (!keysDown.contains(key))
+            keysDown.add(key);
+
+        keyDownFrame.add(key);
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (instance != this) return;
-        keysDown.remove(e.getKeyChar());
-        keysDownInt.remove(e.getKeyCode());
+    void keyReleased(int key) {
+        keysDown.remove(key);
     }
 
-    public static boolean isKeyDown(char c) {
+    public static boolean isKeyDown(int c) {
         return keysDown.contains(c);
     }
-    public static boolean isKeyDown(int c) {
-        return keysDownInt.contains(c);
-    }
-
     public static boolean isButtonDown(int b) {
         return buttonDown.contains(b);
     }
 
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        mousePosition = e.getPoint();
+    public static boolean isKeyDownFrame(int c) { return keyDownFrame.contains(c); }
+    public static boolean isKeyUpFrame(int c) { return keyUpFrame.contains(c); }
+
+    void mouseMoved(int x, int y) {
+        mousePosition.set(x,y);
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        mousePosition = e.getPoint();
+    public static Vector2i getMousePosition() {
+        return mousePosition;
     }
 
-    public static Vector2d getMousePosition() {
-        return new Vector2d(instance.mousePosition.x, instance.mousePosition.y);
+    void mousePressed(int button, int x, int y) {
+        if (!buttonDown.contains(button))
+            buttonDown.add(button);
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (instance != this) return;
-        if (!buttonDown.contains(e.getButton()))
-            buttonDown.addStart(e.getButton());
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (instance != this) return;
-        buttonDown.remove(e.getButton());
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+    void mouseReleased(int button, int x, int y) {
+        buttonDown.remove(button);
     }
 }

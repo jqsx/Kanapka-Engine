@@ -4,13 +4,13 @@ import static org.lwjgl.opengl.GL11.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Window {
+public final class Window {
     private long window;
 
     public int width;
     public int height;
 
-    public Window(long window) {
+    Window(long window, EngineConfiguration configuration) {
         this.window = window;
 
         int[] widthptr = new int[1];
@@ -22,6 +22,8 @@ public class Window {
         height = heightptr[0];
 
         glfwSetWindowSizeCallback(window, this::WindowSizeCallBack);
+
+        setTitle(configuration.window_title);
     }
 
     private void WindowSizeCallBack(long window, int width, int height) {
@@ -29,5 +31,34 @@ public class Window {
         this.height = height;
 
         glViewport(0, 0, width, height);
+    }
+
+    public void setTitle(String text) {
+        glfwSetWindowTitle(window, text);
+    }
+
+    public void setSize(int width, int height) {
+        glfwSetWindowSize(window, width, height);
+    }
+
+    public void setLocation(int x, int y) {
+        glfwSetWindowPos(window, x, y);
+    }
+
+    public void setDimensions(int x, int y, int width, int height) {
+        setLocation(x, y);
+        setSize(width, height);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setIcon() {
+
     }
 }

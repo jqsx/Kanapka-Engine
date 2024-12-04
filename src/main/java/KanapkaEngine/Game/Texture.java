@@ -74,6 +74,8 @@ public final class Texture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
         Engine.ErrorCheck("Buffering Texture Data");
+
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public void Dispose() {

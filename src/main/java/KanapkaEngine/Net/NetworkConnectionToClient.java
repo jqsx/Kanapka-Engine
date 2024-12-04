@@ -1,5 +1,6 @@
 package KanapkaEngine.Net;
 
+import KanapkaEngine.Game.Logger;
 import KanapkaEngine.Net.Router.Route;
 import KanapkaEngine.Net.Router.RouteManager;
 
@@ -9,6 +10,8 @@ import java.util.HashMap;
 
 public class NetworkConnectionToClient implements Runnable {
 
+    private static final Logger logger = new Logger("NETWORK_SERVER_CLIENT");
+
     private final int id;
 
     private Socket socket;
@@ -17,14 +20,14 @@ public class NetworkConnectionToClient implements Runnable {
     private final Thread thread;
 
     public NetworkConnectionToClient(Socket socket, int id) {
-        System.out.println("[SERVERCLIENT] Setting up server client connection.");
+        logger.log("Setting up server client connection.");
         this.socket = socket;
 
         this.id = id;
 
         thread = new Thread(this);
         thread.start();
-        System.out.println("[SERVERCLIENT] Set up server client connection.");
+        logger.log("Set up server client connection.");
     }
 
     public final int getId() {
@@ -33,13 +36,13 @@ public class NetworkConnectionToClient implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("[SERVERCLIENT] Started server client connection thread.");
+        logger.log("Started server client connection thread.");
 
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
-            System.out.println("[SERVERCLIENT] Failed connection with client " + socket.getLocalAddress().getHostAddress());
+            logger.error("Failed connection with client " + socket.getLocalAddress().getHostAddress());
             e.printStackTrace();
         }
 
@@ -49,8 +52,8 @@ public class NetworkConnectionToClient implements Runnable {
                 int length = in.readInt();
                 Route route = RouteManager.getRoute(ID);
                 if (route == null) {
-                    System.out.println("[SERVERCLIENT] ROUTE NOT FOUND " + ID);
-                    socket.close();
+                    logger.error("ROUTE NOT FOUND " + ID);
+                    //socket.close();
                     return;
                 }
                 byte[] data = new byte[length];
@@ -63,9 +66,9 @@ public class NetworkConnectionToClient implements Runnable {
             out.close();
             if (!socket.isClosed())
                 socket.close();
-            System.out.println("Closed");
+            logger.log("Closed");
         } catch (IOException e) {
-            System.out.println("[SERVERCLIENT] Problem");
+            logger.error("Problem");
         }
         finally {
             RouteManager.onServerClientDisconnect(this);
