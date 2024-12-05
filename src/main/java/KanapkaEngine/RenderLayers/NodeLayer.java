@@ -12,7 +12,7 @@ public class NodeLayer implements RenderLayer {
     @Override
     public void Render() {
         if (SceneManager.hasScene() && Camera.main != null) {
-            SceneManager.getSceneNodes().foreach(this::RenderNode);
+            SceneManager.getSceneNodes().forEach(this::RenderNode);
         }
     }
 

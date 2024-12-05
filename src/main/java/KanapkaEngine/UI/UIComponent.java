@@ -3,6 +3,7 @@ package KanapkaEngine.UI;
 import KanapkaEngine.Game.Input;
 import KanapkaEngine.Game.Window;
 import org.joml.Vector2d;
+import org.joml.Vector2i;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -66,7 +67,7 @@ public class UIComponent {
 
     private void onClick() {
         Rectangle2D bounds = new Rectangle2D.Double();
-        Vector2d mouse = Input.getMousePosition();
+        Vector2i mouse = Input.getMousePosition();
         if (bounds.contains(mouse.x, mouse.y)) {
             for (Runnable r : onClick)
                 r.run();
