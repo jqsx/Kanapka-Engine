@@ -8,7 +8,13 @@ import KanapkaEngine.Game.Camera;
 import KanapkaEngine.Game.Graphics;
 import KanapkaEngine.Game.SceneManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NodeLayer implements RenderLayer {
+
+    private static final List<Renderer> renderers = new ArrayList<>();
+
     @Override
     public void Render() {
         if (SceneManager.hasScene() && Camera.main != null) {
@@ -17,8 +23,8 @@ public class NodeLayer implements RenderLayer {
     }
 
     private void RenderNode(Node node) {
-        Renderer renderer = node.getRenderer();
-        if (renderer != null) {
+        node.getComponents(renderers, Renderer.class);
+        for (Renderer renderer : renderers) {
             Graphics.DrawSprite(renderer.getTexture(), node.transform.getTransformation(), renderer.getMaterial());
         }
     }

@@ -17,6 +17,7 @@ public class Chunk {
      */
     public static final int BLOCK_SCALE = 16;
     private Rectangle2D bounds;
+    protected Texture renderTexture = new Texture();
     private BufferedImage render;
     private Renderer.Stage render_stage = Renderer.Stage.NOTSTARTED;
     private final World parent;
@@ -98,7 +99,6 @@ public class Chunk {
     public Rectangle2D getBounds() {
         Vector2d camera_position = Camera.main.getPosition();
         Vector2d position = getPosition();
-        double g_size = SceneManager.getGlobalSize();
         Vector2d pos = new Vector2d((camera_position.x + position.x), -(camera_position.y + position.y));
         if (bounds == null)
             bounds = new Rectangle2D.Double(pos.x, pos.y, render.getWidth(), render.getHeight());
@@ -174,6 +174,17 @@ public class Chunk {
         else return null;
     }
 
+    public Texture getTexture() {
+        getRender();
+
+        if (render_stage == Renderer.Stage.READYTOBIND) {
+            renderTexture.setTexture(render);
+            render_stage = Renderer.Stage.BOUND;
+            return renderTexture;
+        }
+        return null;
+    }
+
     public final void activate() {
         isActive = true;
         lastActive = System.currentTimeMillis();
@@ -219,7 +230,7 @@ public class Chunk {
 
             render = image;
             g.dispose();
-            render_stage = Renderer.Stage.FINISHED;
+            render_stage = Renderer.Stage.READYTOBIND;
         }).start();
     }
 

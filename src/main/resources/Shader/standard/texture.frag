@@ -5,26 +5,24 @@ out vec4 fragColor;
 in vec2 vTexCoord;
 uniform sampler2D uMainTex;
 uniform highp float uTime;
+
 uniform vec4 uColors[64];
 
 void main() {
     vec4 color = texture(uMainTex, vTexCoord);
 
-    vec4 closest = vec4(vec3(1.0), 1.0);
-    float l = 9999.0;
-
+    vec3 close = vec3(1.0, 0.0, 0.0);
+    float far = 20000.0;
     for (int i = 0; i < 64; i++) {
-        vec4 c = uColors[i];
+        vec3 diff = abs(uColors[i].xyz - color.xyz);
 
-        vec3 diff = abs(color.xyz - c.xyz);
+        float dist = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
 
-        float _l = diff.x + diff.y + diff.z;
-
-        if (_l < l) {
-            closest = c;
-            l = _l;
+        if (dist < far) {
+            close = uColors[i].rgb;
+            far = dist;
         }
     }
 
-    fragColor = vec4(vec3(l), color.a * closest.a);
+    fragColor = vec4(close, color.a);
 }

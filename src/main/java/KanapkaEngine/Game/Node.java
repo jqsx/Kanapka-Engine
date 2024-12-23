@@ -6,6 +6,7 @@ import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Node {
     private static int NodeCount = 0;
@@ -94,11 +95,26 @@ public class Node {
 
     public final <V extends Component> V getComponent(Class<V> v) {
         if (!alive) return null;
+        Objects.requireNonNull(v);
         for (Component component : components) {
             if (v.isAssignableFrom(component.getClass()))
                 return (V) component;
         }
         return null;
+    }
+
+    public final <V extends Component> void getComponents(List<V> ref, Class<V> v) {
+        if (!alive) return;
+
+        Objects.requireNonNull(ref);
+        Objects.requireNonNull(v);
+
+        ref.clear();
+
+        for (Component component : components) {
+            if (v.isAssignableFrom(component.getClass()))
+                ref.add((V) component);
+        }
     }
 
     public Node(Node parent) {

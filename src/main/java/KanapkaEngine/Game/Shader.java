@@ -59,7 +59,8 @@ public class Shader {
         glCompileShader(shaderId);
 
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
-            throw new Exception("Error compiling Shader code: " + glGetShaderInfoLog(shaderId, 1024));
+            String type = shaderType == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT";
+            throw new Exception("Error compiling " + type + "  Shader code: " + glGetShaderInfoLog(shaderId, 1024));
         }
 
         glAttachShader(programId, shaderId);
@@ -144,6 +145,19 @@ public class Shader {
         glUniform1f(location, value);
         unbind();
     }
+    public final void setUniform(String uniform, int value) {
+        Objects.requireNonNull(uniform);
+        if (isDisposed)
+            return;
+        if (!UniformLocations.containsKey(uniform))
+            return;
+
+        int location = UniformLocations.get(uniform);
+
+        bind();
+        glUniform1i(location, value);
+        unbind();
+    }
 
     public final void setUniform(String uniform, Vector2f value) {
         Objects.requireNonNull(value);
@@ -200,18 +214,33 @@ public class Shader {
 
         bind();
 
-        for (int index = 0; index < value.length; index++) {
-            String uniform_index = uniform + "[" + index + "]";
+//        for (int index = 0; index < value.length; index++) {
+//            String uniform_index = uniform + "[" + index + "]";
+//
+//            Vector4f v = value[index];
+//
+//            glUniform4f(glGetUniformLocation(programId, uniform_index), v.x, v.y, v.z, v.w);
+//        }
 
-            Vector4f v = value[index];
+        float[] _v = new float[value.length * 4];
 
-            glUniform4f(glGetUniformLocation(programId, uniform_index), v.x, v.y, v.z, v.w);
+        for (int i = 0; i < value.length; i++) {
+            _v[i*4] = value[i].x;
+            _v[i*4+1] = value[i].y;
+            _v[i*4+2] = value[i].z;
+            _v[i*4+3] = value[i].w;
         }
+
+        glUniform4fv(UniformLocations.get(uniform), _v);
 
         unbind();
     }
 
     public final void setUniform(String uniform, Texture texture) {
+        setUniform(uniform, texture, GL_TEXTURE0, 0);
+    }
+
+    public final void setUniform(String uniform, Texture texture, int gltexture, int i) {
         Objects.requireNonNull(texture);
         Objects.requireNonNull(uniform);
         if (isDisposed)
@@ -221,9 +250,11 @@ public class Shader {
 
         bind();
 
-        glActiveTexture(GL_TEXTURE0);
+        setUniform(uniform, i);
 
-        glBindTexture(programId, texture.textureId);
+        glActiveTexture(gltexture);
+
+        glBindTexture(GL_TEXTURE_2D, texture.textureId);
 
         unbind();
     }

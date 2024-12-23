@@ -7,16 +7,18 @@ import org.joml.Vector2i;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class Input extends Plugin {
-    private static final List<Integer> keysDown = new ArrayList<>();
+    private static final Set<Integer> keysDown = new HashSet<>();
 
     private static Vector2i mousePosition = new Vector2i(0, 0);
 
-    private static final List<Integer> buttonDown = new ArrayList<>();
-    private static final List<Integer> keyDownFrame = new ArrayList<>();
-    private static final List<Integer> keyUpFrame = new ArrayList<>();
+    private static final Set<Integer> buttonDown = new HashSet<>();
+    private static final Set<Integer> keyDownFrame = new HashSet<>();
+    private static final Set<Integer> keyUpFrame = new HashSet<>();
 
     Input() {
 
@@ -61,12 +63,12 @@ public final class Input extends Plugin {
         return mousePosition;
     }
 
-    void mousePressed(int button, int x, int y) {
+    void mousePressed(int button) {
         if (!buttonDown.contains(button))
             buttonDown.add(button);
     }
 
-    void mouseReleased(int button, int x, int y) {
+    void mouseReleased(int button) {
         buttonDown.remove(button);
     }
 }

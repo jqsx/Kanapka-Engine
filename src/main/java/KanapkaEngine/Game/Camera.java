@@ -57,12 +57,10 @@ public class Camera {
 
     public Point WorldToScreenPosition(Vector2d world) {
 
-        double gSize = SceneManager.getGlobalSize();
-
         Vector2d cameraPosition = Camera.main.getPosition();
         Vector2d position = cameraPosition.add(world);
 
-        return new Point((int) (position.x * gSize), (int) (-position.x * gSize));
+        return new Point((int) (position.x), (int) (-position.x));
     }
 
     public double getRotation() {

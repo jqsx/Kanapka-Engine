@@ -19,6 +19,8 @@ public class Graphics {
 
     private static Mesh spriteMesh;
 
+    private static Mesh renderPassMesh;
+
     public static void DrawMesh(Mesh mesh, Transformation transformation, Shader shader) {
         DrawMesh(mesh.attributeBuffer, transformation, shader);
     }
@@ -42,6 +44,8 @@ public class Graphics {
 
         shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
         shader.setUniform("uTime", (float)Time.time());
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().width);
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().height);
 
         shader.bind();
         mesh.bind();
@@ -62,10 +66,62 @@ public class Graphics {
         DrawMesh(spriteMesh, transformation, shader);
     }
 
-    public static void DrawSprite(RenderTexture texture, Transformation transformation, Shader shader) {
-        Objects.requireNonNull(texture);
+    public static void DrawRenderTexture(RenderTexture texture, Material material) {
+        Objects.requireNonNull(material);
 
-        DrawSprite(texture.getTexture(), transformation, shader);
+        material.Set();
+
+        DrawRenderTexture(texture, material.getShader());
+    }
+
+    public static void DrawRenderTexture(RenderTexture texture, Shader shader) {
+        Objects.requireNonNull(texture);
+        Objects.requireNonNull(shader);
+
+        if (Camera.main == null)
+            return;
+
+        InitRenderTextureMesh();
+
+        shader.setUniform("uMainTex", texture.getTexture());
+        shader.setUniform("uTime", (float)Time.time());
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().width);
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().height);
+
+        shader.bind();
+
+        renderPassMesh.attributeBuffer.bind();
+
+        glDrawElements(GL_TRIANGLES, renderPassMesh.attributeBuffer.getVertexCount(), GL_UNSIGNED_INT, 0);
+
+        renderPassMesh.attributeBuffer.unbind();
+
+        shader.unbind();
+    }
+
+    public static void DrawFullScreen(Texture texture, Shader shader) {
+        Objects.requireNonNull(texture);
+        Objects.requireNonNull(shader);
+
+        if (Camera.main == null)
+            return;
+
+        InitRenderTextureMesh();
+
+        shader.setUniform("uMainTex", texture);
+        shader.setUniform("uTime", (float)Time.time());
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().width);
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().height);
+
+        shader.bind();
+
+        renderPassMesh.attributeBuffer.bind();
+
+        glDrawElements(GL_TRIANGLES, renderPassMesh.attributeBuffer.getVertexCount(), GL_UNSIGNED_INT, 0);
+
+        renderPassMesh.attributeBuffer.unbind();
+
+        shader.unbind();
     }
 
     public static void DrawSprite(Transformation transformation, TextureMaterial material) {
@@ -94,6 +150,21 @@ public class Graphics {
             });
 
             spriteMesh.triangles(new int[] {0,2,1,2,3,1});
+        }
+    }
+
+    private static void InitRenderTextureMesh() {
+        if (renderPassMesh == null) {
+            renderPassMesh = new Mesh();
+
+            renderPassMesh.vertices(new Vector3f[]{
+                    new Vector3f(-1f, -1f, 0.f),
+                    new Vector3f(-1f, 1f, 0.f),
+                    new Vector3f(1f, -1f, 0.f),
+                    new Vector3f(1f, 1f, 0.f)
+            });
+
+            renderPassMesh.triangles(new int[] {0,2,1,2,3,1});
         }
     }
 }

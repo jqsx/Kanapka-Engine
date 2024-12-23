@@ -34,15 +34,25 @@ public class TextureMaterial extends Material {
             int cindex = index * dillusion;
 
             for (int i = 0; i < dillusion; i++) {
-                colors[cindex+i] = main_colors[index].lerp(white, i / (float)dillusion);
+                colors[cindex+i] = lerp(main_colors[index], white, i / (float)dillusion);
             }
         }
+    }
+
+    private static float lerp(float a, float b, float t) {
+        t = Math.min(Math.max(t, 0.0f), 1.0f);
+
+        return a + (b - a) * t;
+    }
+
+    private static Vector4f lerp(Vector4f a, Vector4f b, float t) {
+        return new Vector4f(lerp(a.x, b.x, t), lerp(a.y, b.y, t),lerp(a.z, b.z, t),lerp(a.w, b.w, t));
     }
 
     public TextureMaterial() {
         setShader(Shader.findOrCreate("builtIn:texture", "Shader/standard/texture"));
 
-        //getShader().createUniform("uColors");
+        getShader().createUniform("uColors");
     }
 
     @Override

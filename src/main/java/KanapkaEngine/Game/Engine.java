@@ -45,6 +45,8 @@ public final class Engine {
 
     private Input input;
 
+    private RenderTexture globalTexture;
+
     private final List<RenderLayer> BACKGROUND = new ArrayList<>();
     private final List<RenderLayer> WORLD = new ArrayList<>();
     private final List<RenderLayer> PARTICLES = new ArrayList<>();
@@ -95,11 +97,21 @@ public final class Engine {
         instance = this;
         credits();
 
-        InitializeLWJGL();
-        InitializeOpenGLUpdate();
-
-        load(new Scheduler());
         load(input = new Input());
+        load(new Scheduler());
+
+        try {
+            InitializeLWJGL();
+            InitializeOpenGLUpdate();
+        } catch (Exception e) {
+
+            logger.error("THE ENGINE HAS CRASHED.");
+            logger.error("FREEING ALL OPENGL DATA");
+
+            End();
+
+            throw new RuntimeException(e);
+        }
     }
 
     public void load(Plugin plugin) {
@@ -111,14 +123,32 @@ public final class Engine {
         return WindowObject;
     }
 
+    private TextureMaterial textureMaterial;
+    private Shader invert;
+
     private void Draw() {
         Camera.createProjectionMatrix(WindowObject.width / (float)WindowObject.height);
+
+        if (textureMaterial == null)
+            textureMaterial = new TextureMaterial();
+
+        if (invert == null) {
+            invert = Shader.findOrCreate("builtin:post:invert", "Shader/standard/PostProcess/Invert");
+        }
+//
+//        globalTexture.bind();
+
+        globalTexture.unbind();
 
         Render_Layer(BACKGROUND);
         Render_Layer(WORLD);
         Render_Layer(PARTICLES);
         Render_Layer(UI);
         Render_Layer(FOREGROUND);
+
+//        globalTexture.unbind();
+//
+//        Graphics.DrawFullScreen(globalTexture.getTexture(), invert);
     }
 
     private void Update()  {
@@ -228,11 +258,11 @@ public final class Engine {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_VERSION_MINOR, 2);
-
-        if (isMacOS()) {
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        }
+//
+//        if (isMacOS()) {
+//            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+//            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//        }
 
         if (window == NULL) {
             throw new RuntimeException("Problem while creating GLFW window.");
@@ -277,6 +307,8 @@ public final class Engine {
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+        globalTexture = new RenderTexture();
+
         logger.log("Initialized LWJGL, ready to draw");
 
         Camera.main = new Camera();
@@ -317,8 +349,13 @@ public final class Engine {
         input.mouseMoved((int) x, (int) y);
     }
 
-    private void MouseButtonCallback(long window, int i, int i1, int i2) {
-
+    private void MouseButtonCallback(long window, int button, int action, int mods) {
+        if (action == GLFW_PRESS) {
+            input.mousePressed(button);
+        }
+        else if (action == GLFW_RELEASE) {
+            input.mouseReleased(button);
+        }
     }
 
     public static void ErrorCheck(String namespace) {
@@ -349,5 +386,9 @@ public final class Engine {
             case UI -> UI.add(renderLayer);
             case FOREGROUND -> FOREGROUND.add(renderLayer);
         }
+    }
+
+    static Engine getMainInstance() {
+        return instance;
     }
 }
