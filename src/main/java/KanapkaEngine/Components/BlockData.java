@@ -49,10 +49,9 @@ public class BlockData {
     }
 
     public final BufferedImage getRender() {
-/*        if (render_stage == Renderer.NOT_STARTED) {
-            render_stage = Renderer.STARTED;
+        if (render == null) {
             beginRender();
-        }*/
+        }
         return render;
     }
 
@@ -69,6 +68,5 @@ public class BlockData {
     private void beginRender() {
         if (texture == null) return;
         render = ResourceLoader.loadResource(texture);
-      /*  render_stage = Renderer.FINISHED;*/
     }
 }

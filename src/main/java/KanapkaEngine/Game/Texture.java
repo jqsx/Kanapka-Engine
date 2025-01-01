@@ -28,6 +28,9 @@ public final class Texture {
     boolean isDisposed = false;
 
     public Texture() {
+        if (!Engine.isOpenGLInitialized()) {
+            throw new RuntimeException("CANNOT INSTANTIATE OBJECTS BEFORE INITIALIZING THE ENGINE.");
+        }
         generateTextureID();
 
         LoadedTextures.add(this);
@@ -120,6 +123,9 @@ public final class Texture {
         glBindTexture(GL_TEXTURE_2D, textureId);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -176,6 +182,10 @@ public final class Texture {
 
         if (removeFromList)
             LoadedTextures.remove(this);
+    }
+
+    public void flush() {
+        setTextureUnsafe(0, 0, null);
     }
 
     public boolean HasTexture() {

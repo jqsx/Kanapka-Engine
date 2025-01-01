@@ -25,6 +25,8 @@ public final class Engine {
     private static final Logger logger = new Logger("ENGINE");
     private static Engine instance;
 
+    static boolean openglready = false;
+
     private boolean isRunning = true;
 
     private long window;
@@ -62,6 +64,10 @@ public final class Engine {
         this.engineConfiguration = engineConfiguration;
         this.logic = logic;
         init();
+    }
+
+    static boolean isOpenGLInitialized() {
+        return openglready;
     }
 
     private void credits() {
@@ -127,7 +133,7 @@ public final class Engine {
     private Shader invert;
 
     private void Draw() {
-        Camera.createProjectionMatrix(WindowObject.width / (float)WindowObject.height);
+        Camera.createProjectionMatrix(WindowObject.getWidth() / (float)WindowObject.getHeight());
 
         if (textureMaterial == null)
             textureMaterial = new TextureMaterial();
@@ -137,8 +143,8 @@ public final class Engine {
         }
 //
 //        globalTexture.bind();
-
-        globalTexture.unbind();
+//
+//        globalTexture.clear();
 
         Render_Layer(BACKGROUND);
         Render_Layer(WORLD);
@@ -146,8 +152,8 @@ public final class Engine {
         Render_Layer(UI);
         Render_Layer(FOREGROUND);
 
-//        globalTexture.unbind();
-//
+        globalTexture.unbind();
+
 //        Graphics.DrawFullScreen(globalTexture.getTexture(), invert);
     }
 
@@ -196,13 +202,23 @@ public final class Engine {
         }
     }
 
+    void scroll_callback(long window, double xoffset, double yoffset)
+    {
+        plugins.forEach(plugin -> {
+            if (plugin instanceof IInput in)
+                in.ScrollCallback(xoffset, yoffset);
+        });
+    }
+
+
     public void End() {
         isRunning = false;
+        openglready = false;
 
         logger.log("Engine stopped running, freeing OpenGL data.");
 
         logger.log("Freeing attribute buffers.");
-        for (AttributeBuffer buffer : AttributeBuffer.LoadedAttributeBuffers) {
+        for (AttributeBuffer buffer : AttributeElementBuffer.LoadedAttributeBuffers) {
             buffer.Dispose(false);
         }
         logger.log("Freed attribute buffers.");
@@ -219,12 +235,14 @@ public final class Engine {
 
         Shader.LoadedShaders.clear();
 
-        AttributeBuffer.LoadedAttributeBuffers.clear();
+        AttributeElementBuffer.LoadedAttributeBuffers.clear();
 
         Texture.LoadedTextures.clear();
 
         logger.log("Detaching Plugins.");
         for (Plugin plugin : plugins) {
+            if (plugin instanceof ICleanUp iCleanUp)
+                iCleanUp.cleanUp();
             plugin.Detach();
         }
         logger.log("Detached Plugins.");
@@ -273,8 +291,10 @@ public final class Engine {
         WindowObject = new Window(window, engineConfiguration);
 
         glfwSetKeyCallback(window, this::KeyCallBack);
+        glfwSetCharCallback(window, this::CharKeyCallback);
         glfwSetCursorPosCallback(window, this::MouseCallback);
         glfwSetMouseButtonCallback(window, this::MouseButtonCallback);
+        glfwSetScrollCallback(window, this::scroll_callback);
 
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1);
@@ -296,6 +316,26 @@ public final class Engine {
 
         GL.createCapabilities();
 
+        openglready = true;
+
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+        globalTexture = new RenderTexture(1920, 1080);
+
+        Shader.Standard.init();
+
+        logger.log("Initialized LWJGL, ready to draw");
+
+        Camera.main = new Camera();
+
+        logic.Start(this);
+
+        ErrorCheck("General");
+
+        logger.log("Finished Initialization");
+    }
+
+    private void setDefaultRenderRules() {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
@@ -304,20 +344,6 @@ public final class Engine {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-        globalTexture = new RenderTexture();
-
-        logger.log("Initialized LWJGL, ready to draw");
-
-        Camera.main = new Camera();
-
-        logic.Start();
-
-        ErrorCheck("General");
-
-        logger.log("Finished Initialization");
     }
 
     private void InitializeOpenGLUpdate() {
@@ -343,6 +369,18 @@ public final class Engine {
         } else if (action == GLFW_RELEASE) {
             input.keyReleased(key);
         }
+
+        plugins.forEach(plugin -> {
+            if (plugin instanceof IInput in)
+                in.KeyCallBack(key, scancode, action, mods);
+        });
+    }
+
+    private void CharKeyCallback(long window, int c) {
+        plugins.forEach(plugin -> {
+            if (plugin instanceof IInput in)
+                in.CharKeyCallback(c);
+        });
     }
 
     private void MouseCallback(long window, double x, double y) {
@@ -372,6 +410,7 @@ public final class Engine {
 
     private void Render_Layer(List<RenderLayer> renderStage) {
         for (RenderLayer renderLayer : renderStage) {
+            setDefaultRenderRules();
             renderLayer.Render();
         }
     }
@@ -388,7 +427,7 @@ public final class Engine {
         }
     }
 
-    static Engine getMainInstance() {
+    public static Engine getMainInstance() {
         return instance;
     }
 }

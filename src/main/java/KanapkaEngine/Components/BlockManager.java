@@ -32,7 +32,7 @@ public class BlockManager {
 
     private static ArrayList<BlockData> init() {
         ArrayList<BlockData> data = new ArrayList<>();
-        data.add(new BlockData("logo.png"));
+        data.add(new BlockData("wooden.png"));
         return data;
     }
 

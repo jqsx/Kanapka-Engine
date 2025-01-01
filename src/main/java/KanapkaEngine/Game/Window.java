@@ -7,8 +7,8 @@ import static org.lwjgl.glfw.GLFW.*;
 public final class Window {
     private long window;
 
-    public int width;
-    public int height;
+    private int width;
+    private int height;
 
     Window(long window, EngineConfiguration configuration) {
         this.window = window;
@@ -31,6 +31,10 @@ public final class Window {
         this.height = height;
 
         glViewport(0, 0, width, height);
+    }
+
+    long getGLFWwindow() {
+        return window;
     }
 
     public void setTitle(String text) {

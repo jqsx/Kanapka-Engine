@@ -8,7 +8,7 @@ public class InvertColorsPostProcess extends PostProcessEffect {
     private Shader shader;
 
     public InvertColorsPostProcess() {
-        renderTexture = new RenderTexture();
+        renderTexture = new RenderTexture(1920, 1080);
         shader = Shader.findOrCreate("builtin:post:inverse", "Shader/standard/PostProcess/Invert");
     }
 

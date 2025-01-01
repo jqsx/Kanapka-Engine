@@ -3,19 +3,24 @@ package KanapkaEngine.Game;
 import KanapkaEngine.Components.Material;
 import KanapkaEngine.Components.TextureMaterial;
 import org.joml.Matrix4f;
+import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 
 /*
 I left this class as not final so that you can write your own custom graphics implementations
  */
 public class Graphics {
 
+    private static final Logger logger = new Logger("Graphics");
     private final static Matrix4f model = new Matrix4f().identity();
+
+    private final static Transformation transformation = new Transformation(new Vector3d(), new Vector3d(), new Vector3f());
 
     private static Mesh spriteMesh;
 
@@ -33,7 +38,7 @@ public class Graphics {
         DrawMesh(mesh.attributeBuffer, transformation, shader.getShader());
     }
 
-    public static void DrawMesh(AttributeBuffer mesh, Transformation transformation, Shader shader) {
+    public static void DrawMesh(AttributeElementBuffer mesh, Transformation transformation, Shader shader) {
         Objects.requireNonNull(shader);
         Objects.requireNonNull(mesh);
         Objects.requireNonNull(transformation);
@@ -44,8 +49,8 @@ public class Graphics {
 
         shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
         shader.setUniform("uTime", (float)Time.time());
-        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().width);
-        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().height);
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().getHeight());
 
         shader.bind();
         mesh.bind();
@@ -85,8 +90,8 @@ public class Graphics {
 
         shader.setUniform("uMainTex", texture.getTexture());
         shader.setUniform("uTime", (float)Time.time());
-        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().width);
-        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().height);
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().getHeight());
 
         shader.bind();
 
@@ -110,8 +115,8 @@ public class Graphics {
 
         shader.setUniform("uMainTex", texture);
         shader.setUniform("uTime", (float)Time.time());
-        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().width);
-        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().height);
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().getHeight());
 
         shader.bind();
 
@@ -136,6 +141,50 @@ public class Graphics {
         shader.Set();
 
         DrawSprite(texture, transformation, shader.getShader());
+    }
+
+    public static void DrawSprite(Texture texture, Transformation transformation) {
+        DrawSprite(texture, transformation, Shader.Standard.getTextureShader());
+    }
+
+    public static void DrawSprite(Texture texture, Vector2d position, Vector2d scale, float rotation) {
+        Objects.requireNonNull(position);
+        Objects.requireNonNull(scale);
+        transformation.Update(position, scale, rotation);
+
+        DrawSprite(texture, transformation);
+    }
+
+    public static void DrawInstancedSprite(Shader shader, Texture texture, Transformation transformation, AttributeElementBuffer buffer) {
+        Objects.requireNonNull(texture);
+        Objects.requireNonNull(buffer);
+        Objects.requireNonNull(transformation);
+
+        if (!buffer.isInstanced()) {
+            logger.warn("Rendering non instanced attribute buffer");
+            return;
+        }
+
+        if (Camera.main == null)
+            return;
+
+        shader.bind();
+
+        shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
+        shader.setUniform("uTime", (float)Time.time());
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().getHeight());
+        shader.setUniform("uMainTex", texture);
+
+        shader.bind();
+        buffer.bind();
+
+        //glDrawElements(GL_TRIANGLES, buffer.getVertexCount(), GL_UNSIGNED_INT, 0);
+        glDrawElementsInstanced(GL_TRIANGLES, buffer.getVertexCount(), GL_UNSIGNED_INT, 0, buffer.getInstanceCount());
+
+        buffer.unbind();
+
+        shader.unbind();
     }
 
     private static void InitSpriteMesh() {

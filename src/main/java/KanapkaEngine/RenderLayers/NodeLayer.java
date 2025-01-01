@@ -1,12 +1,8 @@
 package KanapkaEngine.RenderLayers;
 
-import KanapkaEngine.Game.Node;
-import KanapkaEngine.Game.RenderLayer;
+import KanapkaEngine.Game.*;
 import KanapkaEngine.Components.RenderStage;
 import KanapkaEngine.Components.Renderer;
-import KanapkaEngine.Game.Camera;
-import KanapkaEngine.Game.Graphics;
-import KanapkaEngine.Game.SceneManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +10,8 @@ import java.util.List;
 public class NodeLayer implements RenderLayer {
 
     private static final List<Renderer> renderers = new ArrayList<>();
+
+    private static final Logger logger = new Logger("NodeLayer");
 
     @Override
     public void Render() {
@@ -25,7 +23,9 @@ public class NodeLayer implements RenderLayer {
     private void RenderNode(Node node) {
         node.getComponents(renderers, Renderer.class);
         for (Renderer renderer : renderers) {
-            Graphics.DrawSprite(renderer.getTexture(), node.transform.getTransformation(), renderer.getMaterial());
+            if (Camera.main.isWithin(renderer)) {
+                Graphics.DrawSprite(renderer.getTexture(), node.transform.getTransformation(), renderer.getMaterial());
+            }
         }
     }
 

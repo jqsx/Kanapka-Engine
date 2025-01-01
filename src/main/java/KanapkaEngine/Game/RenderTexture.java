@@ -11,59 +11,52 @@ public final class RenderTexture {
     private static final int[] attachments = new int[] { GL_COLOR_ATTACHMENT0 };
 
     private final int frameBuffer;
-    private final int renderBuffer;
-
     private final Texture target;
 
-    public RenderTexture() {
-        target = new Texture();
+    private int width;
+    private int height;
 
-        Window window = Engine.getMainInstance().getWindow();
-
-        target.setTextureUnsafe(1920, 1080, null);
-
-        renderBuffer = glGenRenderbuffers();
-        frameBuffer = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1980, 1080);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBuffer);
-
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target.textureId, 0);
-
-        glDrawBuffers(attachments);
-
-        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            logger.error("ERROR WHILE CREATING RENDERTEXTURE");
-            return;
+    public RenderTexture(int width, int height) {
+        if (!Engine.isOpenGLInitialized()) {
+            throw new RuntimeException("CANNOT INSTANTIATE OBJECTS BEFORE INITIALIZING THE ENGINE.");
         }
 
-        UpdateResolution();
-    }
+        this.width = width;
+        this.height = height;
 
-    private void UpdateResolution() {
+        target = new Texture();
+
+        target.setTextureUnsafe(width, height, null);
+
+        frameBuffer = glGenFramebuffers();
+
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-        Window window = Engine.getMainInstance().getWindow();
 
-        glViewport(0,0,window.width, window.height);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target.textureId, 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            logger.error("Framebuffer is not complete!");
+            throw new RuntimeException("Framebuffer not complete.");
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     public void bind() {
-        UpdateResolution();
-
-        glClear(GL_COLOR_BUFFER_BIT);
-
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-        Window window = Engine.getMainInstance().getWindow();
-        glViewport(0,0,window.width, window.height);
+
+        glViewport(0, 0, width, height);
+    }
+
+    public void clear() {
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     public void unbind() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         Window window = Engine.getMainInstance().getWindow();
-        glViewport(0,0,window.width, window.height);
+        glViewport(0,0,window.getWidth(), window.getHeight());
     }
 
     public Texture getTexture() {

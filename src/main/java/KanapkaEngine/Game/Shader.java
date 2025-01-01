@@ -24,7 +24,12 @@ public class Shader {
 
     private boolean isDisposed = false;
 
+    private static float[] preallocatedMat4Floats = new float[16];
+
     public Shader(String id, String fragCode, String vertCode) {
+        if (!Engine.isOpenGLInitialized()) {
+            throw new RuntimeException("CANNOT INSTANTIATE OBJECTS BEFORE INITIALIZING THE ENGINE.");
+        }
         Objects.requireNonNull(id);
         Objects.requireNonNull(fragCode);
         Objects.requireNonNull(vertCode);
@@ -124,10 +129,9 @@ public class Shader {
         int location = UniformLocations.get(uniform);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer fb = stack.mallocFloat(16);
-            mat.get(fb);
+            mat.get(preallocatedMat4Floats);
             bind();
-            glUniformMatrix4fv(location, false, fb);
+            glUniformMatrix4fv(location, false, preallocatedMat4Floats);
             unbind();
         }
     }
@@ -311,5 +315,24 @@ public class Shader {
             shader = Shader.createShaderFromResources(id, path);
 
         return shader;
+    }
+
+    public final static class Standard {
+
+        private static Shader standard;
+        private static Shader texture;
+
+        public static Shader getStandardShader() {
+            return standard;
+        }
+
+        public static Shader getTextureShader() {
+            return texture;
+        }
+
+        protected static void init() {
+            texture = Shader.findOrCreate("builtIn:texture", "Shader/standard/texture");
+            standard = Shader.findOrCreate("builtIn:standard", "Shader/standard/standard");
+        }
     }
 }

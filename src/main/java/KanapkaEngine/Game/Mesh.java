@@ -3,12 +3,15 @@ package KanapkaEngine.Game;
 import org.joml.Vector3f;
 
 public final class Mesh {
-    final AttributeBuffer attributeBuffer;
+    final AttributeElementBuffer attributeBuffer;
 
     private static final String VERTICE_ID = "vertices";
 
     public Mesh() {
-        attributeBuffer = new AttributeBuffer();
+        if (!Engine.isOpenGLInitialized()) {
+            throw new RuntimeException("CANNOT INSTANTIATE OBJECTS BEFORE INITIALIZING THE ENGINE.");
+        }
+        attributeBuffer = new AttributeElementBuffer();
 
         attributeBuffer.createAttribute(VERTICE_ID);
     }

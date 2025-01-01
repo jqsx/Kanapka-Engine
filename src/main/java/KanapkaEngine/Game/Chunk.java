@@ -15,9 +15,12 @@ public class Chunk {
     /**
      * Hardcoded block scale
      */
+
+    private static final Logger logger = new Logger("CHUNK");
+
     public static final int BLOCK_SCALE = 16;
     private Rectangle2D bounds;
-    protected Texture renderTexture = new Texture();
+    protected Texture renderTexture;
     private BufferedImage render;
     private Renderer.Stage render_stage = Renderer.Stage.NOTSTARTED;
     private final World parent;
@@ -168,21 +171,26 @@ public class Chunk {
     }
 
     public BufferedImage getRender() {
-        if (!isActive) return null;
+//        if (!isActive) return null;
         if (render_stage == Renderer.Stage.NOTSTARTED || needReRender) beginRender();
         if (render_stage == Renderer.Stage.FINISHED || render_stage == Renderer.Stage.READYTOBIND || render_stage == Renderer.Stage.BOUND) return render;
         else return null;
     }
 
     public Texture getTexture() {
+        if (!Engine.isOpenGLInitialized()) {
+            throw new RuntimeException("CANNOT INSTANTIATE OBJECTS BEFORE INITIALIZING THE ENGINE.");
+        }
         getRender();
 
         if (render_stage == Renderer.Stage.READYTOBIND) {
+            if (renderTexture == null)
+                renderTexture = new Texture();
             renderTexture.setTexture(render);
             render_stage = Renderer.Stage.BOUND;
-            return renderTexture;
         }
-        return null;
+
+        return renderTexture;
     }
 
     public final void activate() {
@@ -215,6 +223,7 @@ public class Chunk {
         if (!isReadyForRender && !needReRender) return;
         if (needReRender)
             needReRender = false;
+        render_stage = Renderer.Stage.RENDERING;
         new Thread(() -> {
             int s = SceneManager.getCurrentlyLoaded().getChunkSize() * BLOCK_SCALE;
             BufferedImage image = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);

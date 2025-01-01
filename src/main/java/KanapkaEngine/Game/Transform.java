@@ -36,7 +36,7 @@ public class Transform {
             this.position.set(node_parent.transform.getPosition().sub(position));
         }
         else
-            this.position.set(position);
+            this.position.set(position.x, position.y);
     }
 
     public void setPosition(double x, double y) {
@@ -54,6 +54,9 @@ public class Transform {
 
     public void setSize(Vector2d size) {
         this.size.set(size);
+    }
+    public void setSize(double x, double y) {
+        this.size.set(x, y);
     }
 
     public double getRotation() {
