@@ -1,5 +1,6 @@
 package KanapkaEngine.Game;
 
+import KanapkaEngine.Editor.Attributes.Serialized;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 public final class AttributeElementBuffer extends AttributeBuffer {
+    private static final Logger logger = new Logger("AttributeElementBuffer");
     private final int VAO;
     private final int EBO;
 
@@ -50,6 +52,11 @@ public final class AttributeElementBuffer extends AttributeBuffer {
         }
 
         LoadedAttributeBuffers.add(this);
+    }
+
+    @Serialized
+    public void logInstanceCount() {
+        logger.log("Instance count: " + instanceCount);
     }
 
     /**
@@ -149,10 +156,10 @@ public final class AttributeElementBuffer extends AttributeBuffer {
         bind();
 
         glBindBuffer(GL_ARRAY_BUFFER, data.VBO);
-        glBufferData(GL_ARRAY_BUFFER, floats, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, floats, GL_DYNAMIC_DRAW);
 
-        glVertexAttribPointer(data.AttribLocation, size, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(data.AttribLocation);
+        glVertexAttribPointer(data.AttribLocation, size, GL_FLOAT, false, 0, 0);
 
         glVertexAttribDivisor(data.AttribLocation, 1);
 

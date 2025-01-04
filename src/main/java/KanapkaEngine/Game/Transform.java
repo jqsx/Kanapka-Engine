@@ -1,5 +1,6 @@
 package KanapkaEngine.Game;
 
+import KanapkaEngine.Components.vec2d;
 import KanapkaEngine.Game.Node;
 import KanapkaEngine.Game.Transformation;
 import org.joml.Vector2d;
@@ -9,7 +10,7 @@ import java.awt.geom.AffineTransform;
 public class Transform {
     private final Transformation transformation;
     public final Node parent;
-    private final Vector2d position = new Vector2d(0, 0);
+    private final vec2d position = new vec2d(0, 0);
     private double rotation = 0;
     private final Vector2d size = new Vector2d(1, 1);
 

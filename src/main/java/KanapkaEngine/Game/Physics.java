@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 
 public final class Physics {
-    public static Vector2d gravity = new Vector2d(0, -9.81);
+    public static vec2d gravity = new vec2d(0, -9.81);
 
     public static AudioClip hit = ResourceLoader.loadAudio("Audio/boxHit.wav");
 

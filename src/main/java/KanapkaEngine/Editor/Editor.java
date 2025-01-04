@@ -49,6 +49,7 @@ public class Editor {
             private double particleSpawnDelay = 0;
 
             private Texture texture;
+            private Texture wooden;
             private ParticleSystem<Particle> particleSystem;
 
             @Override
@@ -63,9 +64,7 @@ public class Editor {
                     private Vector2d windowPos = new Vector2d(0, 0);
                     private Vector2d windowSize = new Vector2d(500, engine.getWindow().getHeight());
 
-                    private Node selected;
-
-                    private ImString ref_Name = new ImString();
+                    private List<Node> openNodes = new ArrayList<>();
 
                     private double[] data = new double[2];
 
@@ -73,12 +72,16 @@ public class Editor {
 
                     private ImBoolean displayHierarchy = new ImBoolean(true);
 
+                    ImString ref_name = new ImString();
+
                     ImBoolean component_boolean = new ImBoolean();
                     int[] component_int = new int[1];
                     float[] component_float = new float[1];
                     double[] component_double = new double[1];
 
                     ImString component_string = new ImString();
+
+                    private int node_id = 0;
 
                     public void RenderGUI() {
                         Window window = engine.getWindow();
@@ -96,68 +99,74 @@ public class Editor {
                         ImGui.setNextWindowSize((float) windowSize.x, (float) windowSize.y);
                         ImGui.setNextWindowPos((float) windowPos.x, (float) windowPos.y, ImGuiWindowFlags.AlwaysAutoResize);
 
+                        openNodes.clear();
+
                         // First Time ever using imgui... tragedy
                         if (displayHierarchy.get()) {
                             if (ImGui.begin("Hierarchy (Its kinda shit but it works)")) {
 
-                                selected = null;
-
+                                node_id = 0;
                                 if (ImGui.beginChild("##tree", new ImVec2(300, 0), ImGuiWindowFlags.NoCollapse)) {
-                                    AtomicInteger i = new AtomicInteger(0);
                                     if (SceneManager.hasScene()) {
 
                                         SceneManager.getSceneNodes().forEach(node -> {
-                                            nodeRecursive(node, i.get());
-                                            i.incrementAndGet();
+                                            nodeRecursive(node);
                                         });
                                     }
                                 }
 
-                                if (selected != null)
-                                    ref_Name.set(selected.name);
                                 ImGui.endChild();
 
                                 ImGui.sameLine();
 
                                 if (ImGui.beginChild("##Editor", new ImVec2(0, 0))) {
-                                    if (this.selected != null) {
-                                        if (ImGui.inputText("Name", ref_Name)) {
-                                            this.selected.name = ref_Name.get();
+                                    int index = 0;
+                                    for (Node selected : openNodes) {
+                                        if (index > 0) {
+                                            ImGui.spacing();
+                                            ImGui.separator();
+                                            ImGui.separator();
+                                            ImGui.spacing();
+                                        }
+
+                                        ref_name.set(selected.name);
+                                        if (ImGui.inputText(index + " Name", ref_name)) {
+                                            selected.name = ref_name.get();
                                         }
                                         ImGui.separator();
                                         ImGui.textColored(0xff0000ff, "Transform");
 
-                                        Vector2d p = this.selected.transform.getPosition();
+                                        Vector2d p = selected.transform.getPosition();
                                         data[0] = p.x;
                                         data[1] = p.y;
                                         if (ImGui.dragScalarN("Position", data, 2, 0.031f)) {
-                                            this.selected.transform.setPosition(data[0], data[1]);
+                                            selected.transform.setPosition(data[0], data[1]);
                                         }
 
-                                        double[] r = {this.selected.transform.getRotation()};
+                                        double[] r = { selected.transform.getRotation()};
 
                                         if (ImGui.dragScalar("Rotation", r, 0.1f)) {
-                                            this.selected.transform.setRotation(r[0]);
+                                            selected.transform.setRotation(r[0]);
                                         }
 
-                                        Vector2d s = this.selected.transform.getSize();
+                                        Vector2d s = selected.transform.getSize();
                                         data[0] = s.x;
                                         data[1] = s.y;
                                         if (ImGui.dragScalarN("Scale", data, 2, 0.031f)) {
-                                            this.selected.transform.setSize(data[0], data[1]);
+                                            selected.transform.setSize(data[0], data[1]);
                                         }
 
                                         components.clear();
-                                        this.selected.getComponents(components, Component.class);
+                                        selected.getComponents(components, Component.class);
 
                                         ImGui.separator();
-                                        if (ImGui.treeNode("Components")) {
-                                            for (int i = 0; i < components.size(); i++) {
-                                                Component component = components.get(i);
-                                                ComponentRecursive(component);
-                                            }
-                                            ImGui.treePop();
+                                        for (int i = 0; i < components.size(); i++) {
+                                            Component component = components.get(i);
+                                            ComponentRecursive(component);
+                                            if (i != components.size() - 1)
+                                                ImGui.separator();
                                         }
+                                        index++;
                                     }
                                 }
                                 ImGui.endChild();
@@ -173,20 +182,24 @@ public class Editor {
                         }
                     }
 
-                    private void nodeRecursive(Node node, int i) {
+                    private void nodeRecursive(Node node) {
+                        node_id++;
                         ImGui.setNextItemWidth(300);
-                        String node_text = i + ". " + (node.name == null || node.name.isEmpty() ? "NoName" : node.name);
-                        if (ImGui.treeNode(node_text)) {
-                            selected = node;
+                        String node_text = node_id + ". " + (node.name == null || node.name.isEmpty() ? "NoName" : node.name);
+                        if (ImGui.treeNodeEx("##TreeNodeN" + node_id, 0, node_text)) {
+                            openNodes.add(node);
                             for (int j = 0; j < node.childCount(); j++) {
-                                nodeRecursive(node.getChild(j), j);
+                                nodeRecursive(node.getChild(j));
                             }
                             ImGui.treePop();
                         }
                     }
 
                     private void ComponentRecursive(Object component) {
-                        String comp_text = component.getClass().getName();
+                        String isRenderer = (component instanceof Renderer ? " (Renderer)" : "");
+                        String isRigidbody = (component instanceof Rigidbody ? " (Physics)" : "");
+                        String isCollider = (component instanceof Collider ? " (Collider)" : "");
+                        String comp_text = component.getClass().getSimpleName() + isRenderer + isRigidbody + isCollider;
                         if (ImGui.treeNode(comp_text)) {
                             ImGui.separator();
 
@@ -341,24 +354,29 @@ public class Editor {
                 RenderLayer.register(guiRenderer);
                 engine.load(guiRenderer);
 
-                {
-                    particleSystem = new ParticleSystem<>();
-
-                    particleSystem.setTexture(new Texture(ResourceLoader.loadResource("logo.png")));
-
-                    particleSystem.setInstanced();
-
-                    Node sys = new Node();
-
-                    sys.addComponent(particleSystem);
-
-                    sys.append();
-                }
-
                 texture = new Texture(ResourceLoader.loadResource("logo.png"));
+                wooden = new Texture(ResourceLoader.loadResource("wooden.png"));
 
-                GenerateChunk(0, 0);
-                GenerateChunk(1, 0);
+                physicsTest();
+
+//                GenerateChunk(0, 0);
+//                GenerateChunk(1, 0);
+            }
+
+            private void particleSystemTest() {
+                particleSystem = new ParticleSystem<>();
+
+                particleSystem.setTexture(texture);
+
+                particleSystem.setInstanced();
+
+                Node sys = new Node();
+
+                sys.addComponent(particleSystem);
+
+                sys.append();
+
+                sys.addChild(new Node());
             }
 
             private void createSandwich(double x, double y) {
@@ -378,6 +396,47 @@ public class Editor {
                 node.append();
             }
 
+            private void physicsTest() {
+
+                TextureMaterial material = new TextureMaterial();
+
+                material.MainTex = wooden;
+
+                {
+                    Node floor = new Node();
+                    floor.addComponent(new Collider());
+
+                    Renderer renderer = new Renderer();
+
+                    renderer.setMaterial(material);
+                    renderer.setTexture(wooden);
+
+                    floor.addComponent(renderer);
+
+                    floor.transform.setSize(3, 1);
+
+                    floor.append();
+                }
+
+                {
+                    Node box = new Node();
+                    box.addComponent(new Collider());
+                    box.addComponent(new Rigidbody());
+
+                    Renderer renderer = new Renderer();
+
+                    renderer.setMaterial(material);
+                    renderer.setTexture(wooden);
+
+                    box.addComponent(renderer);
+
+                    box.transform.setPosition(0, 3);
+
+                    box.append();
+                }
+
+            }
+
             @Override
             public void Update() {
 
@@ -388,12 +447,13 @@ public class Editor {
                     createSandwich(wL.x, wL.y);
                 }
 
-                if (particleSpawnDelay < Time.time()) {
-                    particleSpawnDelay = Time.time() + 0.05;
+                if (particleSystem != null)
+                    if (particleSpawnDelay < Time.time()) {
+                        particleSpawnDelay = Time.time() + 0.05;
 
-                    particleSystem.SpawnOffset(new Vector2d(0, 0)).addVelocity(new Vector2d(10, 0));
+                        particleSystem.SpawnOffset(new Vector2d(0, 0)).addVelocity(new Vector2d(10, 0));
 
-                }
+                    }
             }
 
             @Override

@@ -9,5 +9,6 @@ out vec2 vTexCoord;
 
 void main() {
     vTexCoord = aPosition.xy + vec2(0.5);
-    gl_Position = uModelProj * vec4(aPosition + vec3(aOffset, 0.0), 1.0);
+    gl_Position = uModelProj * vec4(aPosition + vec3(aOffset
+    , 0.0), 1.0);
 }

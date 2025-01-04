@@ -14,8 +14,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-@ShowMethods
 public class ParticleSystem<T extends Particle> extends Renderer implements IUpdate {
+
+    private static final Logger logger = new Logger("ParticleSystem");
     private final Rectangle2D.Double m_Bounds = new Rectangle2D.Double();
 
     private final List<T> particles = new ArrayList<>();
@@ -25,6 +26,7 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
     @ReadOnly
     private double last_update = Time.time();
 
+    @Serialized
     private static AttributeElementBuffer instancedMesh;
 
     private boolean isDrawInstanced = false;
@@ -149,7 +151,7 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         int index = 0;
         particles.forEach(particle -> {
             bufferedFloats[index] = (float)particle.getPosition().x;
-            bufferedFloats[index+1] = (float)particle.getPosition().x;
+            bufferedFloats[index+1] = (float)particle.getPosition().y;
         });
 
         instancedMesh.BufferFloatsInstancedc("inst_locations", bufferedFloats, 2);
@@ -171,5 +173,11 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
 
     public static AttributeElementBuffer getInstancedMesh() {
         return instancedMesh;
+    }
+
+    @Serialized
+    public void logBufferedFloatsLength() {
+        logger.log("Buffered: " + bufferedFloats.length);
+        logger.log("Particle List: " + particles.size());
     }
 }

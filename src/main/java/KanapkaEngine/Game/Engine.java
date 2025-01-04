@@ -171,8 +171,8 @@ public final class Engine {
             }
             if (last_fixed_update + Second / 50L < System.nanoTime()) {
                 double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;
-                physics.FixedUpdate(fixedDelta);
                 last_fixed_update = System.nanoTime();
+                physics.FixedUpdate(fixedDelta);
             }
             logic.Update();
             for (int i = plugins.size() - 1; i >= 0; i--) {
