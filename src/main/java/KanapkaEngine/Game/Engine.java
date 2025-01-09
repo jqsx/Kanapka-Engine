@@ -22,7 +22,8 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public final class Engine {
-    private static final Logger logger = new Logger("ENGINE");
+    private static final Logger logger = new Logger("engine");
+
     private static Engine instance;
 
     static boolean openglready = false;
@@ -73,29 +74,7 @@ public final class Engine {
     private void credits() {
         BufferedImage image = ResourceLoader.loadResource("logo.png");
 
-        BufferedImage logo = new BufferedImage(32, 16, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D g = logo.createGraphics();
-
-        AffineTransform at = new AffineTransform();
-
-        at.scale(logo.getWidth() / (double)image.getWidth(), logo.getHeight() / (double)image.getHeight());
-
-        g.drawImage(image, at, null);
-
-        g.dispose();
-
-        for (int y = 0; y < logo.getHeight(); y++) {
-            for (int x = 0; x < logo.getWidth(); x++) {
-                Color color = new Color(logo.getRGB(x, y));
-
-                System.out.print(ANSI.getAnsiColor(color.getRed(), color.getGreen(), color.getBlue()) + "█");
-            }
-            System.out.println();
-        }
-
-        image.flush();
-        logo.flush();
+        logger.log(image, 32, 16);
         logger.log("Thank you for using Kanapka Engine.");
     }
 
@@ -212,6 +191,9 @@ public final class Engine {
 
 
     public void End() {
+        if (!isRunning)
+            return;
+
         isRunning = false;
         openglready = false;
 

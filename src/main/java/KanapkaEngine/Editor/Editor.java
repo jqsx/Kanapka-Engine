@@ -9,7 +9,6 @@ import KanapkaEngine.Game.*;
 import KanapkaEngine.Game.Window;
 import KanapkaEngine.RenderLayers.ChunkLayer;
 import KanapkaEngine.RenderLayers.NodeLayer;
-import KanapkaEngine.RenderLayers.ParticleLayer;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.*;
@@ -19,14 +18,9 @@ import org.joml.Vector2d;
 import static org.lwjgl.glfw.GLFW.*;
 
 import java.awt.*;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class Editor {
     private static boolean editor = false;
@@ -56,7 +50,7 @@ public class Editor {
             public void Start(Engine engine) {
                 RenderLayer.register(new NodeLayer());
                 RenderLayer.register(new ChunkLayer());
-                RenderLayer.register(new ParticleLayer());
+                //RenderLayer.register(new ParticleLayer());
 
                 engine.load(new SimpleViewController());
 
@@ -70,7 +64,8 @@ public class Editor {
 
                     private final List<Component> components = new ArrayList<>();
 
-                    private ImBoolean displayHierarchy = new ImBoolean(true);
+                    private ImBoolean displayHierarchy = new ImBoolean(false);
+                    private ImBoolean displayResourceExplorer = new ImBoolean(false);
 
                     ImString ref_name = new ImString();
 
@@ -83,6 +78,8 @@ public class Editor {
 
                     private int node_id = 0;
 
+                    private Node selected;
+
                     public void RenderGUI() {
                         Window window = engine.getWindow();
 
@@ -90,6 +87,7 @@ public class Editor {
                             if (ImGui.beginMenu("Windows")){
 
                                 if (ImGui.checkbox("Hierarchy", displayHierarchy)) {}
+                                if (ImGui.checkbox("Resource Explorer", displayResourceExplorer)) {}
 
                                 ImGui.endMenu();
                             }
@@ -102,6 +100,23 @@ public class Editor {
                         openNodes.clear();
 
                         // First Time ever using imgui... tragedy
+                        DrawHeirarchy();
+                        DrawResourceExplorer();
+                    }
+
+                    private void DrawResourceExplorer() {
+                        if (displayResourceExplorer.get()) {
+                            if (ImGui.begin("Resource Explorer")) {
+                                if (ImGui.treeNode("Texures")) {
+                                    GuiRenderer.ImGuiImage(texture);
+                                    ImGui.treePop();
+                                }
+                            }
+                            ImGui.end();
+                        }
+                    }
+
+                    private void DrawHeirarchy() {
                         if (displayHierarchy.get()) {
                             if (ImGui.begin("Hierarchy (Its kinda shit but it works)")) {
 
@@ -119,19 +134,31 @@ public class Editor {
 
                                 ImGui.sameLine();
 
-                                if (ImGui.beginChild("##Editor", new ImVec2(0, 0))) {
-                                    int index = 0;
-                                    for (Node selected : openNodes) {
-                                        if (index > 0) {
-                                            ImGui.spacing();
-                                            ImGui.separator();
-                                            ImGui.separator();
-                                            ImGui.spacing();
-                                        }
 
+                                if (selected != null) {
+                                    if (ImGui.beginChild("##Editor", new ImVec2(0, 0))) {
                                         ref_name.set(selected.name);
-                                        if (ImGui.inputText(index + " Name", ref_name)) {
+                                        if (ImGui.inputText(" Name", ref_name)) {
                                             selected.name = ref_name.get();
+                                        }
+                                        ImGui.sameLine();
+                                        if (ImGui.treeNodeEx("##" + ref_name.get() + "reset", 0, "Reset")) {
+                                            if (ImGui.button("Reset Position")) {
+                                                selected.transform.setPosition(0, 0);
+                                            }
+                                            else if (ImGui.button("Reset Scale")) {
+                                                selected.transform.setSize(1, 1);
+                                            }
+                                            else if (ImGui.button("Reset Rotation")) {
+                                                selected.transform.setRotation(0);
+                                            }
+                                            else if (ImGui.button("Reset Transform")) {
+                                                selected.transform.setPosition(0, 0);
+                                                selected.transform.setSize(1, 1);
+                                                selected.transform.setRotation(0);
+                                            }
+
+                                            ImGui.treePop();
                                         }
                                         ImGui.separator();
                                         ImGui.textColored(0xff0000ff, "Transform");
@@ -166,10 +193,9 @@ public class Editor {
                                             if (i != components.size() - 1)
                                                 ImGui.separator();
                                         }
-                                        index++;
                                     }
+                                    ImGui.endChild();
                                 }
-                                ImGui.endChild();
 
 
                                 ImVec2 vec2 = ImGui.getWindowPos();
@@ -187,6 +213,11 @@ public class Editor {
                         ImGui.setNextItemWidth(300);
                         String node_text = node_id + ". " + (node.name == null || node.name.isEmpty() ? "NoName" : node.name);
                         if (ImGui.treeNodeEx("##TreeNodeN" + node_id, 0, node_text)) {
+                            if (ImGui.isItemClicked(ImGuiMouseButton.Right)) {
+                                if (selected == node)
+                                    selected = null;
+                                else selected = node;
+                            }
                             openNodes.add(node);
                             for (int j = 0; j < node.childCount(); j++) {
                                 nodeRecursive(node.getChild(j));
@@ -348,6 +379,10 @@ public class Editor {
 
                             ImGui.treePop();
                         }
+                    }
+
+                    private void DrawCameraInfo() {
+
                     }
                 });
 

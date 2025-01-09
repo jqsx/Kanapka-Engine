@@ -3,6 +3,7 @@ package KanapkaEngine.Game;
 import KanapkaEngine.Components.ANSI;
 import KanapkaEngine.Components.Mathf;
 import KanapkaEngine.Components.ResourceLoader;
+import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -36,10 +37,17 @@ public final class Logger {
     private static final String WARN_PREFIX = ANSI_YELLOW + " [WARN] " + ANSI_RESET;
     private static final String ERROR_PREFIX = ANSI_RED + "[ERROR] " + ANSI_RESET;
 
+    private final org.apache.logging.log4j.Logger logger;
+
+    public static boolean useLog4jDefault = true;
+
+    private boolean useLog4j = useLog4jDefault;
+
     public final String NameSpace;
 
     public Logger(String nameSpace) {
         this.NameSpace = nameSpace.toUpperCase();
+        logger = LogManager.getLogger(nameSpace.toUpperCase());
     }
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss");
@@ -52,8 +60,23 @@ public final class Logger {
     public void log(Object text) {
         if (ignoreInfo)
             return;
-        String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + INFO_PREFIX + ANSI_RESET + " [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + text.toString() + ANSI_RESET;
-        System.out.println(message);
+        if (useLog4j) {
+            logger.info(text);
+        }
+        else {
+            String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + INFO_PREFIX + ANSI_RESET + " [ " + ANSI_YELLOW + getFrom() + ANSI_RESET + " ] " + text.toString() + ANSI_RESET;
+            System.out.println(message);
+        }
+    }
+
+    private String getFrom() {
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+
+        StringBuilder builder = new StringBuilder();
+        for (int index = 0; index < elements.length; index++) {
+            builder.append(elements[index].getMethodName());
+        }
+        return builder.toString();
     }
 
     public void log(BufferedImage image, int width, int height) {
@@ -78,7 +101,7 @@ public final class Logger {
 
                 builder.append(ANSI.getAnsiColor(color.getRed(), color.getGreen(), color.getBlue()) + "█");
             }
-            log(builder.toString());
+            System.out.println(builder.toString() + ANSI_RESET);
         }
         logo.flush();
     }
@@ -86,32 +109,52 @@ public final class Logger {
     public void warn(Object text) {
         if (ignoreWarn)
             return;
-        String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + WARN_PREFIX + ANSI_RESET + " [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + ANSI_YELLOW + text.toString() + ANSI_RESET;
-        System.out.println(message);
+        if (useLog4j) {
+            logger.info(text);
+        }
+        else {
+            String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + WARN_PREFIX + ANSI_RESET + " [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + ANSI_YELLOW + text.toString() + ANSI_RESET;
+            System.out.println(message);
+        }
     }
 
     public void error(Object text) {
         if (ignoreError)
             return;
-        String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + ERROR_PREFIX + ANSI_RESET + " [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + ANSI_RED + text.toString() + ANSI_RESET;
-        System.out.println(message);
-        if (text instanceof Exception) {
-            Exception e = (Exception) text;
+        if (useLog4j) {
+            logger.error(text);
+        }
+        else {
+            String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + ERROR_PREFIX + ANSI_RESET + " [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + ANSI_RED + text.toString() + ANSI_RESET;
+            System.out.println(message);
+            if (text instanceof Exception) {
+                Exception e = (Exception) text;
 
-            e.printStackTrace();
+                e.printStackTrace();
+            }
         }
     }
 
     public void error(Object text, String context) {
         if (ignoreError)
             return;
-        String message = ERROR_PREFIX + ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + ANSI_RED + text.toString() + ANSI_RESET;
-        System.out.println(message);
-        error("CONTEXT: " + context);
-        if (text instanceof Exception) {
-            Exception e = (Exception) text;
-
-            e.printStackTrace();
+        if (useLog4j) {
+            logger.error("CONTEXT: " + context + " | " + text);
         }
+        else {
+            String message = ERROR_PREFIX + ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + ANSI_RED + text.toString() + ANSI_RESET;
+            System.out.println(message);
+            error("CONTEXT: " + context);
+            if (text instanceof Exception) {
+                Exception e = (Exception) text;
+
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Logger setUseLog4j(boolean b) {
+        this.useLog4j = b;
+        return this;
     }
 }

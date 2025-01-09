@@ -38,6 +38,34 @@ public class Graphics {
         DrawMesh(mesh.attributeBuffer, transformation, shader.getShader());
     }
 
+    public static void DrawWireframe(AttributeElementBuffer mesh, Transformation transformation, Shader shader) {
+        Objects.requireNonNull(shader);
+        Objects.requireNonNull(mesh);
+        Objects.requireNonNull(transformation);
+        if (Camera.main == null)
+            return;
+
+        shader.bind();
+
+        shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
+        shader.setUniform("uTime", (float)Time.time());
+        shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
+        shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().getHeight());
+
+        shader.bind();
+        mesh.bind();
+
+        glDrawElements(GL_LINE_LOOP, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
+
+        mesh.unbind();
+
+        shader.unbind();
+    }
+
+    public static void DrawWireframe(Transformation transformation) {
+        DrawWireframe(spriteMesh.attributeBuffer, transformation, Shader.Standard.getStandardShader());
+    }
+
     public static void DrawMesh(AttributeElementBuffer mesh, Transformation transformation, Shader shader) {
         Objects.requireNonNull(shader);
         Objects.requireNonNull(mesh);

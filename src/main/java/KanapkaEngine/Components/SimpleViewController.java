@@ -55,15 +55,6 @@ public class SimpleViewController extends Plugin implements IInput {
             return;
 
         if (!SceneManager.hasScene()) return;
-        if (Input.isKeyDown(GLFW_KEY_LEFT_CONTROL) || Input.isKeyDown(GLFW_KEY_RIGHT_CONTROL)) {
-            Camera.main.size = (Mathf.Clamp(Camera.main.size - (y + x) / 10.0, range.x, range.y));
-        }
-        else {
-            Vector2d total = new Vector2d(x, y);
-
-            if (Camera.main != null) {
-                velocity.set(velocity.add(total.mul(1.0 / Camera.main.size)));
-            }
-        }
+        Camera.main.size = (Mathf.Clamp(Camera.main.size - (y + x) / 10.0, range.x, range.y));
     }
 }

@@ -11,7 +11,7 @@ public class Collider extends Component {
     private Vector2d size = new Vector2d(1, 1);
     private Vector2d offset = new Vector2d(0, 0);
 
-    private Rectangle2D rect = new Rectangle2D.Double();
+    private Rectangle2D.Double rect = new Rectangle2D.Double();
 
     public boolean collideNodes = true;
 
@@ -51,7 +51,7 @@ public class Collider extends Component {
         return rect;
     }
 
-    public Rectangle2D getRectangle() {
+    public Rectangle2D.Double getRectangle() {
         Vector2d scaledSize = getScaledSize();
         double w = scaledSize.x;
         double h = scaledSize.y;

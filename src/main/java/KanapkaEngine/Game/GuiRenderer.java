@@ -231,6 +231,10 @@ public final class GuiRenderer extends Plugin implements IInput, ICleanUp, Rende
         implGl3.renderDrawData(ImGui.getDrawData());
     }
 
+    public static void ImGuiImage(Texture texture) {
+        ImGui.image(texture.textureId, texture.width, texture.height);
+    }
+
     @Override
     public RenderStage getStage() {
         return RenderStage.UI;
