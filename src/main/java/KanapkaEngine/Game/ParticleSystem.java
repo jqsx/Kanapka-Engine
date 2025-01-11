@@ -13,6 +13,7 @@ import org.joml.Vector3f;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParticleSystem<T extends Particle> extends Renderer implements IUpdate {
 
@@ -148,10 +149,11 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         if (particles.size() != bufferedFloats.length * 2)
             regenerateArray();
 
-        int index = 0;
+        AtomicInteger index = new AtomicInteger();
         particles.forEach(particle -> {
-            bufferedFloats[index] = (float)particle.getPosition().x;
-            bufferedFloats[index+1] = (float)particle.getPosition().y;
+            bufferedFloats[index.get()] = (float) particle.getPosition().x;
+            bufferedFloats[index.get() + 1] = (float) particle.getPosition().y;
+            index.getAndAdd(2);
         });
 
         instancedMesh.BufferFloatsInstancedc("inst_locations", bufferedFloats, 2);

@@ -48,6 +48,12 @@ public class BlockData {
         render = null;
     }
 
+    /**
+     * Future plans: Create a way to render dynamic textures and make it possible to define depth blocks filtering any objects that are behind them and making them visible
+     *
+     *
+     * @return
+     */
     public final BufferedImage getRender() {
         if (render == null) {
             beginRender();
@@ -62,7 +68,7 @@ public class BlockData {
     public final void setImage(BufferedImage image) {
         Objects.requireNonNull(image);
         this.render = image;
-/*        this.render_stage = Renderer.FINISHED;*/
+        /*        this.render_stage = Renderer.FINISHED;*/
     }
 
     private void beginRender() {

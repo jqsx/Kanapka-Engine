@@ -28,8 +28,8 @@ public class Route {
 
     /**
      * Server Side
-     * @param conn
-     * @param data
+     * @param conn The network connection to the client on the server that the command was received from.
+     * @param data You have to reconstruct data from bytes directly
      */
     public void ServerClient_IN(NetworkConnectionToClient conn, byte[] data) {
 
@@ -37,7 +37,7 @@ public class Route {
 
     /**
      * Client Side
-     * @param data
+     * @param data You have to reconstruct data from bytes directly
      */
     public void Client_IN(byte[] data) {
 
@@ -68,6 +68,8 @@ public class Route {
     }
 
     public final void sendToClient(NetworkConnectionToClient connectionToClient, byte[] data) {
+        if (data == null)
+            data = new byte[0];
         if (NetworkServer.clients.contains(connectionToClient))
             connectionToClient.send(getID(), data);
         else
@@ -75,6 +77,9 @@ public class Route {
     }
 
     public final void sendToServer(byte[] data) {
+        if (data == null)
+            data = new byte[0];
+
         if (NetworkClient.isConnected())
             NetworkClient.send(getID(), data);
         else

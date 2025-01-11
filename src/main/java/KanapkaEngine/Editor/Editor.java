@@ -9,6 +9,7 @@ import KanapkaEngine.Game.*;
 import KanapkaEngine.Game.Window;
 import KanapkaEngine.RenderLayers.ChunkLayer;
 import KanapkaEngine.RenderLayers.NodeLayer;
+import KanapkaEngine.RenderLayers.ParticleLayer;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.*;
@@ -50,7 +51,7 @@ public class Editor {
             public void Start(Engine engine) {
                 RenderLayer.register(new NodeLayer());
                 RenderLayer.register(new ChunkLayer());
-                //RenderLayer.register(new ParticleLayer());
+                RenderLayer.register(new ParticleLayer());
 
                 engine.load(new SimpleViewController());
 

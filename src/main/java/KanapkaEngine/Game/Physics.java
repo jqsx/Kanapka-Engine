@@ -9,16 +9,15 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Future plan: Create a system to add generic type based filter for collider resolving to allow for custom physics processing.
+ */
 public final class Physics {
     public static vec2d gravity = new vec2d(0, -9.81);
 
     public static AudioClip hit = ResourceLoader.loadAudio("Audio/boxHit.wav");
 
     private static Rectangle2D blockCollider = new Rectangle2D.Double(-8, -8, 16, 16);
-
-    private static final List<Vector2d> physics_intersections = new ArrayList<>();
-
-    private static final List<Node> physics_exclude = new ArrayList<>();
 
     private static final Line2D.Double noAllocRay = new Line2D.Double();
 
@@ -64,6 +63,90 @@ public final class Physics {
         noAllocRay.setLine(origin.x, origin.y, origin.x + direction.x * length,origin.y + direction.y * length);
 
         return rect.intersectsLine(noAllocRay);
+    }
+
+    public static List<Vector2d> raycastAll(Vector2d origin, Vector2d direction, double length, Rectangle2D.Double rect) {
+        List<Vector2d> intersections = new ArrayList<>();
+
+        noAllocRay.setLine(origin.x, origin.y, origin.x + direction.x * length, origin.y + direction.y * length);
+        return raycastAll(intersections, noAllocRay, rect);
+    }
+
+    public static List<Vector2d> raycastAll(Vector2d origin, Vector2d direction, double length) {
+        List<Vector2d> intersections = new ArrayList<>();
+
+        for (Node node : SceneManager.getSceneNodes())
+            if (node.getCollider() != null)
+                raycastAll(intersections, origin, direction, length, node.getCollider().getRectangle());
+
+        return intersections;
+    }
+
+    public static List<Vector2d> raycastAll(List<Vector2d> intersections, Vector2d origin, Vector2d direction, double length, Rectangle2D.Double rect) {
+        if (intersections == null)
+            throw new NullPointerException("Intersections list is null");
+        noAllocRay.setLine(origin.x, origin.y, origin.x + direction.x * length, origin.y + direction.y * length);
+        return raycastAll(intersections, noAllocRay, rect);
+    }
+
+    private static List<Vector2d> raycastAll(List<Vector2d> intersections, Line2D.Double line, Rectangle2D.Double rect) {
+        if (intersections == null)
+            throw new NullPointerException("Intersections list is null");
+
+        // Define the rectangle's edges as lines
+        Line2D.Double topEdge = new Line2D.Double(rect.x, rect.y, rect.x + rect.width, rect.y);
+        Line2D.Double bottomEdge = new Line2D.Double(rect.x, rect.y + rect.height, rect.x + rect.width, rect.y + rect.height);
+        Line2D.Double leftEdge = new Line2D.Double(rect.x, rect.y, rect.x, rect.y + rect.height);
+        Line2D.Double rightEdge = new Line2D.Double(rect.x + rect.width, rect.y, rect.x + rect.width, rect.y + rect.height);
+
+        // Check for intersections with each edge
+        findIntersection(line, topEdge, intersections);
+        findIntersection(line, bottomEdge, intersections);
+        findIntersection(line, leftEdge, intersections);
+        findIntersection(line, rightEdge, intersections);
+
+        return intersections;
+    }
+
+    private static void findIntersection(Line2D.Double line1, Line2D.Double line2, List<Vector2d> intersections) {
+        if (line1.intersectsLine(line2)) {
+            Vector2d intersection = getIntersectionPoint(line1, line2);
+            if (intersection != null) {
+                intersections.add(intersection);
+            }
+        }
+    }
+
+    private static Vector2d getIntersectionPoint(Line2D.Double line1, Line2D.Double line2) {
+        // Line 1's coordinates
+        double x1 = line1.x1, y1 = line1.y1;
+        double x2 = line1.x2, y2 = line1.y2;
+
+        // Line 2's coordinates
+        double x3 = line2.x1, y3 = line2.y1;
+        double x4 = line2.x2, y4 = line2.y2;
+
+        // Calculate the determinant
+        double denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+        // If denom is zero, lines are parallel
+        if (denom == 0) {
+            return null;
+        }
+
+        // Calculate intersection point
+        double px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom;
+        double py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom;
+
+        // Ensure the intersection point lies on both line segments
+        if (px >= Math.min(x1, x2) && px <= Math.max(x1, x2) &&
+            py >= Math.min(y1, y2) && py <= Math.max(y1, y2) &&
+            px >= Math.min(x3, x4) && px <= Math.max(x3, x4) &&
+            py >= Math.min(y3, y4) && py <= Math.max(y3, y4)) {
+            return new Vector2d(px, py);
+        }
+
+        return null;
     }
 
 
@@ -282,7 +365,9 @@ public final class Physics {
     private void ApplyVelocity(Node node, double fixedDelta) {
         Vector2d old = node.transform.getPosition();
 
-        Vector2d position = node.transform.getPosition().add(node.getRigidbody().getVelocity().mul(fixedDelta));
+        assert node.getRigidbody() != null;
+
+        Vector2d position = new Vector2d(old.x, old.y).add(node.getRigidbody().getVelocity().mul(fixedDelta));
 
         if (FailedCollisionTest(old, position, node))
             return;
@@ -339,16 +424,13 @@ public final class Physics {
     }
 
     private boolean FailedCollisionTest(Vector2d old, Vector2d position, Node node) {
-        physics_intersections.clear();
         double distance = Mathf.aDistance(old, position);
         Vector2d direction = new Vector2d(old.x, old.y).sub(position).mul(1.0 / distance);
-        if (physics_exclude.isEmpty())
-            physics_exclude.add(node);
-        else
-            physics_exclude.set(0, node);
 
         for (Node loop : SceneManager.getSceneNodes()) {
-            if (loop.getCollider() != null)
+            if (loop.getCollider() == null)
+                continue;
+            if (loop == node)
                 continue;
             if (rayCastNoAlloc(old, direction, distance, loop.getCollider().getRectangle())) {
                 return true;
@@ -369,26 +451,28 @@ public final class Physics {
 
         if (!otherCollider.intersects(nodeCollider.getRectangle())) return;
 
-        Vector2d nodeSize = nodeCollider.getScaledSize();
-        Vector2d otherSize = new Vector2d(Chunk.BLOCK_SCALE, Chunk.BLOCK_SCALE);
-
-        Vector2d otherColliderPosition = new Vector2d(otherCollider.getX() + otherCollider.getWidth() / 2.0, otherCollider.getY() + otherCollider.getHeight() / 2.0);
-
-//.add(new Vector2d( node.transform.getSize().x / 2.0, 0))
-        Vector2d nodeDiff = node.transform.getPosition().sub(otherColliderPosition);
-        Vector2d combinedScale = nodeSize.add(otherSize);
-        Vector2d nodeDiffScaled = new Vector2d(nodeDiff.x / combinedScale.x, nodeDiff.y / combinedScale.y);
+//        Vector2d nodeSize = nodeCollider.getScaledSize();
+//        Vector2d otherSize = new Vector2d(Chunk.BLOCK_SCALE, Chunk.BLOCK_SCALE);
+//
+//        Vector2d otherColliderPosition = new Vector2d(otherCollider.getX() + otherCollider.getWidth() / 2.0, otherCollider.getY() + otherCollider.getHeight() / 2.0);
+//
+////.add(new Vector2d( node.transform.getSize().x / 2.0, 0))
+//        Vector2d nodeDiff = node.transform.getPosition().sub(otherColliderPosition);
+//        Vector2d combinedScale = nodeSize.add(otherSize);
+//        Vector2d nodeDiffScaled = new Vector2d(nodeDiff.x / combinedScale.x, nodeDiff.y / combinedScale.y);
 
         Vector2d position = node.transform.getPosition();
         Vector2d velocity = node.getRigidbody().getVelocity();
 
-        if (Math.abs(nodeDiffScaled.y) < Math.abs(nodeDiffScaled.x)) {
-            position = new Vector2d((position.x + (otherSize.x / 2.0 + nodeSize.x / 2.0 - Math.abs(nodeDiff.x)) * Math.signum(nodeDiff.x)), position.y);
-            velocity = new Vector2d((-velocity.x * node.getRigidbody().getBounce() * Math.signum(nodeDiff.x)), velocity.y);
-        } else {
-            position = new Vector2d(position.x, (position.y + (otherSize.y / 2.0 + nodeSize.y / 2.0 - Math.abs(nodeDiff.y)) * Math.signum(nodeDiff.y)));
-            velocity = new Vector2d(velocity.x, (-velocity.y * node.getRigidbody().getBounce() * Math.signum(nodeDiff.y)));
-        }
+        resolveCollision(position, velocity, nodeCollider.getRectangle(), (Rectangle2D.Double) otherCollider);
+
+//        if (Math.abs(nodeDiffScaled.y) < Math.abs(nodeDiffScaled.x)) {
+//            position = new Vector2d((position.x + (otherSize.x / 2.0 + nodeSize.x / 2.0 - Math.abs(nodeDiff.x)) * Math.signum(nodeDiff.x)), position.y);
+//            velocity = new Vector2d((-velocity.x * node.getRigidbody().getBounce() * Math.signum(nodeDiff.x)), velocity.y);
+//        } else {
+//            position = new Vector2d(position.x, (position.y + (otherSize.y / 2.0 + nodeSize.y / 2.0 - Math.abs(nodeDiff.y)) * Math.signum(nodeDiff.y)));
+//            velocity = new Vector2d(velocity.x, (-velocity.y * node.getRigidbody().getBounce() * Math.signum(nodeDiff.y)));
+//        }
 
 //        playSound(node.transform.getPosition(), position);
 

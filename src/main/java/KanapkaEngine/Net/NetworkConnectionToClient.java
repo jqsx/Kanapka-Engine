@@ -53,8 +53,9 @@ public class NetworkConnectionToClient implements Runnable {
                 Route route = RouteManager.getRoute(ID);
                 if (route == null) {
                     logger.error("ROUTE NOT FOUND " + ID);
-                    //socket.close();
-                    return;
+
+                    in.skipBytes(in.available());
+                    continue;
                 }
                 byte[] data = new byte[length];
                 for (int i = 0; i < data.length; i++) {
@@ -72,11 +73,14 @@ public class NetworkConnectionToClient implements Runnable {
         }
         finally {
             RouteManager.onServerClientDisconnect(this);
-
-
         }
     }
 
+    /**
+     * Buffers the route id, the length of the data and the data into a network message
+     * @param id
+     * @param data
+     */
     public void send(short id, byte[] data) {
         try {
             out.writeShort(id);

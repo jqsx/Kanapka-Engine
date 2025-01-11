@@ -79,17 +79,40 @@ public class Camera {
     }
 
     public Vector2d ScreenToWorldPosition(Point screen_position) {
-//        Dimension screen = Window.getWindowSize();
-//        return position.subtract(new Vector2d(screen.getWidth() / 2.0, screen.getHeight() / 2.0)).add(new Vector2d(screen_position.x, -screen_position.y));
-        return null;
+
+        Window window = Engine.getMainInstance().getWindow();
+
+        float ratio = window.getWidth() / (float)window.getHeight();
+
+        float reverseRatio = 1.f / ratio;
+
+        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 20.0);
+        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 20.0);
+        return new Vector2d((screen_position.x / (double)window.getWidth() * 2 - 1) * Camera.main.size * widthMult, (-screen_position.y / (double)window.getHeight() * 2 + 1) * Camera.main.size * heightMult).add(Camera.main.getPosition());
     }
 
     public Point WorldToScreenPosition(Vector2d world) {
+        Vector2d camRelative = world.sub(Camera.main.getPosition());
 
-        Vector2d cameraPosition = Camera.main.getPosition();
-        Vector2d position = cameraPosition.add(world);
+        Window window = Engine.getMainInstance().getWindow();
 
-        return new Point((int) (position.x), (int) (-position.x));
+        float ratio = window.getWidth() / (float)window.getHeight();
+
+        float reverseRatio = 1.f / ratio;
+
+        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 20.0);
+        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 20.0);
+
+        camRelative.x /= (Camera.main.size * widthMult);
+        camRelative.y /= (Camera.main.size * heightMult);
+
+        camRelative.x += 1;
+        camRelative.y -= 1;
+
+        camRelative.x *= window.getWidth();
+        camRelative.y *= window.getHeight();
+
+        return new Point((int) camRelative.x, (int) camRelative.y);
     }
 
     public double getRotation() {

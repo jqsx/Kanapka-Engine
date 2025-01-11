@@ -1,6 +1,9 @@
 package KanapkaEngine.Net;
 
+import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.Logger;
+import KanapkaEngine.Game.Plugin;
+import KanapkaEngine.Game.Time;
 import KanapkaEngine.Net.Router.RouteManager;
 
 import javax.net.ServerSocketFactory;
@@ -34,6 +37,10 @@ public class NetworkServer implements Runnable {
     private static HashMap<Integer, NetworkConnectionToClient> connections = new HashMap<>();
 
     public static boolean isServer = false;
+
+    public static int ServerTickRate = 30;
+
+    private static double lastTick = Time.time();
 
     public static void StartServer() {
         try {
@@ -101,6 +108,17 @@ public class NetworkServer implements Runnable {
             else connections.remove(id);
         }
         return null;
+    }
+
+    /**
+     * Put this method in the global update method of the engine, you can control how quick does the server tick with <code>NetworkServer.ServerTickRate</code>
+     */
+    public static void ServerTick() {
+        if (lastTick + 1.0 / (double)ServerTickRate < Time.time()) {
+            lastTick = Time.time();
+
+            NetworkOperation.ExecuteNetworkOperations();
+        }
     }
 
     private NetworkServer() {
