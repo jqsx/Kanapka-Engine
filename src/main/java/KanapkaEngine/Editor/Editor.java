@@ -230,7 +230,7 @@ public class Editor {
                     private void ComponentRecursive(Object component) {
                         String isRenderer = (component instanceof Renderer ? " (Renderer)" : "");
                         String isRigidbody = (component instanceof Rigidbody ? " (Physics)" : "");
-                        String isCollider = (component instanceof Collider ? " (Collider)" : "");
+                        String isCollider = (component instanceof RectangleCollider ? " (Collider)" : "");
                         String comp_text = component.getClass().getSimpleName() + isRenderer + isRigidbody + isCollider;
                         if (ImGui.treeNode(comp_text)) {
                             ImGui.separator();
@@ -440,7 +440,7 @@ public class Editor {
 
                 {
                     Node floor = new Node();
-                    floor.addComponent(new Collider());
+                    floor.addComponent(new RectangleCollider());
 
                     Renderer renderer = new Renderer();
 
@@ -456,7 +456,7 @@ public class Editor {
 
                 {
                     Node box = new Node();
-                    box.addComponent(new Collider());
+                    box.addComponent(new RectangleCollider());
                     box.addComponent(new Rigidbody());
 
                     Renderer renderer = new Renderer();

@@ -13,14 +13,17 @@ import java.util.List;
  * Future plan: Create a system to add generic type based filter for collider resolving to allow for custom physics processing.
  */
 public final class Physics {
+    private static final Logger logger = new Logger("physics");
     public static vec2d gravity = new vec2d(0, -9.81);
 
-    public static AudioClip hit = ResourceLoader.loadAudio("Audio/boxHit.wav");
+    private static final ICollisionResolver.CollisionData one = new ICollisionResolver.CollisionData();
+    private static final ICollisionResolver.CollisionData two = new ICollisionResolver.CollisionData();
+
+    private static List<ICollisionResolver> resolvers = new ArrayList<>();
 
     private static Rectangle2D blockCollider = new Rectangle2D.Double(-8, -8, 16, 16);
 
     private static final Line2D.Double noAllocRay = new Line2D.Double();
-
 
     private static List<Vector2d> rayCastForNoAlloc(List<Vector2d> locations, Ray ray, Rectangle2D.Double rect) {
         {
@@ -55,11 +58,11 @@ public final class Physics {
         return locations;
     }
 
-    private static boolean rayCastNoAlloc(Ray ray, Rectangle2D.Double rect) {
+    public static boolean rayCastNoAlloc(Ray ray, Rectangle2D.Double rect) {
         return rayCastNoAlloc(ray.origin, ray.direction, ray.length, rect);
     }
 
-    private static boolean rayCastNoAlloc(Vector2d origin, Vector2d direction, double length, Rectangle2D.Double rect) {
+    public static boolean rayCastNoAlloc(Vector2d origin, Vector2d direction, double length, Rectangle2D.Double rect) {
         noAllocRay.setLine(origin.x, origin.y, origin.x + direction.x * length,origin.y + direction.y * length);
 
         return rect.intersectsLine(noAllocRay);
@@ -76,8 +79,8 @@ public final class Physics {
         List<Vector2d> intersections = new ArrayList<>();
 
         for (Node node : SceneManager.getSceneNodes())
-            if (node.getCollider() != null)
-                raycastAll(intersections, origin, direction, length, node.getCollider().getRectangle());
+            if (node.getCollider() != null && node.getCollider() instanceof RectangleCollider)
+                raycastAll(intersections, origin, direction, length, ((RectangleCollider)node.getCollider()).getRectangle());
 
         return intersections;
     }
@@ -149,9 +152,8 @@ public final class Physics {
         return null;
     }
 
-
     Physics() {
-
+        registerCollisionResolver(new RectangleCollisionResolver());
     }
 
     public static List<Vector2d> raycastNodesNoAlloc(List<Vector2d> locations, Vector2d from, Vector2d direction, double range, List<Node> exclude) {
@@ -160,11 +162,11 @@ public final class Physics {
         List<Vector2d> nodes = locations;
         Ray ray = new Ray(from, direction, range);
         SceneManager.getSceneNodes().forEach((other) -> {
-            if (other.getCollider() == null) return;
+            if (other.getCollider() == null || !(other.getCollider() instanceof RectangleCollider)) return;
             if (exclude != null && exclude.contains(other))
                 return;
 
-            rayCastForNoAlloc(nodes, ray, other.getCollider().getRectangle());
+            rayCastForNoAlloc(nodes, ray, ((RectangleCollider)other.getCollider()).getRectangle());
         });
 
         return locations;
@@ -221,8 +223,8 @@ public final class Physics {
             return new Node[0];
         List<Node> nodes = new ArrayList<>();
         SceneManager.getSceneNodes().forEach((other) -> {
-            if (other.getCollider() == null) return;
-            if (other.getCollider().getRectangle().intersects(getRect(position, size)))
+            if (other.getCollider() == null || !(other.getCollider() instanceof RectangleCollider)) return;
+            if (((RectangleCollider)other.getCollider()).getRectangle().intersects(getRect(position, size)))
                 nodes.add(other);
         });
 
@@ -283,9 +285,21 @@ public final class Physics {
         }
     }
 
+    public static void registerCollisionResolver(ICollisionResolver resolver) {
+        resolvers.add(resolver);
+
+        Collections.sort(resolvers, new Comparator<ICollisionResolver>() {
+            @Override
+            public int compare(ICollisionResolver o1, ICollisionResolver o2) {
+                return o1.priority() > o2.priority() ? -1 : (o1.priority() == o2.priority() ? 0 : -1);
+            }
+        });
+    }
+
     void FixedUpdate(double fixedDelta) {
         if (SceneManager.hasScene()) {
             SceneManager.getSceneNodes().forEach(node -> {
+                if (!node.isAlive()) return;
                 CheckCollisionFor(node, fixedDelta);
                 CheckCollisionForChunk(node, fixedDelta);
             });
@@ -294,16 +308,30 @@ public final class Physics {
 
     private void CheckCollisionFor(Node node, double fixedDelta) {
         if (node.getRigidbody() == null) return;
+        Vector2d oldposition = node.transform.getPosition();
         VelocityUpdate(node, fixedDelta);
+        ApplyVelocity(node, oldposition, fixedDelta);
 
         if (node.getCollider() == null) return;
         SceneManager.getSceneNodes().forEach((other) -> {
+            if (!other.isAlive()) return;
             if (other.getCollider() == null) return;
             if (other == node) return;
-            if (other.getCollider().isColliding(node.getCollider()))
-                ProcessCollision(node, other, fixedDelta);
+
+            one.node = node;
+            one.collider = node.getCollider();
+            two.node = other;
+            two.collider = other.getCollider();
+
+            for (ICollisionResolver resolver : resolvers) {
+                if (resolver.hasCorrectCollider(node.getCollider(), other.getCollider())) {
+                    if (resolver.isInRange(one, two)) {
+                        resolver.resolve(one, two);
+                    }
+                    break;
+                }
+            }
         });
-        ApplyVelocity(node, fixedDelta);
     }
 
     private void CheckCollisionForChunk(Node node, double fixedDelta) {
@@ -311,6 +339,21 @@ public final class Physics {
         if (node.getRigidbody() == null) return;
 
         if (node.getCollider() == null) return;
+
+        ICollisionResolver selected = null;
+
+        for (ICollisionResolver resolver : resolvers) {
+            if (resolver.supportsBlocks(node.getCollider())) {
+                selected = resolver;
+                break;
+            }
+        }
+
+        if (selected == null)
+            return;
+
+        one.node = node;
+        one.collider = node.getCollider();
 
         Vector2d chunkSize = Chunk.getSize();
 
@@ -337,7 +380,7 @@ public final class Physics {
                             Block block = check.getBlock(p);
 
                             if (block != null && block.getBlockData().hasCollision)
-                                ProcessCollision(node, block, fixedDelta);
+                                selected.resolve(one, block);
                         }
                     }
                 }
@@ -349,7 +392,7 @@ public final class Physics {
         return Math.floor(Math.abs(a) + 0.5) * Math.signum(a);
     }
 
-    private static Rectangle2D getBlockCollider(Block block) {
+    public static Rectangle2D getBlockCollider(Block block) {
         double blockScale = Chunk.BLOCK_SCALE;
         Vector2d blockPosition = block.getPosition();
         blockCollider.setRect(blockPosition.x, blockPosition.y - blockScale, blockScale, blockScale);
@@ -357,162 +400,30 @@ public final class Physics {
     }
 
     private void VelocityUpdate(Node node, double fixedDelta) {
+        assert node.getRigidbody() != null;
         node.getRigidbody().addVelocity(gravity.mul(fixedDelta));
 
         node.getRigidbody().setVelocity(Mathf.Lerp(node.getRigidbody().getVelocity(), new Vector2d(), fixedDelta / 15.0));
     }
 
-    private void ApplyVelocity(Node node, double fixedDelta) {
-        Vector2d old = node.transform.getPosition();
-
+    private void ApplyVelocity(Node node, Vector2d old, double fixedDelta) {
         assert node.getRigidbody() != null;
 
-        Vector2d position = new Vector2d(old.x, old.y).add(node.getRigidbody().getVelocity().mul(fixedDelta));
+        Vector2d position = node.transform.getPosition().add(node.getRigidbody().getVelocity().mul(fixedDelta));
 
-        if (FailedCollisionTest(old, position, node))
-            return;
+        if (node.getCollider() != null) {
+            one.node = node;
+            one.collider = node.getCollider();
 
-        node.transform.setPosition(position);
-    }
-
-    private void ProcessCollision(Node node, Node other, double fixedDelta) {
-
-        if (!node.isAlive() || !other.isAlive()) return;
-
-        Collider nodeCollider = node.getCollider();
-        Collider otherCollider = other.getCollider();
-
-        if (nodeCollider == null || otherCollider == null) return;
-
-        if (!(nodeCollider.collideNodes && otherCollider.collideNodes)) return;
-
-        if (otherCollider.noMass && !nodeCollider.noMass) return;
-
-//        Vector2d nodeSize = nodeCollider.getScaledSize();
-//        Vector2d otherSize = otherCollider.getScaledSize();
-//
-//        Vector2d nodeDiff = node.transform.getPosition().sub(other.transform.getPosition());//.add(new Vector2d( node.transform.getSize().x / 2.0, 0)).sub(other.transform.getPosition().add(new Vector2d( other.transform.getSize().x / 2.0, 0)));
-//        Vector2d combinedScale = nodeSize.add(otherSize);
-//        Vector2d nodeDiffScaled = new Vector2d(nodeDiff.x / combinedScale.x, nodeDiff.y / combinedScale.y);
-
-        Vector2d position = node.transform.getPosition();
-        Vector2d velocity = node.getRigidbody().getVelocity();
-
-        resolveCollision(position, velocity, nodeCollider.getRectangle(), otherCollider.getRectangle());
-
-/*        {
-            Rigidbody rb = other.getRigidbody();
-            if (rb != null) {
-                Vector2d v = velocity.mul(node.getRigidbody().getBounce() / rb.getMass());
-                rb.addVelocity(v);
-            }
-
-
-        }*/
-
-//        if (Math.abs(nodeDiffScaled.y) < Math.abs(nodeDiffScaled.x)) {
-//            position = new Vector2d((position.x + (otherSize.x / 2.0 + nodeSize.x / 2.0 - Math.abs(nodeDiff.x)) * Math.signum(nodeDiff.x)), position.y);
-//            velocity = new Vector2d((-velocity.x * node.getRigidbody().getBounce() * Math.signum(nodeDiff.x)), velocity.y);
-//        }
-//        else {
-//            position = new Vector2d(position.x, (position.y + (otherSize.y / 2.0 + nodeSize.y / 2.0 - Math.abs(nodeDiff.y)) * Math.signum(nodeDiff.y)));
-//            velocity = new Vector2d(velocity.x, (-velocity.y * node.getRigidbody().getBounce() * Math.signum(nodeDiff.y)));
-//        }
-
-        node.transform.setPosition(position);
-        node.getRigidbody().setVelocity(velocity);
-    }
-
-    private boolean FailedCollisionTest(Vector2d old, Vector2d position, Node node) {
-        double distance = Mathf.aDistance(old, position);
-        Vector2d direction = new Vector2d(old.x, old.y).sub(position).mul(1.0 / distance);
-
-        for (Node loop : SceneManager.getSceneNodes()) {
-            if (loop.getCollider() == null)
-                continue;
-            if (loop == node)
-                continue;
-            if (rayCastNoAlloc(old, direction, distance, loop.getCollider().getRectangle())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void ProcessCollision(Node node, Block other, double fixedDelta) {
-
-        if (!node.isAlive()) return;
-
-        Rectangle2D otherCollider = getBlockCollider(other);
-
-        Collider nodeCollider = node.getCollider();
-
-        if (nodeCollider == null || otherCollider == null) return;
-
-        if (!otherCollider.intersects(nodeCollider.getRectangle())) return;
-
-//        Vector2d nodeSize = nodeCollider.getScaledSize();
-//        Vector2d otherSize = new Vector2d(Chunk.BLOCK_SCALE, Chunk.BLOCK_SCALE);
-//
-//        Vector2d otherColliderPosition = new Vector2d(otherCollider.getX() + otherCollider.getWidth() / 2.0, otherCollider.getY() + otherCollider.getHeight() / 2.0);
-//
-////.add(new Vector2d( node.transform.getSize().x / 2.0, 0))
-//        Vector2d nodeDiff = node.transform.getPosition().sub(otherColliderPosition);
-//        Vector2d combinedScale = nodeSize.add(otherSize);
-//        Vector2d nodeDiffScaled = new Vector2d(nodeDiff.x / combinedScale.x, nodeDiff.y / combinedScale.y);
-
-        Vector2d position = node.transform.getPosition();
-        Vector2d velocity = node.getRigidbody().getVelocity();
-
-        resolveCollision(position, velocity, nodeCollider.getRectangle(), (Rectangle2D.Double) otherCollider);
-
-//        if (Math.abs(nodeDiffScaled.y) < Math.abs(nodeDiffScaled.x)) {
-//            position = new Vector2d((position.x + (otherSize.x / 2.0 + nodeSize.x / 2.0 - Math.abs(nodeDiff.x)) * Math.signum(nodeDiff.x)), position.y);
-//            velocity = new Vector2d((-velocity.x * node.getRigidbody().getBounce() * Math.signum(nodeDiff.x)), velocity.y);
-//        } else {
-//            position = new Vector2d(position.x, (position.y + (otherSize.y / 2.0 + nodeSize.y / 2.0 - Math.abs(nodeDiff.y)) * Math.signum(nodeDiff.y)));
-//            velocity = new Vector2d(velocity.x, (-velocity.y * node.getRigidbody().getBounce() * Math.signum(nodeDiff.y)));
-//        }
-
-//        playSound(node.transform.getPosition(), position);
-
-        node.transform.setPosition(position);
-        node.getRigidbody().setVelocity(velocity);
-    }
-
-    private void resolveCollision(Vector2d outPosition, Vector2d outVelocity, Rectangle2D.Double rect1, Rectangle2D.Double rect2) {
-        if (rect1.intersects(rect2)) {
-            double overlapX = Math.min(rect1.getMaxX() - rect2.getMinX(), rect2.getMaxX() - rect1.getMinX());
-            double overlapY = Math.min(rect1.getMaxY() - rect2.getMinY(), rect2.getMaxY() - rect1.getMinY());
-
-            // Resolve along the smaller overlap axis to minimize movement
-            if (overlapX < overlapY) {
-                // Move rect1 horizontally
-                if (rect1.getCenterX() < rect2.getCenterX()) {
-                    outPosition.x -= overlapX;
-                } else {
-                    outPosition.x += overlapX;
+            for (ICollisionResolver resolver : resolvers) {
+                if (resolver.hasCorrectCollider(node.getCollider(), node.getCollider())) {
+                    if (resolver.Interpolation(position, old, one))
+                        return;
+                    break;
                 }
-                outVelocity.x *= -0.9;
-            } else {
-                // Move rect1 vertically
-                if (rect1.getCenterY() < rect2.getCenterY()) {
-                    outPosition.y -= overlapY;
-                } else {
-                    outPosition.y += overlapY;
-                }
-                outVelocity.y *= -0.9;
             }
         }
-    }
 
-    private void playSound(Vector2d old, Vector2d position) {
-        double total = Math.abs(position.x - old.x) + Math.abs(position.y - old.y);
-
-        if (total > 0.01) {
-            hit.clip.setFramePosition(0);
-            hit.setVolume((float)Math.random() / 4f);
-            hit.clip.start();
-        }
+        node.transform.setPosition(position);
     }
 }

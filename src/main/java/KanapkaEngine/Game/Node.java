@@ -15,7 +15,7 @@ public class Node {
     private Node parent;
     public final Transform transform = new Transform(this);
     private KanapkaEngine.Components.Renderer renderer;
-    private Collider collider;
+    private ICollider collider;
     private Rigidbody rigidbody;
     private final List<Node> children = new ArrayList<>();
 
@@ -38,8 +38,8 @@ public class Node {
         components.add(component);
         if (component instanceof KanapkaEngine.Components.Renderer)
             renderer = (KanapkaEngine.Components.Renderer) component;
-        else if (component instanceof Collider)
-            collider = (Collider) component;
+        else if (component instanceof ICollider)
+            collider = (ICollider) component;
         else if (component instanceof Rigidbody)
             rigidbody = (Rigidbody) component;
         component.setParent(this);
@@ -177,7 +177,7 @@ public class Node {
         if (!alive) return null;
         return renderer;
     }
-    public final Collider getCollider() {
+    public final ICollider getCollider() {
         if (!alive) return null;
         return collider;
     }

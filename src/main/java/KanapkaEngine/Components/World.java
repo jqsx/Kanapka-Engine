@@ -98,7 +98,7 @@ public class World {
                     Point p = new Point(x * 32 + i, y * 32 + j);
                     if (hasChunk(p.x, p.y)) {
                         Chunk chunk = get(p.x, p.y);
-                        byte[] data = chunk.getSave();
+                        byte[] data = Chunk.chunkSerializer.Serialize(chunk);
                         chunkData.add(data);
                         chunkCount++;
                     }

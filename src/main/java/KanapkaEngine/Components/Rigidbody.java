@@ -3,22 +3,22 @@ package KanapkaEngine.Components;
 import org.joml.Vector2d;
 
 public class Rigidbody extends Component {
-    private Vector2d velocity = new Vector2d(0,0);
+    private vec2d velocity = new vec2d(0,0);
 
     private double Mass = 1.0;
 
     private double Bounce = 0.3;
 
     public Vector2d getVelocity() {
-        return velocity;
+        return velocity.clone();
     }
 
     public void setVelocity(Vector2d velocity) {
-        this.velocity = velocity;
+        this.velocity.set(velocity);
     }
 
-    public Vector2d addVelocity(Vector2d force) {
-        return velocity = velocity.add(force);
+    public void addVelocity(Vector2d vel) {
+        setVelocity(velocity.add(vel));
     }
 
     /**

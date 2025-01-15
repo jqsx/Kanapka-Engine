@@ -26,11 +26,18 @@ public class Chunk {
     private final World parent;
     private final Point point;
     private final Block[][] blocks;
+    private final ImmutableBlocks immutableBlocks;
     private boolean isReadyForRender = false;
     private boolean isActive = false;
     private boolean needReRender = false;
     private long lastActive = System.currentTimeMillis();
     private final LinkedList<ChunkNode> chunkNodeList = new LinkedList<>();
+
+    /**
+     * Set to your own block serializer in order to parse blocks correctly
+     */
+    public static Block.BlockSerializer blockSerializer = new Block.BlockSerializer();
+    public static ChunkSerializer chunkSerializer = new ChunkSerializer();
 
     /**
      * Internally managed function for appending blocks <br>
@@ -92,6 +99,16 @@ public class Chunk {
             setAir(p);
             return null;
         }
+        return instantiateBlockObject(id, p);
+    }
+
+    /**
+     * Access point to instantiate your own Block class extension.
+     * @param id
+     * @param p
+     * @return
+     */
+    public Block instantiateBlockObject(int id, Point p) {
         return new Block(this, p, id);
     }
 
@@ -132,8 +149,10 @@ public class Chunk {
     private Chunk(Point point, World parent) {
         this.point = point;
         this.parent = parent;
-        if (SceneManager.hasScene())
+        if (SceneManager.hasScene()) {
             blocks = new Block[SceneManager.getCurrentlyLoaded().getChunkSize()][SceneManager.getCurrentlyLoaded().getChunkSize()];
+            immutableBlocks = new ImmutableBlocks(blocks);
+        }
         else
             throw new RuntimeException("No scene loaded.");
         parent.set(this);
@@ -175,6 +194,10 @@ public class Chunk {
         if (render_stage == Renderer.Stage.NOTSTARTED || needReRender) beginRender();
         if (render_stage == Renderer.Stage.FINISHED || render_stage == Renderer.Stage.READYTOBIND || render_stage == Renderer.Stage.BOUND) return render;
         else return null;
+    }
+
+    public final ImmutableBlocks getBlocks() {
+        return immutableBlocks;
     }
 
     public Texture getTexture() {
@@ -257,21 +280,9 @@ public class Chunk {
             return new AffineTransform();
         AffineTransform at = new AffineTransform();
         Vector2d p = new Vector2d(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
-        if (block.getBlockData().scale_render) {
-            at.scale(BLOCK_SCALE / (double) block_render.getWidth(), BLOCK_SCALE / (double) block_render.getHeight());
-            at.translate(p.x * ((double) block_render.getWidth() / BLOCK_SCALE), p.y * ((double) block_render.getHeight() / BLOCK_SCALE));
-        }
-        else {
-            //Vector2d m = new Vector2d(BLOCK_SCALE / 2.0 - block_render.getWidth() / 2.0, BLOCK_SCALE - block_render.getHeight() / 2.0);
-            at.translate(block.point.x * BLOCK_SCALE, block.point.y * BLOCK_SCALE);
-        }
+        at.scale(BLOCK_SCALE / (double) block_render.getWidth(), BLOCK_SCALE / (double) block_render.getHeight());
+        at.translate(p.x * ((double) block_render.getWidth() / BLOCK_SCALE), p.y * ((double) block_render.getHeight() / BLOCK_SCALE));
         return at;
-    }
-
-    private void scaleAt(AffineTransform at, BufferedImage image) {
-        at.translate(image.getWidth() / 2.0, image.getHeight() / 2.0);
-        at.scale(1, -1);
-        at.translate(-image.getWidth() / 2.0, -image.getHeight() / 2.0);
     }
 
     private void finishedRender() {
@@ -292,47 +303,6 @@ public class Chunk {
         return parent;
     }
 
-    /**
-     * A bit save function that collects all chunk data into a single byte array to be saved into memory.
-     * @return Byte array of chunk's block data
-     */
-    public byte[] getSave() {
-        if (!isReadyForRender) {
-            ByteBuffer buffer = ByteBuffer.allocate(12);
-            buffer.putInt(point.x);
-            buffer.putInt(point.y);
-            buffer.putInt(0);
-            return buffer.array();
-        }
-        Block[][] temp_blocks = Arrays.copyOf(blocks, blocks.length);
-        int block_count = 0;
-        for (Block[] block : temp_blocks) {
-            for (Block value : block) {
-                if (value != null)
-                    block_count++;
-            }
-        }
-
-        ByteBuffer buffer = ByteBuffer.allocate(12 + block_count * 10);
-
-        buffer.putInt(point.x);
-        buffer.putInt(point.y);
-        buffer.putInt(block_count);
-        for (Block[] block : temp_blocks) {
-            for (Block value : block) {
-                if (value == null) continue;
-                byte x = (byte) Mathf.Clamp(value.point.x, 0, 127);
-                byte y = (byte) Mathf.Clamp(value.point.y, 0, 127);
-                buffer.put(x);
-                buffer.put(y);
-                buffer.putInt(value.id);
-                buffer.putInt(value.special_id);
-            }
-        }
-
-        return buffer.array();
-    }
-
     private void Update() {
         chunkNodeList.forEach(ChunkNode::UpdateCall);
     }
@@ -350,5 +320,96 @@ public class Chunk {
 
     public final LinkedList<ChunkNode> getChunkNodes() {
         return chunkNodeList;
+    }
+
+    /**
+     * Im not spoon feeding you here I had to write this reader and now its your turn to live the nightmare
+     * <br><br>
+     * Now how does this save the block data in the first place: the blocks have their point, id, and special id buffered. The point object is buffered as 2 bytes in order to save on bytes therefore limiting chunk size to 127x127 which they probably shouldn't be as it defeats the point of the system in the first place. If the block value is null then its not buffered and its skipped.
+     */
+    public static class ChunkSerializer {
+        private static final ByteBuffer _buffer = ByteBuffer.allocate(12);
+
+        private int block_count = 0;
+
+        public byte[] Serialize(Chunk chunk) {
+            ImmutableBlocks temp_blocks = chunk.getBlocks();
+            CalculateBlockCount(temp_blocks);
+            ByteBuffer buffer = ByteBuffer.allocate(ChunkDataSize() + block_count * blockSerializer.SerializationDataSize());
+
+            buffer.put(ChunkData(chunk));
+            for (int x = 0; x < temp_blocks.length; x++) {
+                for (int y = 0; y < temp_blocks.length; y++) {
+                    Block value = temp_blocks.get(x,y);
+                    if (value == null) continue;
+                    buffer.put(blockSerializer.SerializationData(value));
+                }
+            }
+
+            return buffer.array();
+        }
+
+        public byte[] ChunkData(Chunk chunk) {
+            _buffer.clear();
+
+            _buffer.putInt(chunk.point.x);
+            _buffer.putInt(chunk.point.y);
+            _buffer.putInt(block_count);
+
+            return _buffer.array();
+        }
+
+        private void CalculateBlockCount(ImmutableBlocks temp_blocks) {
+            int blockcount = 0;
+            for (int x = 0; x < temp_blocks.length; x++) {
+                for (int y = 0; y < temp_blocks.length; y++) {
+                    if (temp_blocks.get(x, y) != null)
+                        blockcount++;
+                }
+            }
+
+            block_count = blockcount;
+        }
+
+        public int ChunkDataSize() {
+            return 12;
+        }
+
+        public Chunk Deserialize(World world, byte[] data) {
+            _buffer.put(data, 0, ChunkDataSize());
+
+            int x = _buffer.getInt();
+            int y = _buffer.getInt();
+            block_count = _buffer.getInt();
+
+            Chunk chunk = new Chunk(new Point(x, y), world);
+
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+            byte[] blockBuffer = new byte[blockSerializer.SerializationDataSize()];
+
+            buffer.position(ChunkDataSize() - 1);
+
+            for (int index = 0; index < block_count; index++) {
+                buffer.get(blockBuffer);
+
+                blockSerializer.Deserialize(chunk, blockBuffer);
+            }
+
+            return chunk;
+        }
+    }
+
+    public static final class ImmutableBlocks {
+        private final Block[][] blocks;
+        public final int length;
+
+        private ImmutableBlocks(Block[][] blocks) {
+            this.blocks = blocks;
+            this.length = blocks.length;
+        }
+
+        public Block get(int x, int y) {
+            return blocks[x][y];
+        }
     }
 }

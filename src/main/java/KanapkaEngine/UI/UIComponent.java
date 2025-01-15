@@ -13,6 +13,9 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * TODO: Revise the ui rendering and management.
+ */
 public class UIComponent {
     private List<UIComponent> children = new ArrayList<>();
     private UIComponent parent;

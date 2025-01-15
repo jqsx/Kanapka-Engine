@@ -19,8 +19,6 @@ public class BlockData {
 
     public int blockStrength = 1;
 
-    @Deprecated
-    public boolean scale_render = true;
     public BlockData(String texture) {
         this.texture = texture;
         getRender();

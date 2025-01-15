@@ -22,6 +22,7 @@ public final class Window {
         height = heightptr[0];
 
         glfwSetWindowSizeCallback(window, this::WindowSizeCallBack);
+        glfwSetWindowPosCallback(window, this::WindowPositionCallback);
 
         setTitle(configuration.window_title);
     }
@@ -31,6 +32,12 @@ public final class Window {
         this.height = height;
 
         glViewport(0, 0, width, height);
+
+        Engine.getMainInstance().correctPhysicsUpdate();
+    }
+
+    private void WindowPositionCallback(long window, int x, int y) {
+        Engine.getMainInstance().correctPhysicsUpdate();
     }
 
     long getGLFWwindow() {

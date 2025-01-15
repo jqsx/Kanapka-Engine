@@ -1,5 +1,6 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.ICollider;
 import org.joml.Vector2d;
 
 import java.awt.geom.Rectangle2D;
@@ -7,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 /**
  * Standard AABB box collider. The collider scales along with the object size and can have an additional offset and size as well.
  */
-public class Collider extends Component {
+public class RectangleCollider extends ICollider {
     private Vector2d size = new Vector2d(1, 1);
     private Vector2d offset = new Vector2d(0, 0);
 
@@ -17,11 +18,11 @@ public class Collider extends Component {
 
     public boolean noMass = false;
 
-    public Collider() {
+    public RectangleCollider() {
 
     }
 
-    public Collider(Vector2d size) {
+    public RectangleCollider(Vector2d size) {
         setSize(size);
     }
 
@@ -34,7 +35,7 @@ public class Collider extends Component {
         getRectangle();
     }
 
-    public boolean isColliding(Collider other) {
+    public boolean isColliding(RectangleCollider other) {
         return getRectangle().intersects(other.getRectangle());
     }
 

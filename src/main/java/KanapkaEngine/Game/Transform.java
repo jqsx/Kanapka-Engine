@@ -24,11 +24,11 @@ public class Transform {
         if (node_parent != null) {
             return position.add(node_parent.transform.getPosition());
         }
-        return position;
+        return position.clone();
     }
 
     public Vector2d getLocalPosition() {
-        return position;
+        return position.clone();
     }
 
     public void setPosition(Vector2d position) {
@@ -38,6 +38,14 @@ public class Transform {
         }
         else
             this.position.set(position.x, position.y);
+    }
+
+    public void setLocalPosition(double x, double y) {
+        position.set(x,y);
+    }
+
+    public void setLocalPosition(Vector2d position) {
+        position.set(position);
     }
 
     public void setPosition(double x, double y) {

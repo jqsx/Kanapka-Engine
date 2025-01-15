@@ -189,7 +189,6 @@ public final class Engine {
         });
     }
 
-
     public void End() {
         if (!isRunning)
             return;
@@ -278,6 +277,8 @@ public final class Engine {
         glfwSetMouseButtonCallback(window, this::MouseButtonCallback);
         glfwSetScrollCallback(window, this::scroll_callback);
 
+        glfwSetWindowRefreshCallback(window, this::window_refresh_callback);
+
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
@@ -315,6 +316,16 @@ public final class Engine {
         ErrorCheck("General");
 
         logger.log("Finished Initialization");
+    }
+
+    private void window_refresh_callback(long window) {
+        correctPhysicsUpdate();
+        logger.log("Refreshed");
+        glfwSwapBuffers(window);
+    }
+
+    void correctPhysicsUpdate() {
+        last_fixed_update = System.nanoTime();
     }
 
     private void setDefaultRenderRules() {

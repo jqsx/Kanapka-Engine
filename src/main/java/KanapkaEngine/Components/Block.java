@@ -6,6 +6,7 @@ import org.joml.Vector2d;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 /**
@@ -15,6 +16,8 @@ import java.util.Objects;
  */
 public class Block {
     private static final Logger logger = new Logger("BLOCK");
+    private static final ByteBuffer _buffer = ByteBuffer.allocate(10);
+
     public final Chunk parent;
     /**
      * Block position in the chunk, not world block position.
@@ -42,6 +45,12 @@ public class Block {
         this.id = id;
     }
 
+    private Block(Chunk parent) {
+        this.parent = parent;
+
+        point = new Point();
+    }
+
     /**
      * Returns the render image of the block.
      * @return
@@ -66,5 +75,47 @@ public class Block {
 
     public final Vector2d getCenter() {
         return getPosition().add(new Vector2d(Chunk.BLOCK_SCALE / 4.0, -Chunk.BLOCK_SCALE / 2.0));
+    }
+
+    public static class BlockSerializer {
+        public byte[] SerializationData(Block block) {
+            _buffer.clear();
+
+            byte x = (byte) Mathf.Clamp(block.point.x, 0, 127);
+            byte y = (byte) Mathf.Clamp(block.point.y, 0, 127);
+            _buffer.put(x);
+            _buffer.put(y);
+            _buffer.putInt(block.id);
+            _buffer.putInt(block.special_id);
+
+            return _buffer.array();
+        }
+
+        public int SerializationDataSize() {
+            return 10;
+        }
+
+        public Block Deserialize(Chunk chunk, byte[] data) {
+            Block block = new Block(chunk);
+
+            _buffer.clear();
+            _buffer.put(data);
+
+            block.point.x = _buffer.get();
+            block.point.y = _buffer.get();
+
+            block.id = _buffer.getInt();
+            if (block.id < 0)
+                return null;
+            if (block.id >= BlockManager.getBlockCount()) {
+                logger.warn("Problem while deserializing world chunk data: Block id " + block.id + " is not registered in the BlockManager. Will default to block id 0 instead.");
+                block.id = 0;
+            }
+            block.special_id = _buffer.getInt();
+
+            chunk.appendBlock(block);
+
+            return block;
+        }
     }
 }
