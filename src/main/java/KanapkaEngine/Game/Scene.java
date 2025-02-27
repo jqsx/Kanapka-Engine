@@ -9,6 +9,8 @@ public class Scene {
     public final List<Node> nodes = new ArrayList<>();
     public final World scene_world;
 
+    public boolean isZSorted = false;
+
     private int CHUNK_SIZE = 10;
 
     public Scene() {
@@ -33,5 +35,22 @@ public class Scene {
      */
     public void setChunkSize(int CHUNK_SIZE) {
         this.CHUNK_SIZE = CHUNK_SIZE;
+    }
+
+    protected void zSort() {
+        int count = nodes.size();
+
+        // Progressive bubble sort
+
+        if (count > 1 && isZSorted)
+            for (int i = 0; i < count - 1; i++) {
+                Node one = nodes.get(i);
+                Node two = nodes.get(i+1);
+
+                if (one.transform.getPosition().y > two.transform.getPosition().y) {
+                    nodes.set(i, two);
+                    nodes.set(i+1, one);
+                }
+            }
     }
 }

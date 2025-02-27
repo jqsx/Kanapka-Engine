@@ -153,6 +153,7 @@ public final class Engine {
             }
             if (last_fixed_update + Second / 50L < System.nanoTime()) {
                 double fixedDelta = (System.nanoTime() - last_fixed_update) / Second;
+                SceneManager.getCurrentlyLoaded().zSort();
                 last_fixed_update = System.nanoTime();
                 physics.FixedUpdate(fixedDelta);
             }
@@ -244,9 +245,13 @@ public final class Engine {
         System.exit(0);
     }
 
-    @Deprecated
+    /**
+     * If the current OS is mac. Thats crazy dude
+     */
+    @WIP("There will be macos support at some point.")
     public static boolean isMacOS() {
-        return System.getProperty("os.name").toLowerCase().contains("mac");
+        String value = System.getProperty("os.name");
+        return value.toLowerCase().contains("mac");
     }
 
     private void InitializeLWJGL() {
@@ -260,13 +265,13 @@ public final class Engine {
         // glfwDefaultWindowHints(); // optional, the current window hints are already the default
 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_VERSION_MINOR, 2);
-//
-//        if (isMacOS()) {
-//            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-//            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//        }
+        glfwWindowHint(GLFW_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_VERSION_MINOR, 1);
+
+        if (isMacOS()) {
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        }
 
         if (window == NULL) {
             throw new RuntimeException("Problem while creating GLFW window.");
@@ -348,9 +353,11 @@ public final class Engine {
         while (!glfwWindowShouldClose(window) && isRunning) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            Update();
+            if (SceneManager.hasScene()) {
+                Update();
 
-            Draw();
+                Draw();
+            }
 
             glfwSwapBuffers(window);
 

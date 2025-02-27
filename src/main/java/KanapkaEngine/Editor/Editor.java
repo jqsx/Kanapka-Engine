@@ -63,7 +63,8 @@ public class Editor {
                 texture = new Texture(ResourceLoader.loadImageResource("logo.png"));
                 wooden = new Texture(ResourceLoader.loadImageResource("wooden.png"));
 
-                physicsTest();
+//                physicsTest();
+                particleSystemTest();
 
 //                GenerateChunk(0, 0);
 //                GenerateChunk(1, 0);
@@ -157,7 +158,7 @@ public class Editor {
                     if (particleSpawnDelay < Time.time()) {
                         particleSpawnDelay = Time.time() + 0.05;
 
-                        particleSystem.SpawnOffset(new Vector2d(0, 0)).addVelocity(new Vector2d(10, 0));
+                        particleSystem.emit(new Vector2d(0, 0)).addVelocity(new Vector2d(10, 0));
 
                     }
             }

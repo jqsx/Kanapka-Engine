@@ -8,11 +8,13 @@ import KanapkaEngine.Editor.Attributes.ReadOnly;
 import KanapkaEngine.Editor.Attributes.Serialized;
 import KanapkaEngine.Editor.Attributes.ShowMethods;
 import org.joml.Vector2d;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @WIP("Allow for allocation of objects into an arraylist and setting of maximum particles in the system")
@@ -25,6 +27,11 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
     @Serialized
     private int UPDATE_RATE = 60;
 
+    private int MAX_PARTICLES = 500;
+
+    @Serialized
+    public double LIFETIME = 5.0;
+
     @ReadOnly
     private double last_update = Time.time();
 
@@ -35,7 +42,7 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
 
     private float[] bufferedFloats = new float[0];
 
-    public ParticleSystem() {
+    public ParticleSystem(int max_particles) {
         if (instancedMesh == null) {
             instancedMesh = new AttributeElementBuffer();
 
@@ -54,6 +61,34 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         }
 
         setMaterial(new TextureMaterial());
+
+        setMaxParticles(MAX_PARTICLES);
+    }
+
+    public ParticleSystem() {
+        this(500);
+    }
+
+    public final void setMaxParticles(int count) {
+        if (particles.size() < count) {
+            int add_particles = count - particles.size();
+            for (int index = 0; index < add_particles; index++) {
+                particles.add(createParticle());
+            }
+        }
+        else {
+            AtomicInteger remainingCount = new AtomicInteger(particles.size() - count);
+
+            particles.removeIf(particle -> {
+                boolean v = particle.isDead(getLifeTime(particle)) && remainingCount.get() > 0;
+
+                if (v)
+                    remainingCount.decrementAndGet();
+                return v;
+            });
+        }
+
+        MAX_PARTICLES = count;
     }
 
     public final void setInstanced() {
@@ -78,28 +113,40 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         return particles;
     }
 
-    public final T Spawn() {
-        return SpawnOffset(new Vector2d(0, 0));
+    /**
+     * You need to override this method in order to implement your own particle class instantiation
+     * @return A new particle object
+     */
+    public T createParticle() {
+        return (T) new Particle();
     }
 
-    public final T SpawnOffset(Vector2d offset) {
-        T t = createParticle(offset);
-        particles.add(t);
-        onSpawn(t);
+    public final T emit(Vector2d p, Vector2d v) {
+        Objects.requireNonNull(p);
+        T particle = fetchDeadParticle();
 
-        return t;
+        if (particle == null)
+            return null;
+
+        if (v != null)
+            particle.reset(p,v);
+        else particle.reset(p);
+
+        onSpawn(particle);
+
+        return particle;
     }
 
-    public T createParticle(Vector2d offset) {
-        return (T) new Particle(offset);
+    public final T emit(Vector2d p) {
+        return emit(p, null);
     }
 
     public void onSpawn(T instance) {
 
     }
 
-    public double getLifeTime() {
-        return 5.0;
+    public double getLifeTime(T particle) {
+        return LIFETIME;
     }
 
     @Override
@@ -131,7 +178,7 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
 
     private void CheckExpired() {
         int count = particles.size();
-        particles.removeIf(particle -> particle.isDead(getLifeTime()));
+        particles.removeIf(particle -> particle.isDead(getLifeTime(particle)));
 
         if (isDrawInstanced)
             if (particles.size() != count) {
@@ -150,12 +197,14 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         if (particles.size() != bufferedFloats.length * 2)
             regenerateArray();
 
-        AtomicInteger index = new AtomicInteger();
-        particles.forEach(particle -> {
-            bufferedFloats[index.get()] = (float) particle.getPosition().x;
-            bufferedFloats[index.get() + 1] = (float) particle.getPosition().y;
-            index.getAndAdd(2);
-        });
+        for (int index = 0; index < particles.size(); index++) {
+            T particle = particles.get(index);
+
+            int bufferedIndex = index * 2;
+
+            bufferedFloats[bufferedIndex] = (float) particle.getPosition().x;
+            bufferedFloats[bufferedIndex + 1] = (float) particle.getPosition().y;
+        }
 
         instancedMesh.BufferFloatsInstancedc("inst_locations", bufferedFloats, 2);
     }
@@ -172,6 +221,15 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
 
     public void ParticleUpdate(T particle, final double fixedDelta) {
 
+    }
+
+    private T fetchDeadParticle() {
+        for (T particle : particles) {
+            if (particle.isDead(getLifeTime(particle))) {
+                return particle;
+            }
+        }
+        return null;
     }
 
     public static AttributeElementBuffer getInstancedMesh() {

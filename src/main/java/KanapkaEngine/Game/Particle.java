@@ -8,10 +8,10 @@ public class Particle {
     private final vec2d position = new vec2d(0.0, 0.0);
     private final vec2d velocity = new vec2d(0.0, 0.0);
 
-    private final double birth = Time.time();
+    private double birth = -999.0;
 
-    public Particle(Vector2d position) {
-        this.position.set(position);
+    public Particle() {
+
     }
 
     public final boolean isDead(double lifeTime) {
@@ -40,5 +40,22 @@ public class Particle {
 
     public final void addVelocity(Vector2d add) {
         velocity.set(velocity.add(add));
+    }
+
+    public Particle reset(Vector2d p, Vector2d v) {
+        position.set(p);
+        velocity.set(v);
+
+        birth = Time.time();
+
+        return this;
+    }
+
+    public Particle reset(Vector2d p) {
+        position.set(p);
+
+        birth = Time.time();
+
+        return this;
     }
 }
