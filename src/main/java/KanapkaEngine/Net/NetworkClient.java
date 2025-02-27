@@ -6,7 +6,9 @@ import KanapkaEngine.Net.Router.RouteManager;
 
 import javax.net.SocketFactory;
 import java.io.*;
+import java.net.Inet4Address;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class NetworkClient implements Runnable {
     private static final Logger logger = new Logger("NETWORK_CLIENT");
@@ -43,6 +45,10 @@ public class NetworkClient implements Runnable {
             }
         }
 
+        if (hostName == null || hostName.isEmpty() || hostName.equals("localhost")) {
+            hostName = getLANIP();
+        }
+
         try {
             instance = new NetworkClient(SocketFactory.getDefault().createSocket(hostName, port));
         } catch (IOException e) {
@@ -50,6 +56,15 @@ public class NetworkClient implements Runnable {
         }
 
         logger.log("Connected to server.");
+    }
+
+    private static String getLANIP() {
+        try {
+            return Inet4Address.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.error("You are most likely not connected to the internet and the server cannot be launched.");
+            return "localhost";
+        }
     }
 
     public static void Connect(String hostName) {

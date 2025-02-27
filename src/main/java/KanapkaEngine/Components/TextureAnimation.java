@@ -9,7 +9,7 @@ public class TextureAnimation {
     private BufferedImage spriteSheet;
     private HashMap<String, anim> animations = new HashMap<>();
     public TextureAnimation(String spriteSheetPath, int resolution) {
-        this(ResourceLoader.loadResource(spriteSheetPath), resolution);
+        this(ResourceLoader.loadImageResource(spriteSheetPath), resolution);
     }
 
     public TextureAnimation(BufferedImage spriteSheet, int resolution) {

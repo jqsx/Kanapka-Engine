@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@WIP("Allow for allocation of objects into an arraylist and setting of maximum particles in the system")
 public class ParticleSystem<T extends Particle> extends Renderer implements IUpdate {
 
     private static final Logger logger = new Logger("ParticleSystem");

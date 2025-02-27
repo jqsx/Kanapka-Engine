@@ -72,7 +72,7 @@ public final class Engine {
     }
 
     private void credits() {
-        BufferedImage image = ResourceLoader.loadResource("logo.png");
+        BufferedImage image = ResourceLoader.loadImageResource("logo.png");
 
         logger.log(image, 32, 16);
         logger.log("Thank you for using Kanapka Engine.");
@@ -91,6 +91,9 @@ public final class Engine {
         } catch (Exception e) {
 
             logger.error("THE ENGINE HAS CRASHED.");
+
+            logger.error(e, "ENGINE CRASH INFO");
+
             logger.error("FREEING ALL OPENGL DATA");
 
             End();
@@ -172,7 +175,7 @@ public final class Engine {
         if (engineConfiguration.FPSLIMIT > 0) {
             double updateTime = Time.time() - start_time;
             double ms = TARGET_MS - updateTime;
-            if (ms > 1.0)
+            if (ms < 1.0)
                 try {
                     Thread.sleep((long)ms * 1000);
                 } catch (InterruptedException e) {
@@ -237,6 +240,8 @@ public final class Engine {
         logger.log("Running end logic.");
         logic.End();
         logger.log("Finished running end logic.");
+
+        System.exit(0);
     }
 
     @Deprecated

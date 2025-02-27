@@ -1,7 +1,6 @@
 package KanapkaEngine.RenderLayers;
 
-import KanapkaEngine.Components.RenderStage;
-import KanapkaEngine.Components.World;
+import KanapkaEngine.Components.*;
 import KanapkaEngine.Game.*;
 import org.joml.Vector2d;
 import org.joml.Vector2i;
@@ -10,9 +9,9 @@ import java.awt.geom.Rectangle2D;
 
 public class ChunkLayer implements RenderLayer {
 
-    private static final Vector2d m_globalChunkPosition = new Vector2d();
+    private static final vec2d m_globalChunkPosition = new vec2d();
 
-    private static final double m_chunkScale = SceneManager.getCurrentlyLoaded().getChunkSize();
+    private static final int m_chunkScale = SceneManager.getCurrentlyLoaded().getChunkSize();
 
     private static final Vector2d m_chunkScalev2d = new Vector2d(m_chunkScale, m_chunkScale);
 
@@ -39,6 +38,21 @@ public class ChunkLayer implements RenderLayer {
                     Texture texture = chunk.getTexture();
                     if (texture != null)
                         Graphics.DrawSprite(chunk.getTexture(), getPositionForChunk(m_CameraChunk.x+x, m_CameraChunk.y+y), m_chunkScalev2d, 0f);
+
+                    RenderDynamicDrawBlocks(chunk);
+                }
+            }
+        }
+    }
+
+    private void RenderDynamicDrawBlocks(Chunk chunk) {
+        Chunk.ImmutableBlocks blocks = chunk.getBlocks();
+        for (int x = 0; x < m_chunkScale; x++) {
+            for (int y = 0; y < m_chunkScale; y++) {
+                Block block = blocks.get(x, y);
+
+                if (block != null && block.getBlockData() instanceof DynamicDraw dynamicDraw) {
+                    dynamicDraw.Render(chunk, block, getPositionForChunk(chunk.getPoint().x, chunk.getPoint().y));
                 }
             }
         }
@@ -50,8 +64,9 @@ public class ChunkLayer implements RenderLayer {
         return Math.floor(in) + (lessThanZero ? -0.5 : 0);
     }
 
-    private Vector2d getPositionForChunk(int x, int y) {
-        return m_globalChunkPosition.set(x * m_chunkScale, y * m_chunkScale);
+    private vec2d getPositionForChunk(int x, int y) {
+        m_globalChunkPosition.set(x * m_chunkScale, y * m_chunkScale);
+        return m_globalChunkPosition;
     }
 
     private Rectangle2D.Double getBoundsForChunk(int x, int y) {

@@ -13,13 +13,8 @@ public class RouteManager {
         return routes.get(id);
     }
 
-    public static final HelloWorld helloRoute = getHelloRoute();
-
-    private static HelloWorld getHelloRoute() {
-        HelloWorld helloWorld = new HelloWorld();
-        routes.add(helloWorld);
-        return helloWorld;
-    }
+    public static final HelloWorld helloRoute = new HelloWorld();
+    public static final AuthorityInterface authority = new AuthorityInterface();
 
     private RouteManager() {
 

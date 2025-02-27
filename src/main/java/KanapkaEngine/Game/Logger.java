@@ -140,6 +140,8 @@ public final class Logger {
             return;
         if (useLog4j) {
             logger.error("CONTEXT: " + context + " | " + text);
+            if (text instanceof Throwable)
+                logger.info(context, text);
         }
         else {
             String message = ERROR_PREFIX + ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] [ " + ANSI_YELLOW + NameSpace + ANSI_RESET + " ] " + ANSI_RED + text.toString() + ANSI_RESET;

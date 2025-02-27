@@ -302,8 +302,8 @@ public class Shader {
             return null;
         }
 
-        String fragCode = ResourceLoader.loadStringFromFile(path + ".frag");
-        String vertCode = ResourceLoader.loadStringFromFile(path + ".vert");
+        String fragCode = ResourceLoader.loadStringFromResource(path + ".frag");
+        String vertCode = ResourceLoader.loadStringFromResource(path + ".vert");
 
         return new Shader(id, fragCode, vertCode);
     }

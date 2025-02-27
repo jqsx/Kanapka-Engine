@@ -191,4 +191,8 @@ public final class Texture {
     public boolean HasTexture() {
         return hasTexture;
     }
+
+    public boolean isDisposed() {
+        return isDisposed;
+    }
 }

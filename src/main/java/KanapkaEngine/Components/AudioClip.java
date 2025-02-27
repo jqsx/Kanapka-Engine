@@ -1,10 +1,13 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.WIP;
+
 import javax.sound.sampled.*;
 
 /**
  * WIP
  */
+@WIP("Needs to be completely redone and overhauled using OpenAL")
 public class AudioClip implements LineListener {
     public final Clip clip;
     private final FloatControl fc;

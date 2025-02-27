@@ -9,10 +9,7 @@ import KanapkaEngine.Net.Router.RouteManager;
 import javax.net.ServerSocketFactory;
 import javax.net.SocketFactory;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketAddress;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +44,8 @@ public class NetworkServer implements Runnable {
             if (serverSocket != null)
                 RouteManager.onServerStop();
             serverSocket = ServerSocketFactory.getDefault().createServerSocket();
-            System.out.println("[SERVER] Created server socket.");
-            serverSocket.bind(new InetSocketAddress(hostName != null && !hostName.isEmpty() ? hostName : "localhost", PORT));
+            logger.log("Created server socket.");
+            serverSocket.bind(new InetSocketAddress(hostName != null && !hostName.isEmpty() ? hostName : getLANIP(), PORT));
             logger.log("Bound server to correct hostName and port.");
             clients.clear();
             logger.log("Cleared existing clients.");
@@ -62,6 +59,15 @@ public class NetworkServer implements Runnable {
             isServer = true;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static String getLANIP() {
+        try {
+            return Inet4Address.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.error("You are most likely not connected to the internet and the server cannot be launched.");
+            return "localhost";
         }
     }
 

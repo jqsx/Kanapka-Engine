@@ -66,6 +66,22 @@ public class Graphics {
         DrawWireframe(spriteMesh.attributeBuffer, transformation, Shader.Standard.getStandardShader());
     }
 
+    public static void DrawWireframe(double x, double y, double width, double height, double rotation) {
+        transformation.position.set(x, y, 0);
+        transformation.rotation.set(0, 0, rotation);
+        transformation.scale.set(width, height, 1.0);
+
+        DrawWireframe(transformation);
+    }
+
+    public static void DrawWireframe(Vector2d p, Vector2d s, double r) {
+        DrawWireframe(p.x, p.y, s.x, s.y, r);
+    }
+
+    public static void DrawWireframe(Vector2d p, Vector2d s) {
+        DrawWireframe(p, s, 0.0);
+    }
+
     public static void DrawMesh(AttributeElementBuffer mesh, Transformation transformation, Shader shader) {
         Objects.requireNonNull(shader);
         Objects.requireNonNull(mesh);

@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class Node {
+    private static final Logger logger = new Logger("NODE");
     private static int NodeCount = 0;
     private boolean alive = true;
     public String name = "Node_Instance";
     private Node parent;
     public final Transform transform = new Transform(this);
-    private KanapkaEngine.Components.Renderer renderer;
+    private Renderer renderer;
     private ICollider collider;
     private Rigidbody rigidbody;
     private final List<Node> children = new ArrayList<>();
@@ -189,10 +190,20 @@ public class Node {
 
     protected final void UpdateCall() {
         if (!alive) return;
-        Update();
+        try {
+            Update();
+        } catch (Exception e) {
+            logger.error("{" + name + "} " + e.getClass().getName());
+            logger.error(e.toString());
+        }
         for (Component component : components) {
             if (component instanceof IUpdate update) {
-                update.Update();
+                try {
+                    update.Update();
+                } catch (Exception e) {
+                    logger.error("{" + name + "} " + e.getClass().getName() + " while updating " + component.getClass().getName());
+                    logger.error(e.toString());
+                }
             }
         }
         synchronized (children) {

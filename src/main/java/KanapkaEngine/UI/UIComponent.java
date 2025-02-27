@@ -1,6 +1,7 @@
 package KanapkaEngine.UI;
 
 import KanapkaEngine.Game.Input;
+import KanapkaEngine.Game.WIP;
 import KanapkaEngine.Game.Window;
 import org.joml.Vector2d;
 import org.joml.Vector2i;
@@ -16,6 +17,7 @@ import java.util.Objects;
 /**
  * TODO: Revise the ui rendering and management.
  */
+@WIP
 public class UIComponent {
     private List<UIComponent> children = new ArrayList<>();
     private UIComponent parent;

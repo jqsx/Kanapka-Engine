@@ -8,7 +8,7 @@ import KanapkaEngine.Components.RenderStage;
  */
 public interface RenderLayer {
     /**
-     * Main graphics rendering interface where the render layer is able to access the Graphics2D component of the renderer.
+     * Main graphics rendering interface where the render layer is able to access the render stage for the engine.
      */
     void Render();
 

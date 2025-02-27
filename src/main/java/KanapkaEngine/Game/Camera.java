@@ -145,7 +145,7 @@ public class Camera {
         if (main.projection == Projection.ORTHOGRAPHIC)
             proj = proj.identity().ortho2D(-size * widthMult, size * widthMult, -size * heightMult, size * heightMult);
         else if (main.projection == Projection.PERSPECTIVE)
-            proj = proj.identity().perspective((float)Math.toRadians(main.FOV), ratio, main.NEAR, main.FAR);
+            proj = proj.identity().perspectiveLH((float)Math.toRadians(main.FOV), ratio, main.NEAR, main.FAR);
 
         proj.rotateZ((float)Camera.main.rotation);
 

@@ -74,6 +74,6 @@ public class Image extends UIComponent {
     }
 
     public final void setImage(String path) {
-        this.render = ResourceLoader.loadResource(path);
+        this.render = ResourceLoader.loadImageResource(path);
     }
 }

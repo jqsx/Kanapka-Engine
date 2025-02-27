@@ -1,5 +1,7 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Logger;
+
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
@@ -9,21 +11,18 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 public class ResourceLoader {
-    private static HashMap<String, BufferedImage> loadedImages = new HashMap<>();
+    private static final Logger logger = new Logger("ResourceLoader");
 
     /**
      * Load resources from the project's resources folder.
      * @param path
      * @return The loaded resource as BufferedImage
      */
-    public static BufferedImage loadResource(String path) {
-        if (loadedImages.containsKey(path)) return loadedImages.get(path);
+    public static BufferedImage loadImageResource(String path) {
         InputStream stream = ClassLoader.getSystemResourceAsStream(path);
         if (stream != null) {
             try {
-                BufferedImage image = ImageIO.read(stream);
-                loadedImages.put(path, image);
-                return image;
+                return ImageIO.read(stream);
             } catch (IOException e) {
                 System.out.println(e);
                 return null;
@@ -37,7 +36,7 @@ public class ResourceLoader {
      * @param path
      * @return An InputStream of file information from the resources folder of the project.
      */
-    public static InputStream loadStream(String path) {
+    public static InputStream loadStreamResource(String path) {
         return ClassLoader.getSystemResourceAsStream(path);
     }
 
@@ -58,7 +57,7 @@ public class ResourceLoader {
     }
     private ResourceLoader() {}
 
-    public static AudioClip loadAudio(String path) {
+    public static AudioClip loadAudioResoource(String path) {
         try {
             Clip clip = AudioSystem.getClip();
 
@@ -74,9 +73,12 @@ public class ResourceLoader {
         }
     }
 
-    public static String loadStringFromFile(String path) {
+    public static String loadStringFromResource(String path) {
         try {
-            InputStream stream = loadStream(path);
+            InputStream stream = loadStreamResource(path);
+
+            if (stream == null)
+                return null;
 
             StringBuilder builder = new StringBuilder();
 

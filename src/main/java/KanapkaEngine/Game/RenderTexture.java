@@ -3,6 +3,7 @@ package KanapkaEngine.Game;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 
+@WIP
 public final class RenderTexture {
     private static final int[] EMPTY_PTR = new int[0];
 

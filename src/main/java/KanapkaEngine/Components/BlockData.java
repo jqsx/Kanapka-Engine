@@ -39,14 +39,6 @@ public class BlockData {
     }
 
     /**
-     * Used for perhaps unloading a block from the <code><stong>BlockManager</stong></code> (bad idea as all ids will shift) flushes the block render, and resets the block render state.
-     */
-    public final void Derender() {
-        render.flush();
-        render = null;
-    }
-
-    /**
      * Future plans: Create a way to render dynamic textures and make it possible to define depth blocks filtering any objects that are behind them and making them visible
      *
      *
@@ -71,6 +63,6 @@ public class BlockData {
 
     private void beginRender() {
         if (texture == null) return;
-        render = ResourceLoader.loadResource(texture);
+        render = ResourceLoader.loadImageResource(texture);
     }
 }

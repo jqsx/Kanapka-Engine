@@ -2,7 +2,9 @@ package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Camera;
 import KanapkaEngine.Game.Time;
+import KanapkaEngine.Game.WIP;
 
+@WIP
 public class AudioSource extends Component implements IUpdate {
 
     public AudioClip clip;

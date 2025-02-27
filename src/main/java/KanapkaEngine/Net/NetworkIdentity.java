@@ -14,6 +14,8 @@ public class NetworkIdentity extends Component {
     @ReadOnly
     private final int NetID;
 
+    public boolean clientHasAuthority = false;
+
     private final Set<Integer> networkClientAuthority = new HashSet<>();
 
     /**

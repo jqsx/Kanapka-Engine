@@ -13,6 +13,8 @@ public class NodeLayer implements RenderLayer {
 
     private static final Logger logger = new Logger("NodeLayer");
 
+    public static boolean DRAW_WIREFRAME = false;
+
     @Override
     public void Render() {
         if (SceneManager.hasScene() && Camera.main != null) {
@@ -24,8 +26,10 @@ public class NodeLayer implements RenderLayer {
         node.getComponents(renderers, Renderer.class);
         for (Renderer renderer : renderers) {
             if (Camera.main.isWithin(renderer)) {
-                Graphics.DrawSprite(renderer.getTexture(), node.transform.getTransformation(), renderer.getMaterial());
-                Graphics.DrawWireframe(node.transform.getTransformation());
+                if (DRAW_WIREFRAME) {
+                    Graphics.DrawWireframe(node.transform.getTransformation());
+                }
+                else Graphics.DrawSprite(renderer.getTexture(), node.transform.getTransformation(), renderer.getMaterial());
             }
         }
     }
