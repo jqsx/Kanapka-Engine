@@ -9,6 +9,7 @@ import org.joml.Matrix3f;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +34,30 @@ public class ParticleLayer implements RenderLayer {
     }
 
     private void Render(Node node, Renderer renderer) {
+        if (renderer.getTexture() == null)
+            return;
+        if (renderer.getMaterial() == null)
+            return;
+        if (renderer.getMaterial().getShader() == null)
+            return;
+
         if (renderer instanceof ParticleSystem<?> any) {
-
-            if (renderer.getTexture() == null)
-                return;
-            if (renderer.getMaterial() == null)
-                return;
-            if (renderer.getMaterial().getShader() == null)
-                return;
-
             ParticleSystem<Particle> system = (ParticleSystem<Particle>) any;
+
+            if (!Camera.main.isWithin(renderer))
+                return;
+
+            if (NodeLayer.DRAW_WIREFRAME) {
+                Rectangle2D.Double rect = renderer.bounds();
+
+                Graphics.WIREFRAME_COLOR.set(0.5f, 1.f, 0.f);
+                Graphics.DrawWireframe(rect.x + rect.width / 2.0, rect.y + rect.height / 2.0, rect.width, rect.height, 0.f);
+
+                Graphics.WIREFRAME_COLOR.set(1f, 0.f, 0.f);
+                Graphics.DrawWireframe(rect.x + rect.width * 1.5, rect.y + rect.height * 1.5, rect.width * 2.0, rect.height * 2.0, 0.f);
+
+                Graphics.WIREFRAME_COLOR.set(1f, 0.f, 1.f);
+            }
 
             if (system.isDrawInstanced()) {
                 system.BufferParticleLocations();

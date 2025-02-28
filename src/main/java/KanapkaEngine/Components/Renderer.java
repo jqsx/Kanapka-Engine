@@ -19,6 +19,15 @@ public class Renderer extends Component {
     private static final Logger logger = new Logger("Renderer");
     private final Rectangle2D.Double m_Bounds = new Rectangle2D.Double();
 
+    private static final vec2d min = new vec2d();
+    private static final vec2d max = new vec2d();
+
+    private static final Vector3f TOPRIGHT = new Vector3f(0.5f, 0.5f, 1.0f);
+    private static final Vector3f BOTTOMLEFT = new Vector3f(-0.5f, -0.5f, 1.0f);
+
+    private static final Vector3f topRight = new Vector3f();
+    private static final Vector3f bottomLeft = new Vector3f();
+
     private Texture texture;
     private Material material;
 
@@ -47,15 +56,12 @@ public class Renderer extends Component {
 
         Matrix3f matrix3f = getParent().transform.getTransformation().get2DMatrix();
 
-        Vector3f topRight = new Vector3f(0.5f, 0.5f, 1.0f);
-        Vector3f bottomLeft = new Vector3f(-0.5f, -0.5f, 1.0f);
+        matrix3f.transform(TOPRIGHT, topRight);
+        matrix3f.transform(BOTTOMLEFT, bottomLeft);
 
-        matrix3f.transform(topRight);
-        matrix3f.transform(bottomLeft);
+        min.set(Math.min(topRight.x, bottomLeft.x), Math.min(topRight.y, bottomLeft.y));
 
-        vec2d min = new vec2d(Math.min(topRight.x, bottomLeft.x), Math.min(topRight.y, bottomLeft.y));
-
-        vec2d max = new vec2d(Math.max(topRight.x, bottomLeft.x), Math.max(topRight.y, bottomLeft.y));
+        max.set(Math.max(topRight.x, bottomLeft.x), Math.max(topRight.y, bottomLeft.y));
 
         Vector2d ms = max.sub(min);
 
@@ -64,10 +70,5 @@ public class Renderer extends Component {
         m_Bounds.setRect(min.x, min.y, ms.x, ms.y);
 
         return m_Bounds;
-    }
-
-    @Serialized(methodName = "Testing!")
-    public void test() {
-        logger.log("You executed method test() from the Renderer class!");
     }
 }

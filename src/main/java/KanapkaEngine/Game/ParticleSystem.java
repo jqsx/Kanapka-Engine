@@ -7,14 +7,13 @@ import KanapkaEngine.Components.TextureMaterial;
 import KanapkaEngine.Editor.Attributes.ReadOnly;
 import KanapkaEngine.Editor.Attributes.Serialized;
 import KanapkaEngine.Editor.Attributes.ShowMethods;
-import org.joml.Vector2d;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
+import org.joml.*;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @WIP("Allow for allocation of objects into an arraylist and setting of maximum particles in the system")
@@ -23,7 +22,26 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
     private static final Logger logger = new Logger("ParticleSystem");
     private final Rectangle2D.Double m_Bounds = new Rectangle2D.Double();
 
+    private static final Transformation transformation = new Transformation(new Vector3d(), new Vector3d(1,1,1), new Vector3f());
+
+    private static final Vector3f TOPRIGHT = new Vector3f(0.5f, 0.5f, 1.0f);
+    private static final Vector3f BOTTOMLEFT = new Vector3f(-0.5f, -0.5f, 1.0f);
+
+    private static final Vector2d max = new Vector2d();
+    private static final Vector2d min = new Vector2d();
+
+    private static final Vector3f topRight = new Vector3f();
+    private static final Vector3f bottomLeft = new Vector3f();
+
+    private static final Matrix3f output_mat = new Matrix3f().identity();
+
     private final List<T> particles = new ArrayList<>();
+
+    public boolean isLoop = false;
+    public double loopEmitDelay = 1.0;
+
+    private double lastEmit = Time.time();
+
     @Serialized
     private int UPDATE_RATE = 60;
 
@@ -62,7 +80,7 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
 
         setMaterial(new TextureMaterial());
 
-        setMaxParticles(MAX_PARTICLES);
+        setMaxParticles(max_particles);
     }
 
     public ParticleSystem() {
@@ -88,6 +106,9 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
             });
         }
 
+        if (isDrawInstanced)
+            regenerateArray();
+
         MAX_PARTICLES = count;
     }
 
@@ -99,6 +120,8 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         setMaterial(material);
 
         isDrawInstanced = true;
+
+        regenerateArray();
     }
 
     public final int getFPS() {
@@ -155,9 +178,14 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
             double fixedDelta = Time.time() - last_update;
             last_update = Time.time();
 
-            CheckExpired();
             Loop(fixedDelta);
             FixedUpdate(fixedDelta);
+        }
+
+        if (isLoop && lastEmit + loopEmitDelay < Time.time()) {
+            lastEmit = Time.time();
+
+            emit(getParent().transform.getPosition());
         }
     }
 
@@ -166,24 +194,34 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
     }
 
     private void Loop(double fixedDelta) {
+        max.set(-Double.MAX_VALUE, -Double.MAX_VALUE);
+        min.set(Double.MAX_VALUE, Double.MAX_VALUE);
         particles.forEach((particle) -> {
             UpdateParticle(particle, fixedDelta);
+
+            transformation.Update(particle.getPosition(), getParent().transform.getPosition().set(1,1), 0.f);
+            Matrix3f mat = transformation.get2DMatrix();
+
+            mat.transform(TOPRIGHT, topRight);
+            mat.transform(BOTTOMLEFT, bottomLeft);
+
+            if (min.x > bottomLeft.x)
+                min.x = bottomLeft.x;
+            if (min.y > bottomLeft.y)
+                min.y = bottomLeft.y;
+
+            if (max.x < topRight.x)
+                max.x = topRight.x;
+            if (max.y < topRight.y)
+                max.y = topRight.y;
         });
     }
 
     @Override
     public Rectangle2D.Double bounds() {
+        m_Bounds.setRect(min.x, min.y, max.x - min.x, max.y - min.y);
+
         return m_Bounds;
-    }
-
-    private void CheckExpired() {
-        int count = particles.size();
-        particles.removeIf(particle -> particle.isDead(getLifeTime(particle)));
-
-        if (isDrawInstanced)
-            if (particles.size() != count) {
-                regenerateArray();
-            }
     }
 
     private void regenerateArray() {
@@ -234,11 +272,5 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
 
     public static AttributeElementBuffer getInstancedMesh() {
         return instancedMesh;
-    }
-
-    @Serialized
-    public void logBufferedFloatsLength() {
-        logger.log("Buffered: " + bufferedFloats.length);
-        logger.log("Particle List: " + particles.size());
     }
 }

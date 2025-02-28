@@ -13,11 +13,18 @@ public class RouteManager {
         return routes.get(id);
     }
 
-    public static final HelloWorld helloRoute = new HelloWorld();
-    public static final AuthorityInterface authority = new AuthorityInterface();
+    private static HelloWorld helloRoute;
+    private static AuthorityInterface authority;
+    private static RTTRoute rtt;
 
     private RouteManager() {
 
+    }
+
+    public static void InitalizeUtilityRoutes() {
+        helloRoute = new HelloWorld();
+        authority = new AuthorityInterface();
+        rtt = new RTTRoute();
     }
 
     public static void defineRoute(Route route) {
@@ -53,5 +60,17 @@ public class RouteManager {
 
     public static void onServerClientConnect(NetworkConnectionToClient conn) {
         routes.forEach(route -> route.onServerClientConnect(conn));
+    }
+
+    public static HelloWorld getHelloRoute() {
+        return helloRoute;
+    }
+
+    public static AuthorityInterface getAuthority() {
+        return authority;
+    }
+
+    public static RTTRoute getRtt() {
+        return rtt;
     }
 }

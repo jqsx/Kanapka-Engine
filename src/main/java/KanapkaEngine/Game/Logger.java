@@ -39,7 +39,7 @@ public final class Logger {
 
     private final org.apache.logging.log4j.Logger logger;
 
-    public static boolean useLog4jDefault = true;
+    public static boolean useLog4jDefault = false;
 
     private boolean useLog4j = useLog4jDefault;
 
@@ -50,7 +50,7 @@ public final class Logger {
         logger = LogManager.getLogger(nameSpace.toUpperCase());
     }
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss:SSS");
 
     private String getTime() {
         LocalTime time = LocalTime.now();
@@ -71,12 +71,8 @@ public final class Logger {
 
     private String getFrom() {
         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-
-        StringBuilder builder = new StringBuilder();
-        for (int index = 0; index < elements.length; index++) {
-            builder.append(elements[index].getMethodName());
-        }
-        return builder.toString();
+        String function = elements[3].getMethodName();
+        return NameSpace + " -> " + function;
     }
 
     public void log(BufferedImage image, int width, int height) {

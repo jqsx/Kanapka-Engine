@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public final class GuiRenderer extends Plugin implements IInput, ICleanUp, RenderLayer {
+public final class GuiRenderer implements IInput, ICleanUp, RenderLayer, Plugin {
     static GuiRenderer instance;
     private IDrawGUI drawGUI;
 
@@ -238,5 +238,20 @@ public final class GuiRenderer extends Plugin implements IInput, ICleanUp, Rende
     @Override
     public RenderStage getStage() {
         return RenderStage.UI;
+    }
+
+    @Override
+    public void Apply(Engine engine) {
+
+    }
+
+    @Override
+    public void Update() {
+
+    }
+
+    @Override
+    public void Detach() {
+
     }
 }

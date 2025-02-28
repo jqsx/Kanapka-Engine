@@ -5,16 +5,10 @@ package KanapkaEngine.Game;
  *  <br><br>
  *  Can use ICleanUp if in need of disposing of assets.
  */
-public class Plugin {
-    public void Apply(Engine engine) {
+public interface Plugin {
+    void Apply(Engine engine);
 
-    }
+    void Update();
 
-    public void Update() {
-
-    }
-
-    public void Detach() {
-
-    }
+    void Detach();
 }

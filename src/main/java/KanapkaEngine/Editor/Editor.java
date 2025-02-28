@@ -75,8 +75,6 @@ public class Editor {
 
                 particleSystem.setTexture(texture);
 
-                particleSystem.setInstanced();
-
                 Node sys = new Node();
 
                 sys.addComponent(particleSystem);
@@ -158,8 +156,10 @@ public class Editor {
                     if (particleSpawnDelay < Time.time()) {
                         particleSpawnDelay = Time.time() + 0.05;
 
-                        particleSystem.emit(new Vector2d(0, 0)).addVelocity(new Vector2d(10, 0));
+                        Particle particle = particleSystem.emit(new Vector2d(0, 0));
 
+                        if (particle != null)
+                            particle.addVelocity(new Vector2d(10, 0));
                     }
             }
 

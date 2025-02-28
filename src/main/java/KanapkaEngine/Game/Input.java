@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public final class Input extends Plugin {
+public final class Input implements Plugin {
     private static final Set<Integer> keysDown = new HashSet<>();
 
     private static Vector2i mousePosition = new Vector2i(0, 0);
@@ -36,6 +36,16 @@ public final class Input extends Plugin {
 
     @Override
     public void Apply(Engine engine) {
+
+    }
+
+    @Override
+    public void Update() {
+
+    }
+
+    @Override
+    public void Detach() {
 
     }
 

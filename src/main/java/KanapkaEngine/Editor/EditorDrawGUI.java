@@ -1,9 +1,6 @@
 package KanapkaEngine.Editor;
 
-import KanapkaEngine.Components.Component;
-import KanapkaEngine.Components.RectangleCollider;
-import KanapkaEngine.Components.Renderer;
-import KanapkaEngine.Components.Rigidbody;
+import KanapkaEngine.Components.*;
 import KanapkaEngine.Editor.Attributes.*;
 import KanapkaEngine.Game.*;
 import KanapkaEngine.RenderLayers.NodeLayer;
@@ -368,10 +365,17 @@ public class EditorDrawGUI implements IDrawGUI {
         ImGui.setNextWindowPos(0, 20);
         ImGui.begin("CameraInfo", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoBackground);
 
-        ImGui.text("Position=" + Camera.main.getPosition());
+        Vector2d pos = Camera.main.getPosition();
+
+        ImGui.text("Position=(" + precision(pos.x, 2) + ", " + precision(pos.y, 2) + ")");
         ImGui.text("Rotation=" + Camera.main.getRotation());
         ImGui.text("Size=" + Camera.main.size);
 
         ImGui.end();
+    }
+
+    private double precision(double v, int steps) {
+        double divisor = Math.pow(10, Mathf.Clamp(steps, 1, 6));
+        return Math.round(v * divisor) / divisor;
     }
 }

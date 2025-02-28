@@ -8,7 +8,7 @@ import org.joml.Vector2d;
 import java.awt.*;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class SimpleViewController extends Plugin implements IInput {
+public class SimpleViewController implements IInput, Plugin {
     private vec2d velocity = new vec2d(0, 0);
     private Vector2d range = new Vector2d(0.001, 30.0);
 
@@ -35,6 +35,11 @@ public class SimpleViewController extends Plugin implements IInput {
         Camera.main.setPosition(Camera.main.getPosition().add(velocity.mul(Time.deltaTime() * 5)));
 
         Camera.main.setRotation(Math.toRadians(Mathf.Clamp(velocity.x, -10.0, 10.0)));
+    }
+
+    @Override
+    public void Detach() {
+
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,20 @@ public class Shader {
 
             createUniform("uModelProj", false);
             createUniform("uTime", false);
+
+            int count = glGetProgrami(programId, GL_ACTIVE_UNIFORMS);
+
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                for (int i = 0; i < count; i++) {
+                    IntBuffer size = stack.callocInt(1);
+                    IntBuffer type = stack.callocInt(1);
+
+                    String name = glGetActiveUniform(programId, i, size, type);
+
+                    createUniform(name);
+                }
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

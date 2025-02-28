@@ -1,6 +1,7 @@
 package KanapkaEngine.Net;
 
 import KanapkaEngine.Game.Logger;
+import KanapkaEngine.Net.Router.RTTRoute;
 import KanapkaEngine.Net.Router.Route;
 import KanapkaEngine.Net.Router.RouteManager;
 
@@ -19,6 +20,8 @@ public class NetworkConnectionToClient implements Runnable {
     private DataOutputStream out;
     private final Thread thread;
 
+    private int rtt = 0;
+
     public NetworkConnectionToClient(Socket socket, int id) {
         logger.log("Setting up server client connection.");
         this.socket = socket;
@@ -28,6 +31,14 @@ public class NetworkConnectionToClient implements Runnable {
         thread = new Thread(this);
         thread.start();
         logger.log("Set up server client connection.");
+    }
+
+    public final void getRTTForClient(RTTRoute route) {
+        rtt = route.getRTT(this);
+    }
+
+    public final int rtt() {
+        return rtt;
     }
 
     public final int getId() {

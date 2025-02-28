@@ -6,10 +6,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -41,7 +39,7 @@ public final class Engine {
 
     private final Time time = new Time();
 
-    private final List<Plugin> plugins = new ArrayList<>();
+    private final Set<Plugin> plugins = new HashSet<>();
 
     private long last_fixed_update = System.nanoTime();
     private final double Second = (long) Math.pow(10, 9);
@@ -158,9 +156,8 @@ public final class Engine {
                 physics.FixedUpdate(fixedDelta);
             }
             logic.Update();
-            for (int i = plugins.size() - 1; i >= 0; i--) {
-                plugins.get(i).Update();
-            }
+            for (Plugin plugin : plugins)
+                plugin.Update();
             Chunk.UpdateChunks();
             try {
                 SceneManager.getSceneNodes().forEach(Node::UpdateCall);
@@ -267,6 +264,7 @@ public final class Engine {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_VERSION_MINOR, 1);
+        glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
 
         if (isMacOS()) {
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
@@ -330,7 +328,6 @@ public final class Engine {
 
     private void window_refresh_callback(long window) {
         correctPhysicsUpdate();
-        logger.log("Refreshed");
         glfwSwapBuffers(window);
     }
 

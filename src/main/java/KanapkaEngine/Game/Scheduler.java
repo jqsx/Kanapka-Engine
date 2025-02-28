@@ -5,7 +5,7 @@ import KanapkaEngine.Components.TSLinkedList;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Scheduler extends Plugin {
+public final class Scheduler implements Plugin {
     private static final List<delayed> list = new ArrayList<>();
 
     Scheduler() {
@@ -13,9 +13,18 @@ public final class Scheduler extends Plugin {
     }
 
     @Override
+    public void Apply(Engine engine) {
+
+    }
+
+    @Override
     public void Update() {
-        super.Update();
         list.removeIf(delayed::execute);
+    }
+
+    @Override
+    public void Detach() {
+
     }
 
     public static void delay(Runnable task, double delay) {

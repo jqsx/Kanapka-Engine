@@ -20,6 +20,8 @@ public class Graphics {
     private static final Logger logger = new Logger("Graphics");
     private final static Matrix4f model = new Matrix4f().identity();
 
+    public final static Vector3f WIREFRAME_COLOR = new Vector3f(1.f, 0.f, 1.f);
+
     private final static Transformation transformation = new Transformation(new Vector3d(), new Vector3d(), new Vector3f());
 
     private static Mesh spriteMesh;
@@ -51,6 +53,7 @@ public class Graphics {
         shader.setUniform("uTime", (float)Time.time());
         shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
         shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().getHeight());
+        shader.setUniform("uColor", WIREFRAME_COLOR);
 
         shader.bind();
         mesh.bind();
