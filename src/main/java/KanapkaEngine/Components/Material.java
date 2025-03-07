@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Serialized
 public class Material {
-    private static final List<Class> permittedClassTypes = List.of(new Class[]{Float.class, Vector2f.class, Vector3f.class, Vector4f.class, Texture.class, Matrix4f.class});
+    private static final List<Class> permittedClassTypes = List.of(new Class[]{float.class, int.class, Vector2f.class, Vector3f.class, Vector4f.class, Texture.class, Matrix4f.class});
 
     private List<ValidUniform> ValidatedUniforms = new ArrayList<>();
 
@@ -65,8 +65,12 @@ public class Material {
 
         for (ValidUniform uniform : ValidatedUniforms) {
             try {
-                if (uniform.target == Float.class) {
-                    Float result = uniform.field.getFloat(this);
+                if (uniform.target == float.class) {
+                    float result = uniform.field.getFloat(this);
+                    target.setUniform(uniform.targetUniform, result);
+                }
+                else if (uniform.target == int.class) {
+                    int result = uniform.field.getInt(this);
                     target.setUniform(uniform.targetUniform, result);
                 }
                 else if (uniform.target == Vector2f.class) {

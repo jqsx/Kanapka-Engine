@@ -35,7 +35,7 @@ public class Renderer extends Component {
     public final Material getMaterial() {
         return material;
     }
-    public final void setMaterial(Material material) {
+    public final void setMaterial(final Material material) {
         this.material = material;
     }
 

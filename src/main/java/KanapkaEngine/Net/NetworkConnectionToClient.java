@@ -55,7 +55,11 @@ public final class NetworkConnectionToClient implements Runnable {
             out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             logger.error("Failed connection with client " + socket.getLocalAddress().getHostAddress());
-            e.printStackTrace();
+
+            logger.error(e, "Network server connection error");
+            if (NetworkServer.callback != null)
+                NetworkServer.callback.callback(e);
+            return;
         }
 
         try {
@@ -77,6 +81,10 @@ public final class NetworkConnectionToClient implements Runnable {
             }
         } catch (IOException e) {
             logger.error("Problem");
+
+            logger.error(e, "Network server connection error");
+            if (NetworkServer.callback != null)
+                NetworkServer.callback.callback(e);
         }
         finally {
             try {
@@ -109,6 +117,8 @@ public final class NetworkConnectionToClient implements Runnable {
             out.write(data);
         } catch (IOException e) {
             logger.error(e, "Error while sending message.");
+            if (NetworkServer.callback != null)
+                NetworkServer.callback.callback(e);
         }
     }
 

@@ -39,6 +39,8 @@ public final class NetworkServer implements Runnable {
 
     private static double lastTick = Time.time();
 
+    public static NetErrCallback callback;
+
     public static void StartServer() {
         try {
             if (serverSocket != null)
@@ -59,6 +61,9 @@ public final class NetworkServer implements Runnable {
             isServer = true;
         } catch (IOException e) {
             e.printStackTrace();
+
+            if (callback != null)
+                callback.callback(e);
         }
     }
 
@@ -91,7 +96,10 @@ public final class NetworkServer implements Runnable {
                 if (serverSocket.isClosed())
                     return;
 
-                throw new RuntimeException(e);
+                if (callback != null)
+                    callback.callback(e);
+
+                logger.error(e, "Server error.");
             }
         }
         if (!serverSocket.isClosed()) {

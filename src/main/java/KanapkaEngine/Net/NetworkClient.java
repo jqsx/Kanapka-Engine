@@ -22,6 +22,8 @@ public final class NetworkClient implements Runnable {
 
     private static NetworkClient instance;
 
+    public static NetErrCallback callback;
+
     private NetworkClient(Socket socket) {
         this.socket = socket;
 
@@ -40,7 +42,10 @@ public final class NetworkClient implements Runnable {
                 try {
                     instance.socket.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    if (callback != null)
+                        callback.callback(e);
+                    logger.error(e, "Client error");
+                    return;
                 }
             }
         }
@@ -52,7 +57,10 @@ public final class NetworkClient implements Runnable {
         try {
             instance = new NetworkClient(SocketFactory.getDefault().createSocket(hostName, port));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (callback != null)
+                callback.callback(e);
+            logger.error(e, "Client error");
+            return;
         }
 
         logger.log("Connected to server.");
@@ -63,6 +71,9 @@ public final class NetworkClient implements Runnable {
             return Inet4Address.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
             logger.error("You are most likely not connected to the internet and the server cannot be launched.");
+            if (callback != null)
+                callback.callback(e);
+            logger.error(e, "Client error");
             return "localhost";
         }
     }
@@ -80,7 +91,10 @@ public final class NetworkClient implements Runnable {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (callback != null)
+                callback.callback(e);
+            logger.error(e, "Client error");
+            return;
         }
 
         try {
@@ -105,7 +119,9 @@ public final class NetworkClient implements Runnable {
             if (!socket.isClosed())
                 socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            if (callback != null)
+                callback.callback(e);
+            logger.error(e, "Client error");
         }
         finally {
             RouteManager.onClientDisconnect();
@@ -126,7 +142,9 @@ public final class NetworkClient implements Runnable {
             out.writeInt(data.length);
             out.write(data);
         } catch (IOException e) {
-            logger.error(e, "Error while sending message.");
+            if (callback != null)
+                callback.callback(e);
+            logger.error(e, "Client error");
         }
     }
 
