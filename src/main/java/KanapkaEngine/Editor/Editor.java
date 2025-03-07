@@ -28,6 +28,20 @@ public class Editor {
 
     private static Logger logger = new Logger("EDITOR");
 
+    public static void BindEditor() {
+        Engine engine = Engine.getMainInstance();
+
+        if (engine == null)
+            return;
+
+        engine.load(new SimpleViewController());
+
+        GuiRenderer guiRenderer = new GuiRenderer(new EditorDrawGUI());
+
+        RenderLayer.register(guiRenderer);
+        engine.load(guiRenderer);
+    }
+
     public static void StartEditor() {
         editor = true;
 
@@ -53,17 +67,12 @@ public class Editor {
                 RenderLayer.register(new ChunkLayer());
                 RenderLayer.register(new ParticleLayer());
 
-                engine.load(new SimpleViewController());
-
-                GuiRenderer guiRenderer = new GuiRenderer(new EditorDrawGUI());
-
-                RenderLayer.register(guiRenderer);
-                engine.load(guiRenderer);
+                BindEditor();
 
                 texture = new Texture(ResourceLoader.loadImageResource("logo.png"));
                 wooden = new Texture(ResourceLoader.loadImageResource("wooden.png"));
 
-//                physicsTest();
+                physicsTest();
                 particleSystemTest();
 
 //                GenerateChunk(0, 0);
@@ -73,7 +82,11 @@ public class Editor {
             private void particleSystemTest() {
                 particleSystem = new ParticleSystem<>();
 
-                particleSystem.setTexture(texture);
+                TextureMaterial material = new TextureMaterial();
+
+                material.MainTex = wooden;
+
+                particleSystem.setMaterial(material);
 
                 Node sys = new Node();
 
@@ -94,7 +107,6 @@ public class Editor {
 
                 Renderer renderer = new Renderer();
                 renderer.setMaterial(material);
-                renderer.setTexture(texture);
 
                 node.addComponent(renderer);
 
@@ -114,7 +126,6 @@ public class Editor {
                     Renderer renderer = new Renderer();
 
                     renderer.setMaterial(material);
-                    renderer.setTexture(wooden);
 
                     floor.addComponent(renderer);
 
@@ -131,7 +142,6 @@ public class Editor {
                     Renderer renderer = new Renderer();
 
                     renderer.setMaterial(material);
-                    renderer.setTexture(wooden);
 
                     box.addComponent(renderer);
 

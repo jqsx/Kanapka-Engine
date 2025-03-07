@@ -8,6 +8,8 @@ public class Particle {
     private final vec2d position = new vec2d(0.0, 0.0);
     private final vec2d velocity = new vec2d(0.0, 0.0);
 
+    private double size = 1.f;
+
     private double birth = -999.0;
 
     public Particle() {
@@ -57,5 +59,13 @@ public class Particle {
         birth = Time.time();
 
         return this;
+    }
+
+    public double getSize() {
+        return size;
+    }
+
+    public final void setSize(double size) {
+        this.size = size;
     }
 }

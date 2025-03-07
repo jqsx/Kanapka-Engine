@@ -73,6 +73,7 @@ public final class GuiRenderer implements IInput, ICleanUp, RenderLayer, Plugin 
         } else if (action == GLFW_RELEASE) {
             io.addKeyEvent(getImKey(key), false);
         }
+        
     }
 
     @Override

@@ -29,7 +29,7 @@ public class NodeLayer implements RenderLayer {
                 if (DRAW_WIREFRAME) {
                     Graphics.DrawWireframe(node.transform.getTransformation());
                 }
-                else Graphics.DrawSprite(renderer.getTexture(), node.transform.getTransformation(), renderer.getMaterial());
+                else Graphics.DrawSpriteMesh(node.transform.getTransformation(), renderer.getMaterial());
             }
         }
     }

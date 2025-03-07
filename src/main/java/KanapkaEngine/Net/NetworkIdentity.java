@@ -1,7 +1,9 @@
 package KanapkaEngine.Net;
 
 import KanapkaEngine.Components.Component;
+import KanapkaEngine.Components.ImmutableCollection;
 import KanapkaEngine.Editor.Attributes.ReadOnly;
+import KanapkaEngine.Game.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,11 +11,14 @@ import java.util.Random;
 import java.util.Set;
 
 public class NetworkIdentity extends Component {
+    private static final Logger logger = new Logger("Networkidentity");
+
     protected static final HashMap<Integer, NetworkIdentity> loadedIdentities = new HashMap<>();
 
     @ReadOnly
     private final int NetID;
 
+    @ReadOnly
     public boolean clientHasAuthority = false;
 
     private final Set<Integer> networkClientAuthority = new HashSet<>();
@@ -24,17 +29,22 @@ public class NetworkIdentity extends Component {
      */
     public NetworkIdentity(int NetID) {
         this.NetID = NetID;
+
         loadedIdentities.put(NetID, this);
     }
 
     @Override
     public void onOrphan() {
         loadedIdentities.remove(this.getNetID());
+
+        logger.log("Orhpaned");
     }
 
     @Override
     public void onDestroy() {
         loadedIdentities.remove(this.getNetID());
+
+        logger.log("Destroyed");
     }
 
     public int getNetID() {
@@ -65,5 +75,9 @@ public class NetworkIdentity extends Component {
 
         }
         return r;
+    }
+
+    public static ImmutableCollection<NetworkIdentity> identities() {
+        return new ImmutableCollection<>(loadedIdentities.values());
     }
 }

@@ -2,10 +2,7 @@ package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.Material;
 import KanapkaEngine.Components.TextureMaterial;
-import org.joml.Matrix4f;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.*;
 
 import java.util.Objects;
 
@@ -92,8 +89,6 @@ public class Graphics {
         if (Camera.main == null)
             return;
 
-        shader.bind();
-
         shader.setUniform("uModelProj", transformation.getFinalMat(model, new Vector3d(Camera.main.getPosition().x, Camera.main.getPosition().y, 0.0), Camera.getProjectionMatrix()));
         shader.setUniform("uTime", (float)Time.time());
         shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
@@ -115,7 +110,21 @@ public class Graphics {
         InitSpriteMesh();
 
         shader.setUniform("uMainTex", texture);
+        shader.setUniform("uTexWidth", texture.getWidth());
+        shader.setUniform("uTexHeight", texture.getHeight());
+
         DrawMesh(spriteMesh, transformation, shader);
+    }
+
+    public static void DrawSpriteMesh(Transformation transformation, Material material) {
+        if (material instanceof TextureMaterial mat) {
+            DrawSprite(transformation, mat);
+        }
+        else {
+            InitSpriteMesh();
+
+            DrawMesh(spriteMesh, transformation, material);
+        }
     }
 
     public static void DrawRenderTexture(RenderTexture texture, Material material) {

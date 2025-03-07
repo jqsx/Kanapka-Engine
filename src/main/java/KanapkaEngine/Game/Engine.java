@@ -39,7 +39,7 @@ public final class Engine {
 
     private final Time time = new Time();
 
-    private final Set<Plugin> plugins = new HashSet<>();
+    private final List<Plugin> plugins = new ArrayList<>();
 
     private long last_fixed_update = System.nanoTime();
     private final double Second = (long) Math.pow(10, 9);
@@ -145,7 +145,7 @@ public final class Engine {
 
         try {
             try {
-                SceneManager.getSceneNodes().removeIf((node) -> !node.isAlive());
+                SceneManager.getCurrentlyLoaded().nodes.removeIf((node) -> !node.isAlive());
             } catch (ConcurrentModificationException e) {
 
             }
@@ -160,7 +160,7 @@ public final class Engine {
                 plugin.Update();
             Chunk.UpdateChunks();
             try {
-                SceneManager.getSceneNodes().forEach(Node::UpdateCall);
+                SceneManager.getCurrentlyLoaded().nodes.forEach(Node::UpdateCall);
             } catch (ConcurrentModificationException ignore) {
 
             }
@@ -243,7 +243,7 @@ public final class Engine {
     }
 
     /**
-     * If the current OS is mac. Thats crazy dude
+     * If the current OS is mac. That's crazy dude
      */
     @WIP("There will be macos support at some point.")
     public static boolean isMacOS() {
@@ -303,8 +303,6 @@ public final class Engine {
 
         glfwSwapInterval(1);
 
-        glfwShowWindow(window);
-
         GL.createCapabilities();
 
         openglready = true;
@@ -323,6 +321,7 @@ public final class Engine {
 
         ErrorCheck("General");
 
+        glfwShowWindow(window);
         logger.log("Finished Initialization");
     }
 

@@ -37,4 +37,8 @@ public class NetworkOperation {
         operations.foreach(NetworkOperation::run);
         operations.removeIf(NetworkOperation::isCompleted);
     }
+
+    public static void run(Runnable runnable) {
+        new NetworkOperation(runnable);
+    }
 }

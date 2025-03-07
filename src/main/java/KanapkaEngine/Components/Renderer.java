@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Editor.Attributes.HideEditor;
+import KanapkaEngine.Editor.Attributes.ReadOnly;
 import KanapkaEngine.Editor.Attributes.Serialized;
 import KanapkaEngine.Game.Logger;
 import KanapkaEngine.Game.Texture;
@@ -28,15 +29,9 @@ public class Renderer extends Component {
     private static final Vector3f topRight = new Vector3f();
     private static final Vector3f bottomLeft = new Vector3f();
 
-    private Texture texture;
+    @Serialized
     private Material material;
 
-    public final void setTexture(Texture image) {
-        texture = image;
-    }
-    public final Texture getTexture() {
-        return texture;
-    }
     public final Material getMaterial() {
         return material;
     }

@@ -1,5 +1,6 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Editor.Attributes.Serialized;
 import KanapkaEngine.Game.Shader;
 import KanapkaEngine.Game.Texture;
 import org.joml.*;
@@ -14,6 +15,7 @@ import java.util.Objects;
 /**
  * Extend this class inorder to quickly add your uniforms to a shader during draw time.
  */
+@Serialized
 public class Material {
     private static final List<Class> permittedClassTypes = List.of(new Class[]{Float.class, Vector2f.class, Vector3f.class, Vector4f.class, Texture.class, Matrix4f.class});
 
@@ -62,7 +64,6 @@ public class Material {
             return;
 
         for (ValidUniform uniform : ValidatedUniforms) {
-            target.bind();
             try {
                 if (uniform.target == Float.class) {
                     Float result = uniform.field.getFloat(this);
@@ -99,8 +100,6 @@ public class Material {
         }
 
         onSet();
-
-        target.unbind();
     }
 
     public void setShader(Shader target) {

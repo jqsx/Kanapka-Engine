@@ -47,7 +47,6 @@ public class EditorDrawGUI implements IDrawGUI {
     protected EditorDrawGUI() {
         this.engine = Engine.getMainInstance();
     }
-
     public void RenderGUI() {
         Window window = engine.getWindow();
 
@@ -83,6 +82,7 @@ public class EditorDrawGUI implements IDrawGUI {
 
         DrawCameraInfo();
     }
+
 
     private void DrawResourceExplorer() {
         if (displayResourceExplorer.get()) {
@@ -207,6 +207,9 @@ public class EditorDrawGUI implements IDrawGUI {
     }
 
     private void ComponentRecursive(Object component) {
+        if (component == null)
+            return;
+
         String isRenderer = (component instanceof Renderer ? " (Renderer)" : "");
         String isRigidbody = (component instanceof Rigidbody ? " (Physics)" : "");
         String isCollider = (component instanceof RectangleCollider ? " (Collider)" : "");
@@ -279,9 +282,19 @@ public class EditorDrawGUI implements IDrawGUI {
                     }
                     else if (field.getType() == String.class) {
                         component_string.set((String) field.get(component));
+                        if (component_string.isEmpty())
+                            continue;
                         if (ImGui.inputText(field.getName(), component_string)) {
                             field.set(component, component_string.get());
                         }
+                    }
+                    else if (field.getType() == Texture.class) {
+                        Texture texture = (Texture) field.get(component);
+
+                        if (texture == null)
+                            continue;
+
+                        ImGuiDrawImage(texture, new ImVec2(40, 40), new ImVec2());
                     }
                     else {
                         ComponentRecursive(field.get(component));
@@ -363,13 +376,14 @@ public class EditorDrawGUI implements IDrawGUI {
 
     private void DrawCameraInfo() {
         ImGui.setNextWindowPos(0, 20);
-        ImGui.begin("CameraInfo", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoBackground);
+        ImGui.begin("CameraInfo", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoInputs);
 
         Vector2d pos = Camera.main.getPosition();
 
         ImGui.text("Position=(" + precision(pos.x, 2) + ", " + precision(pos.y, 2) + ")");
-        ImGui.text("Rotation=" + Camera.main.getRotation());
-        ImGui.text("Size=" + Camera.main.size);
+        ImGui.text("Rotation=(" + Camera.main.getRotation() + ")");
+        ImGui.text("Size=(" + Camera.main.size + ")");
+        ImGui.text("FPS=" + Math.round(1.0 / Time.deltaTime()));
 
         ImGui.end();
     }

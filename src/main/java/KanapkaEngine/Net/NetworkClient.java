@@ -10,7 +10,7 @@ import java.net.Inet4Address;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class NetworkClient implements Runnable {
+public final class NetworkClient implements Runnable {
     private static final Logger logger = new Logger("NETWORK_CLIENT");
     private Thread thread;
     private Socket socket;
@@ -32,7 +32,7 @@ public class NetworkClient implements Runnable {
     }
 
     public static void Connect(String hostName, int port) {
-        logger.error("Connecting to server.");
+        logger.log("Connecting to server.");
 
         if (instance != null) {
             instance.isRunning = false;
@@ -73,6 +73,8 @@ public class NetworkClient implements Runnable {
 
     @Override
     public void run() {
+        Thread.currentThread().setName("ClientThread");
+        logger.log("Started client thread.");
 
         try {
             in = new DataInputStream(socket.getInputStream());
@@ -111,6 +113,9 @@ public class NetworkClient implements Runnable {
     }
 
     public static void send(short id, byte[] data) {
+        if (!isConnected())
+            return;
+
         if (instance != null)
             instance.Isend(id, data);
     }
@@ -121,7 +126,7 @@ public class NetworkClient implements Runnable {
             out.writeInt(data.length);
             out.write(data);
         } catch (IOException e) {
-            logger.error("Problem");
+            logger.error(e, "Error while sending message.");
         }
     }
 

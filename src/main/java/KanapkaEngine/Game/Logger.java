@@ -41,6 +41,10 @@ public final class Logger {
 
     public static boolean useLog4jDefault = false;
 
+    public boolean logLines = false;
+    public boolean logThread = false;
+    public boolean logFunction = false;
+
     private boolean useLog4j = useLog4jDefault;
 
     public final String NameSpace;
@@ -64,7 +68,7 @@ public final class Logger {
             logger.info(text);
         }
         else {
-            String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + INFO_PREFIX + ANSI_RESET + " [ " + ANSI_YELLOW + getFrom() + ANSI_RESET + " ] " + text.toString() + ANSI_RESET;
+            String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + INFO_PREFIX + getThreadText() + " [ " + ANSI_YELLOW + getFrom() + ANSI_RESET + " ] " + text.toString() + ANSI_RESET;
             System.out.println(message);
         }
     }
@@ -72,7 +76,16 @@ public final class Logger {
     private String getFrom() {
         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
         String function = elements[3].getMethodName();
-        return NameSpace + " -> " + function;
+        int line = elements[3].getLineNumber();
+        return NameSpace + (logFunction ? " -> " + function + (logLines ? ":" + line : "") : "");
+    }
+
+    private String getThreadName() {
+        return Thread.currentThread().getName();
+    }
+
+    private String getThreadText() {
+        return logThread ? ANSI_RESET + " [ " + ANSI_RED + getThreadName() + ANSI_RESET + " ] " : "";
     }
 
     public void log(BufferedImage image, int width, int height) {

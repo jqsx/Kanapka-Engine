@@ -4,10 +4,9 @@ import KanapkaEngine.Components.*;
 import KanapkaEngine.Components.Renderer;
 import org.joml.Vector2d;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+// TODO: Look through this ancient class and see if there are any improvements to be made because refactoring is important
 public class Node {
     private static final Logger logger = new Logger("NODE");
     private static int NodeCount = 0;
@@ -18,17 +17,25 @@ public class Node {
     private Renderer renderer;
     private ICollider collider;
     private Rigidbody rigidbody;
-    private final List<Node> children = new ArrayList<>();
+    private final Set<Node> children = new HashSet<>();
 
     public final int childCount() {
         return children.size();
     }
 
     public final Node getChild(int i) {
-        return children.get(i);
+        if (children.size() > i && i > 0) {
+            int index = 0;
+            for (Node child : children) {
+                if (index == i)
+                    return child;
+                index++;
+            }
+        }
+        return null;
     }
 
-    private final List<Component> components = new ArrayList<>();
+    private final Set<Component> components = new HashSet<>();
 
     public Vector2d position() {
         return transform.getPosition();
@@ -81,8 +88,19 @@ public class Node {
 
     public final void removeComponent(int i) {
         if (!alive) return;
-        if (i >= components.size()) return;
-        Component component = components.remove(Math.abs(i));
+        if (i >= components.size() || i < 0) return;
+
+        Component component = null;
+        int index = 0;
+        for (Component comp : components) {
+            if (index == i) {
+                component = comp;
+                removeComponent(component);
+                break;
+            }
+
+            index++;
+        }
         if (component != null) {
             if (renderer == component)
                 renderer = null;
@@ -90,7 +108,6 @@ public class Node {
                 collider = null;
             else if (rigidbody == component)
                 rigidbody = null;
-            component.onOrphan();
         }
     }
 

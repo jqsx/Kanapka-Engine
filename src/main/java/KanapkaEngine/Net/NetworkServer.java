@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class NetworkServer implements Runnable {
+public final class NetworkServer implements Runnable {
     private static final Logger logger = new Logger("NETWORK_SERVER");
     public static int PORT = 6969;
 
@@ -73,6 +73,7 @@ public class NetworkServer implements Runnable {
 
     @Override
     public void run() {
+        Thread.currentThread().setName("ServerThread");
         logger.log("Started server thread.");
         RouteManager.onServerStart();
         while (isRunning && !serverSocket.isClosed()) {
@@ -87,6 +88,9 @@ public class NetworkServer implements Runnable {
                 clients.add(conn);
                 RouteManager.onServerClientConnect(conn);
             } catch (IOException e) {
+                if (serverSocket.isClosed())
+                    return;
+
                 throw new RuntimeException(e);
             }
         }
@@ -139,5 +143,10 @@ public class NetworkServer implements Runnable {
 
         }
         return r;
+    }
+
+    protected static void IClosed(NetworkConnectionToClient conn) {
+        if (conn.isClosed())
+            connections.remove(conn.getId());
     }
 }

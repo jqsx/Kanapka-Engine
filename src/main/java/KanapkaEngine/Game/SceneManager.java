@@ -1,5 +1,6 @@
 package KanapkaEngine.Game;
 
+import KanapkaEngine.Components.ImmutableList;
 import KanapkaEngine.Components.TSLinkedList;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class SceneManager {
         loadScene(new Scene());
     }
 
-    private static final List<Node> empty = new ArrayList<>();
+    private static final ImmutableList<Node> empty = new ImmutableList<>(new ArrayList<>());
 
     private SceneManager() {
 
@@ -23,10 +24,9 @@ public class SceneManager {
         return currentlyLoaded;
     }
 
-    public static List<Node> getSceneNodes() {
+    public static ImmutableList<Node> getSceneNodes() {
         if (currentlyLoaded != null)
-            return currentlyLoaded.nodes;
-        empty.clear();
+            return currentlyLoaded.getNodes();
         return empty;
     }
 
@@ -36,15 +36,13 @@ public class SceneManager {
 
     public static void addNode(Node node) {
         if (currentlyLoaded == null) return;
-        if (node.getParent() != null)
-            node.setParent(null);
-        else
-            currentlyLoaded.nodes.add(node);
+
+        currentlyLoaded.appendNode(node);
     }
 
     public static void removeNode(Node node) {
         if (currentlyLoaded != null) {
-            currentlyLoaded.nodes.remove(node);
+            currentlyLoaded.removeNode(node);
         }
     }
 

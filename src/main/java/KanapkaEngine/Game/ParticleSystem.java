@@ -144,24 +144,24 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         return (T) new Particle();
     }
 
-    public final T emit(Vector2d p, Vector2d v) {
-        Objects.requireNonNull(p);
+    public final T emit(Vector2d worldSpace, Vector2d v) {
+        Objects.requireNonNull(worldSpace);
         T particle = fetchDeadParticle();
 
         if (particle == null)
             return null;
 
         if (v != null)
-            particle.reset(p,v);
-        else particle.reset(p);
+            particle.reset(worldSpace,v);
+        else particle.reset(worldSpace);
 
         onSpawn(particle);
 
         return particle;
     }
 
-    public final T emit(Vector2d p) {
-        return emit(p, null);
+    public final T emit(Vector2d worldSpace) {
+        return emit(worldSpace, null);
     }
 
     public void onSpawn(T instance) {

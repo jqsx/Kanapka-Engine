@@ -9,7 +9,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 
-public class NetworkConnectionToClient implements Runnable {
+public final class NetworkConnectionToClient implements Runnable {
 
     private static final Logger logger = new Logger("NETWORK_SERVER_CLIENT");
 
@@ -47,6 +47,7 @@ public class NetworkConnectionToClient implements Runnable {
 
     @Override
     public void run() {
+        Thread.currentThread().setName("NetConn=" + id);
         logger.log("Started server client connection thread.");
 
         try {
@@ -74,15 +75,19 @@ public class NetworkConnectionToClient implements Runnable {
                 }
                 route.ServerClient_IN(this, data);
             }
-            in.close();
-            out.close();
-            if (!socket.isClosed())
-                socket.close();
-            logger.log("Closed");
         } catch (IOException e) {
             logger.error("Problem");
         }
         finally {
+            try {
+                in.close();
+                out.close();
+                if (!socket.isClosed())
+                    socket.close();
+                logger.log("Closed");
+            } catch (IOException e) {
+
+            }
             RouteManager.onServerClientDisconnect(this);
         }
     }
@@ -93,12 +98,17 @@ public class NetworkConnectionToClient implements Runnable {
      * @param data
      */
     public void send(short id, byte[] data) {
+        if (isClosed()) {
+            NetworkServer.IClosed(this);
+            return;
+        }
+
         try {
             out.writeShort(id);
             out.writeInt(data.length);
             out.write(data);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e, "Error while sending message.");
         }
     }
 

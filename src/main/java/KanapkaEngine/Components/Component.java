@@ -17,7 +17,6 @@ public abstract class Component {
     public final void setParent(Node parent) {
         Objects.requireNonNull(parent, "Parent cannot be null.");
         if (parent.isChild(this)) {
-            onOrphan();
             this.parent = parent;
             Awake();
             onParent();

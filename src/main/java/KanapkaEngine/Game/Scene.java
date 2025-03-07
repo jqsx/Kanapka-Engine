@@ -1,12 +1,15 @@
 package KanapkaEngine.Game;
 
+import KanapkaEngine.Components.ImmutableList;
 import KanapkaEngine.Components.World;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scene {
-    public final List<Node> nodes = new ArrayList<>();
+    protected final List<Node> nodes = new ArrayList<>();
+    private final ImmutableList<Node> immutableNodes = new ImmutableList<>(nodes);
+
     public final World scene_world;
 
     public boolean isZSorted = false;
@@ -52,5 +55,20 @@ public class Scene {
                     nodes.set(i+1, one);
                 }
             }
+    }
+
+    public final ImmutableList<Node> getNodes() {
+        return immutableNodes;
+    }
+
+    public final void appendNode(Node node) {
+        if (node.getParent() != null)
+            node.setParent(null);
+        else if (!nodes.contains(node))
+            nodes.add(node);
+    }
+
+    public final void removeNode(Node node) {
+        nodes.remove(node);
     }
 }

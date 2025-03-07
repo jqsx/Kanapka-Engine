@@ -7,6 +7,7 @@ import KanapkaEngine.Components.Renderer;
 import KanapkaEngine.Game.*;
 import org.joml.Matrix3f;
 import org.joml.Vector2d;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.awt.geom.Rectangle2D;
@@ -18,6 +19,9 @@ public class ParticleLayer implements RenderLayer {
     private static final Logger logger = new Logger("ParticleLAyer");
 
     private static final List<Renderer> m_Renderers = new ArrayList<>();
+
+    private static final Transformation transformation = new Transformation(new Vector3d(), new Vector3d(), new Vector3f());
+
     @Override
     public void Render() {
         if (SceneManager.hasScene()) {
@@ -34,8 +38,6 @@ public class ParticleLayer implements RenderLayer {
     }
 
     private void Render(Node node, Renderer renderer) {
-        if (renderer.getTexture() == null)
-            return;
         if (renderer.getMaterial() == null)
             return;
         if (renderer.getMaterial().getShader() == null)
@@ -62,7 +64,7 @@ public class ParticleLayer implements RenderLayer {
             if (system.isDrawInstanced()) {
                 system.BufferParticleLocations();
 
-                Graphics.DrawInstancedSprite(renderer.getMaterial().getShader(), renderer.getTexture(), node.transform.getTransformation(), ParticleSystem.getInstancedMesh());
+                //Graphics.DrawInstancedSprite(renderer.getMaterial().getShader(), renderer.getTexture(), node.transform.getTransformation(), ParticleSystem.getInstancedMesh());
             }
             else {
                 List<Particle> particles = system.getList();
@@ -77,7 +79,10 @@ public class ParticleLayer implements RenderLayer {
                 particles.forEach(particle -> {
                     p.set(particle.getPosition().x, particle.getPosition().y, 0.0);
                     p1.set(center.transform(p));
-                    Graphics.DrawSprite(system.getTexture(), p1, one, 0);
+
+                    transformation.Update(p1, one, 0.f);
+
+                    Graphics.DrawSpriteMesh(transformation, renderer.getMaterial());
                 });
             }
         }
