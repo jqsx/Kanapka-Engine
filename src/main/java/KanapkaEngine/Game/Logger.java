@@ -62,6 +62,9 @@ public final class Logger {
     }
 
     public void log(Object text) {
+        if (!VERBOSE)
+            return;
+
         if (ignoreInfo)
             return;
         if (useLog4j) {
@@ -91,6 +94,8 @@ public final class Logger {
     public void log(BufferedImage image, int width, int height) {
         if (ignoreInfo)
             return;
+        if (!VERBOSE)
+            return;
         BufferedImage logo = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = logo.createGraphics();
@@ -116,6 +121,8 @@ public final class Logger {
     }
 
     public void warn(Object text) {
+        if (!VERBOSE)
+            return;
         if (ignoreWarn)
             return;
         if (useLog4j) {
@@ -128,6 +135,8 @@ public final class Logger {
     }
 
     public void error(Object text) {
+        if (!VERBOSE)
+            return;
         if (ignoreError)
             return;
         if (useLog4j) {
@@ -145,6 +154,8 @@ public final class Logger {
     }
 
     public void error(Object text, String context) {
+        if (!VERBOSE)
+            return;
         if (ignoreError)
             return;
         if (useLog4j) {
