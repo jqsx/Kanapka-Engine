@@ -2,9 +2,8 @@ package KanapkaEngine.Game;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 public @interface WIP {
     String value() default "Work in progress feature";
 }
