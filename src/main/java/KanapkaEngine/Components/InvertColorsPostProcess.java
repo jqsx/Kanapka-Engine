@@ -2,6 +2,7 @@ package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.*;
 
+@WIP
 public class InvertColorsPostProcess extends PostProcessEffect {
 
     private RenderTexture renderTexture;
