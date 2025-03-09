@@ -31,7 +31,6 @@ public class Chunk {
     private boolean isActive = false;
     private boolean needReRender = false;
     private long lastActive = System.currentTimeMillis();
-    private final LinkedList<ChunkNode> chunkNodeList = new LinkedList<>();
 
     /**
      * Set to your own block serializer in order to parse blocks correctly
@@ -53,25 +52,6 @@ public class Chunk {
             else if (old.id != block.id) needReRender = true;
             blocks[block.point.x][block.point.y] = block;
         }
-    }
-
-    /**
-     * Appends a ChunkNode to the chunk.
-     * @param node
-     */
-    public final void appendNode(ChunkNode node) {
-        Objects.requireNonNull(node);
-        if (node.getChunkParent() == this)
-            if (!chunkNodeList.contains(node))
-                chunkNodeList.add(node);
-    }
-
-    public final void removeNode(ChunkNode node) {
-        chunkNodeList.remove(node);
-    }
-
-    public final void removeNode(int i) {
-        chunkNodeList.remove(i);
     }
 
     /**
@@ -303,10 +283,6 @@ public class Chunk {
         return parent;
     }
 
-    private void Update() {
-        chunkNodeList.forEach(ChunkNode::UpdateCall);
-    }
-
     /**
      * Internal Update Call
      */
@@ -316,10 +292,6 @@ public class Chunk {
         } catch (ConcurrentModificationException ignore) {
 
         }
-    }
-
-    public final LinkedList<ChunkNode> getChunkNodes() {
-        return chunkNodeList;
     }
 
     /**
