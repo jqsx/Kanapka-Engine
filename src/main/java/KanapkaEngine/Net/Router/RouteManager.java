@@ -1,5 +1,6 @@
 package KanapkaEngine.Net.Router;
 
+import KanapkaEngine.Net.DataSync.DataSyncRoute;
 import KanapkaEngine.Net.NetworkConnectionToClient;
 
 import java.net.InetAddress;
@@ -25,6 +26,7 @@ public class RouteManager {
         helloRoute = new HelloWorld();
         authority = new AuthorityInterface();
         rtt = new RTTRoute();
+        DataSyncRoute.Init();
     }
 
     public static void defineRoute(Route route) {
