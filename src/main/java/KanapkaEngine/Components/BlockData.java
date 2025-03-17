@@ -10,9 +10,9 @@ public class BlockData {
     /**
      * Do nodes with the rigidbody component collide with this block?
      */
-    private boolean hasCollision = true;
-    private boolean floor = false;
-    private BufferedImage render;
+    private final boolean hasCollision;
+    private final boolean floor;
+    private final BufferedImage render;
 
     private int block_id = -1;
 
@@ -61,16 +61,6 @@ public class BlockData {
      */
     public final BufferedImage getRender() {
         return render;
-    }
-
-    /**
-     * Directly setting the visual image for the block.
-     * @param image
-     */
-    public final void setImage(BufferedImage image) {
-        Objects.requireNonNull(image);
-        this.render = image;
-        /*        this.render_stage = Renderer.FINISHED;*/
     }
 
     public static class Builder {
