@@ -1,15 +1,12 @@
 package KanapkaEngine.Components;
 
-import KanapkaEngine.Game.Camera;
-import KanapkaEngine.Game.SceneManager;
 import org.joml.Vector2d;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.util.Random;
 
-public class Mathf {
-    private Mathf() {}
+public class Mathd {
+    private Mathd() {}
 
     /**
      * Noise with seed 15, if you can't be asked to instance it yourself.

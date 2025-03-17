@@ -10,7 +10,7 @@ public class QuadraticBezier {
     }
 
     public void run(Vector2d from, Vector2d to, Vector2d out, double t) {
-        t = Mathf.Clamp01(t);
+        t = Mathd.Clamp01(t);
 
         double dt = Math.pow(t, 2);
         double dti = Math.pow(1.0 - t, 2);

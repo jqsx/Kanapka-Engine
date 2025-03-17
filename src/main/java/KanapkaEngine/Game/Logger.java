@@ -1,20 +1,13 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.ANSI;
-import KanapkaEngine.Components.Mathf;
-import KanapkaEngine.Components.ResourceLoader;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalUnit;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public final class Logger {
     private static final String ANSI_RESET = "\u001B[0m";

@@ -81,8 +81,8 @@ public class Block {
         public byte[] SerializationData(Block block) {
             _buffer.clear();
 
-            byte x = (byte) Mathf.Clamp(block.point.x, 0, 127);
-            byte y = (byte) Mathf.Clamp(block.point.y, 0, 127);
+            byte x = (byte) Mathd.Clamp(block.point.x, 0, 127);
+            byte y = (byte) Mathd.Clamp(block.point.y, 0, 127);
             _buffer.put(x);
             _buffer.put(y);
             _buffer.putInt(block.id);

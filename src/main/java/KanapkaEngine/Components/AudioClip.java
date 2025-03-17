@@ -25,8 +25,8 @@ public class AudioClip implements LineListener {
     }
 
     public void setVolume(float volume) {
-        volume = (float)Mathf.Clamp(volume, 0.0, 1.0);
-        fc.setValue((float)Mathf.Clamp(20f * (float) Math.log10(volume), fc.getMinimum(), fc.getMaximum()));
+        volume = (float) Mathd.Clamp(volume, 0.0, 1.0);
+        fc.setValue((float) Mathd.Clamp(20f * (float) Math.log10(volume), fc.getMinimum(), fc.getMaximum()));
     }
 
     public void start() {

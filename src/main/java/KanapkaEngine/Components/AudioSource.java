@@ -51,8 +51,8 @@ public class AudioSource extends Component implements IUpdate {
     }
 
     private float getP() {
-        float distance = (float) Mathf.aDistance(Camera.main.getWorldPosition(), getParent().transform.getPosition());
-        return (float) Mathf.Clamp((distance) / falloffDistance, 0.0, 1.0);
+        float distance = (float) Mathd.aDistance(Camera.main.getWorldPosition(), getParent().transform.getPosition());
+        return (float) Mathd.Clamp((distance) / falloffDistance, 0.0, 1.0);
 
     }
 

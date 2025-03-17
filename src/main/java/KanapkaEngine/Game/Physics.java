@@ -185,7 +185,7 @@ public final class Physics {
             return new Block[0];
 
         Point chunkPoint = new Point(
-                (int) (Math.floor(position.x / chunkSize.x) + round(Mathf.Clamp01(-position.x))),
+                (int) (Math.floor(position.x / chunkSize.x) + round(Mathd.Clamp01(-position.x))),
                 (int) (Math.floor(position.y / chunkSize.y) + 1));
 
         for (int x = -2; x <= 1; x++) {
@@ -267,7 +267,7 @@ public final class Physics {
         }
         else return null;
 
-        if (Mathf.distance(ray.origin, P) > ray.length)
+        if (Mathd.distance(ray.origin, P) > ray.length)
             return null;
 
         return P;
@@ -365,7 +365,7 @@ public final class Physics {
             return;
 
         Point chunkPoint = new Point(
-                (int) (Math.floor(node.transform.getPosition().x / chunkSize.x) + round(Mathf.Clamp01(-node.transform.getPosition().x))),
+                (int) (Math.floor(node.transform.getPosition().x / chunkSize.x) + round(Mathd.Clamp01(-node.transform.getPosition().x))),
                 (int) (Math.floor(node.transform.getPosition().y / chunkSize.y) + 1));
 
         for (int x = -1; x <= 1; x++) {
@@ -403,7 +403,7 @@ public final class Physics {
         assert node.getRigidbody() != null;
         node.getRigidbody().addVelocity(gravity.mul(fixedDelta));
 
-        node.getRigidbody().setVelocity(Mathf.Lerp(node.getRigidbody().getVelocity(), new Vector2d(), fixedDelta / 15.0));
+        node.getRigidbody().setVelocity(Mathd.Lerp(node.getRigidbody().getVelocity(), new Vector2d(), fixedDelta / 15.0));
     }
 
     private void ApplyVelocity(Node node, Vector2d old, double fixedDelta) {

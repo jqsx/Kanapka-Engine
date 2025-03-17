@@ -79,7 +79,7 @@ public class RectangleCollisionResolver implements ICollisionResolver {
 
     @Override
     public boolean Interpolation(Vector2d position, Vector2d old, CollisionData node) {
-        double distance = Mathf.aDistance(old, position);
+        double distance = Mathd.aDistance(old, position);
         Vector2d direction = new Vector2d(old.x, old.y).sub(position).mul(1.0 / distance);
 
         RectangleCollider collider = (RectangleCollider) node.collider;

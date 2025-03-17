@@ -389,7 +389,7 @@ public class EditorDrawGUI implements IDrawGUI {
     }
 
     private double precision(double v, int steps) {
-        double divisor = Math.pow(10, Mathf.Clamp(steps, 1, 6));
+        double divisor = Math.pow(10, Mathd.Clamp(steps, 1, 6));
         return Math.round(v * divisor) / divisor;
     }
 }

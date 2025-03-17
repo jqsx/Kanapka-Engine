@@ -34,7 +34,7 @@ public class SimpleViewController implements IInput, Plugin {
 
         Camera.main.setPosition(Camera.main.getPosition().add(velocity.mul(Time.deltaTime() * 5)));
 
-        Camera.main.setRotation(Math.toRadians(Mathf.Clamp(velocity.x, -10.0, 10.0)));
+        Camera.main.setRotation(Math.toRadians(Mathd.Clamp(velocity.x, -10.0, 10.0)));
     }
 
     @Override
@@ -60,6 +60,6 @@ public class SimpleViewController implements IInput, Plugin {
             return;
 
         if (!SceneManager.hasScene()) return;
-        Camera.main.size = (Mathf.Clamp(Camera.main.size - (y + x) / 10.0, range.x, range.y));
+        Camera.main.size = (Mathd.Clamp(Camera.main.size - (y + x) / 10.0, range.x, range.y));
     }
 }

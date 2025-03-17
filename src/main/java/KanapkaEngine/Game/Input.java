@@ -1,17 +1,12 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Components.Mathf;
-import KanapkaEngine.Components.TSLinkedList;
+import KanapkaEngine.Components.Mathd;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import org.joml.Vector2d;
 import org.joml.Vector2i;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public final class Input implements Plugin {
@@ -98,8 +93,8 @@ public final class Input implements Plugin {
 
         float reverseRatio = 1.f / ratio;
 
-        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 20.0);
-        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 20.0);
+        float heightMult = (float) Mathd.Clamp(reverseRatio, 1.0, 20.0);
+        float widthMult = (float) Mathd.Clamp(ratio, 1.0, 20.0);
         mouseWorldLocation.set((mousePosition.x / (double)window.getWidth() * 2 - 1) * Camera.main.size * widthMult, (-mousePosition.y / (double)window.getHeight() * 2 + 1) * Camera.main.size * heightMult).add(Camera.main.getPosition());
 
         return mouseWorldLocation;

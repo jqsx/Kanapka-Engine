@@ -1,6 +1,6 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Components.Mathf;
+import KanapkaEngine.Components.Mathd;
 import KanapkaEngine.Components.Renderer;
 import KanapkaEngine.Components.vec2d;
 import org.joml.Matrix4f;
@@ -45,8 +45,8 @@ public class Camera {
 
         float reverseRatio = 1.f / ratio;
 
-        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 20.0);
-        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 20.0);
+        float heightMult = (float) Mathd.Clamp(reverseRatio, 1.0, 20.0);
+        float widthMult = (float) Mathd.Clamp(ratio, 1.0, 20.0);
 
         float width = (float)size * widthMult;
         float height = (float)size * heightMult;
@@ -86,8 +86,8 @@ public class Camera {
 
         float reverseRatio = 1.f / ratio;
 
-        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 20.0);
-        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 20.0);
+        float heightMult = (float) Mathd.Clamp(reverseRatio, 1.0, 20.0);
+        float widthMult = (float) Mathd.Clamp(ratio, 1.0, 20.0);
         return new Vector2d((screen_position.x / (double)window.getWidth() * 2 - 1) * Camera.main.size * widthMult, (-screen_position.y / (double)window.getHeight() * 2 + 1) * Camera.main.size * heightMult).add(Camera.main.getPosition());
     }
 
@@ -100,8 +100,8 @@ public class Camera {
 
         float reverseRatio = 1.f / ratio;
 
-        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 20.0);
-        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 20.0);
+        float heightMult = (float) Mathd.Clamp(reverseRatio, 1.0, 20.0);
+        float widthMult = (float) Mathd.Clamp(ratio, 1.0, 20.0);
 
         camRelative.x /= (Camera.main.size * widthMult);
         camRelative.y /= (Camera.main.size * heightMult);
@@ -139,8 +139,8 @@ public class Camera {
 
         float reverseRatio = 1.f / ratio;
 
-        float heightMult = (float) Mathf.Clamp(reverseRatio, 1.0, 20.0);
-        float widthMult = (float) Mathf.Clamp(ratio, 1.0, 20.0);
+        float heightMult = (float) Mathd.Clamp(reverseRatio, 1.0, 20.0);
+        float widthMult = (float) Mathd.Clamp(ratio, 1.0, 20.0);
 
         if (main.projection == Projection.ORTHOGRAPHIC)
             proj = proj.identity().ortho2D(-size * widthMult, size * widthMult, -size * heightMult, size * heightMult);
