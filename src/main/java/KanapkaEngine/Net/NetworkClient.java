@@ -119,9 +119,14 @@ public final class NetworkClient implements Runnable {
             if (!socket.isClosed())
                 socket.close();
         } catch (IOException e) {
-            if (callback != null)
-                callback.callback(e);
-            logger.error(e, "Client error");
+            if (socket.isClosed()) {
+                logger.log("Disconnected client.");
+            }
+            else {
+                if (callback != null)
+                    callback.callback(e);
+                logger.error(e, "Client error");
+            }
         }
         finally {
             RouteManager.onClientDisconnect();

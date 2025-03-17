@@ -81,11 +81,16 @@ public final class NetworkConnectionToClient implements Runnable {
                 route.ServerClient_IN(this, data);
             }
         } catch (IOException e) {
-            logger.error("Problem");
+            if (socket.isClosed()) {
+                logger.log("Disconnected: " + getId());
+            }
+            else {
+                logger.error("Problem");
 
-            logger.error(e, "Network server connection error");
-            if (NetworkServer.callback != null)
-                NetworkServer.callback.callback(e);
+                logger.error(e, "Network server connection error");
+                if (NetworkServer.callback != null)
+                    NetworkServer.callback.callback(e);
+            }
         }
         finally {
             try {

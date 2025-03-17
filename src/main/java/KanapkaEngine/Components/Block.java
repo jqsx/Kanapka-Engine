@@ -31,7 +31,7 @@ public class Block {
     public Block(Chunk parent, Point point) {
         Objects.requireNonNull(point, "Missing chunk point.");
         Objects.requireNonNull(parent, "Missing parent.");
-        this.point = point;
+        this.point = new Point(point.x, point.y);
         this.parent = parent;
         parent.appendBlock(this);
     }
