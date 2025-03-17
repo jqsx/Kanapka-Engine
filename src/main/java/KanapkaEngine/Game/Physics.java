@@ -199,7 +199,7 @@ public final class Physics {
                             Point p = new Point( i, j);
                             Block block = check.getBlock(p);
 
-                            if (block != null && !block.getBlockData().floor) {
+                            if (block != null && !block.getBlockData().isFloor()) {
                                 if (getRect(position, size).intersects(getBlockCollider(block)))
                                     blocks.add(block);
                             }
@@ -379,7 +379,7 @@ public final class Physics {
                             Point p = new Point( i, j);
                             Block block = check.getBlock(p);
 
-                            if (block != null && block.getBlockData().hasCollision)
+                            if (block != null && block.getBlockData().hasCollision())
                                 selected.resolve(one, block);
                         }
                     }

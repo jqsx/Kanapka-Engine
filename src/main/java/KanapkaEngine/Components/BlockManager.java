@@ -32,7 +32,10 @@ public class BlockManager {
 
     private static ArrayList<BlockData> init() {
         ArrayList<BlockData> data = new ArrayList<>();
-        data.add(new BlockData("wooden.png"));
+        data.add(new BlockData(
+                new BlockData.Builder()
+                        .setRender(ResourceLoader.loadImageResource("wooden.png"))
+        ));
         return data;
     }
 

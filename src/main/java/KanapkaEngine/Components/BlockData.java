@@ -10,28 +10,43 @@ public class BlockData {
     /**
      * Do nodes with the rigidbody component collide with this block?
      */
-    public boolean hasCollision = true;
-    public boolean floor = false;
+    private boolean hasCollision = true;
+    private boolean floor = false;
     private BufferedImage render;
-    private String texture;
 
-    private int block_id;
+    private int block_id = -1;
 
-    public int blockStrength = 1;
-
-    public BlockData(String texture) {
-        this.texture = texture;
-        getRender();
+    public int blockStrength() {
+        return blockStrength;
     }
-    public BlockData(BufferedImage image) {
-        this.render = image;
-    }
-    public BlockData() {
 
+    public int block_id() {
+        return block_id;
+    }
+
+    public boolean hasCollision() {
+        return hasCollision;
+    }
+
+    public boolean isFloor() {
+        return floor;
+    }
+
+    private int blockStrength = 1;
+
+    public BlockData(Builder builder) {
+        this.render = builder.render;
+        this.hasCollision = builder.hasCollision;
+        this.floor = builder.isFloor;
+        this.blockStrength = builder.blockStrength;
     }
 
     protected void setBlockID(int id) {
         this.block_id = id;
+    }
+
+    public final boolean isRegistered() {
+        return block_id >= 0;
     }
 
     public final int getID() {
@@ -45,9 +60,6 @@ public class BlockData {
      * @return
      */
     public final BufferedImage getRender() {
-        if (render == null) {
-            beginRender();
-        }
         return render;
     }
 
@@ -61,8 +73,46 @@ public class BlockData {
         /*        this.render_stage = Renderer.FINISHED;*/
     }
 
-    private void beginRender() {
-        if (texture == null) return;
-        render = ResourceLoader.loadImageResource(texture);
+    public static class Builder {
+        public boolean hasCollision() {
+            return hasCollision;
+        }
+
+        public Builder setCollision(boolean hasCollision) {
+            this.hasCollision = hasCollision;
+            return this;
+        }
+
+        public boolean isFloor() {
+            return isFloor;
+        }
+
+        public Builder setFloor(boolean floor) {
+            isFloor = floor;
+            return this;
+        }
+
+        public BufferedImage render() {
+            return render;
+        }
+
+        public Builder setRender(BufferedImage render) {
+            this.render = render;
+            return this;
+        }
+
+        public int blockStrength() {
+            return blockStrength;
+        }
+
+        public Builder setBlockStrength(int blockStrength) {
+            this.blockStrength = blockStrength;
+            return this;
+        }
+
+        private boolean hasCollision = true;
+        private boolean isFloor = false;
+        private BufferedImage render;
+        private int blockStrength = 1;
     }
 }
