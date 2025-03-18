@@ -8,6 +8,7 @@ point int int, int block_count
 
 At default configuration
 max_per_chunk=1012bytes
+\> Doubled because of Floor/NonFloor blocks separation
 avg_per_chunk=512bytes
 
 Region32x32:

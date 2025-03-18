@@ -26,7 +26,9 @@ public class Chunk {
     private final World parent;
     private final Point point;
     private final Block[][] blocks;
+    private final Block[][] floor;
     private final ImmutableBlocks immutableBlocks;
+    private final ImmutableBlocks immutableFloor;
     private boolean isReadyForRender = false;
     private boolean isActive = false;
     private boolean needReRender = false;
@@ -50,7 +52,10 @@ public class Chunk {
         if (block.parent == this && isInRange(block.point)) {
             if (old == null) needReRender = true;
             else if (old.id != block.id) needReRender = true;
-            blocks[block.point.x][block.point.y] = block;
+            if (block.getBlockData().isFloor())
+                floor[block.point.x][block.point.y] = block;
+            else
+                blocks[block.point.x][block.point.y] = block;
         }
     }
 
@@ -131,7 +136,9 @@ public class Chunk {
         this.parent = parent;
         if (SceneManager.hasScene()) {
             blocks = new Block[SceneManager.getCurrentlyLoaded().getChunkSize()][SceneManager.getCurrentlyLoaded().getChunkSize()];
+            floor = new Block[SceneManager.getCurrentlyLoaded().getChunkSize()][SceneManager.getCurrentlyLoaded().getChunkSize()];
             immutableBlocks = new ImmutableBlocks(blocks);
+            immutableFloor = new ImmutableBlocks(floor);
         }
         else
             throw new RuntimeException("No scene loaded.");
@@ -178,6 +185,10 @@ public class Chunk {
 
     public final ImmutableBlocks getBlocks() {
         return immutableBlocks;
+    }
+
+    public final ImmutableBlocks getFloor() {
+        return immutableFloor;
     }
 
     public Texture getTexture() {
@@ -231,6 +242,14 @@ public class Chunk {
             int s = SceneManager.getCurrentlyLoaded().getChunkSize() * BLOCK_SCALE;
             BufferedImage image = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();
+
+            for (Block[] column : floor)
+                for (Block block : column) {
+                    if (block == null) continue;
+                    BufferedImage block_render = block.getRender();
+                    AffineTransform at = getAffineTransform(block, block_render);
+                    g.drawImage(block_render, at, null);
+                }
 
             for (Block[] column : blocks)
                 for (Block block : column) {
@@ -303,16 +322,31 @@ public class Chunk {
         private static final ByteBuffer _buffer = ByteBuffer.allocate(12);
 
         private int block_count = 0;
+        private int floor_count = 0;
 
         public byte[] Serialize(Chunk chunk) {
             ImmutableBlocks temp_blocks = chunk.getBlocks();
+            ImmutableBlocks floor_blocks = chunk.getFloor();
+
             CalculateBlockCount(temp_blocks);
-            ByteBuffer buffer = ByteBuffer.allocate(ChunkDataSize() + block_count * blockSerializer.SerializationDataSize());
+            CalculateFloorCount(floor_blocks);
+
+            int b_size = blockSerializer.SerializationDataSize();
+
+            ByteBuffer buffer = ByteBuffer.allocate(ChunkDataSize() + block_count * b_size + floor_count * b_size);
 
             buffer.put(ChunkData(chunk));
             for (int x = 0; x < temp_blocks.length; x++) {
                 for (int y = 0; y < temp_blocks.length; y++) {
                     Block value = temp_blocks.get(x,y);
+                    if (value == null) continue;
+                    buffer.put(blockSerializer.SerializationData(value));
+                }
+            }
+
+            for (int x = 0; x < floor_blocks.length; x++) {
+                for (int y = 0; y < floor_blocks.length; y++) {
+                    Block value = floor_blocks.get(x,y);
                     if (value == null) continue;
                     buffer.put(blockSerializer.SerializationData(value));
                 }
@@ -327,6 +361,7 @@ public class Chunk {
             _buffer.putInt(chunk.point.x);
             _buffer.putInt(chunk.point.y);
             _buffer.putInt(block_count);
+            _buffer.putInt(floor_count);
 
             return _buffer.array();
         }
@@ -343,8 +378,20 @@ public class Chunk {
             block_count = blockcount;
         }
 
+        private void CalculateFloorCount(ImmutableBlocks floor_blocks) {
+            int floorcount = 0;
+            for (int x = 0; x < floor_blocks.length; x++) {
+                for (int y = 0; y < floor_blocks.length; y++) {
+                    if (floor_blocks.get(x, y) != null)
+                        floorcount++;
+                }
+            }
+
+            floor_count = floorcount;
+        }
+
         public int ChunkDataSize() {
-            return 12;
+            return Integer.BYTES * 4;
         }
 
         public Chunk Deserialize(World world, byte[] data) {
@@ -353,6 +400,7 @@ public class Chunk {
             int x = _buffer.getInt();
             int y = _buffer.getInt();
             block_count = _buffer.getInt();
+            floor_count = _buffer.getInt();
 
             Chunk chunk = new Chunk(new Point(x, y), world);
 
@@ -362,6 +410,12 @@ public class Chunk {
             buffer.position(ChunkDataSize() - 1);
 
             for (int index = 0; index < block_count; index++) {
+                buffer.get(blockBuffer);
+
+                blockSerializer.Deserialize(chunk, blockBuffer);
+            }
+
+            for (int index = 0; index < floor_count; index++) {
                 buffer.get(blockBuffer);
 
                 blockSerializer.Deserialize(chunk, blockBuffer);
