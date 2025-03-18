@@ -3,7 +3,9 @@ package KanapkaEngine.RenderLayers;
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Game.*;
 import org.joml.Vector2d;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
 import java.awt.geom.Rectangle2D;
 
@@ -19,6 +21,8 @@ public class ChunkLayer implements RenderLayer {
 
     private final Vector2i m_CameraChunk = new Vector2i();
 
+    private final static Vector2f uAtlasRes = new Vector2f(1.f, 1.f);
+
     @Override
     public void Render() {
         if (Camera.main == null)
@@ -29,6 +33,9 @@ public class ChunkLayer implements RenderLayer {
         m_CameraChunk.set((int)floor((cameraPos.x + m_chunkScale / 2.0) / m_chunkScale), (int)floor((cameraPos.y + m_chunkScale / 2.0) / m_chunkScale));
 
         int renderDistance = 3;
+
+        Shader.Standard.getTextureShader().setUniform("uAtlasIndex", 0);
+        Shader.Standard.getTextureShader().setUniform("uAtlasRes", uAtlasRes);
 
         for (int x = -renderDistance; x <= renderDistance; x++) {
             for (int y = -renderDistance; y <= renderDistance; y++) {

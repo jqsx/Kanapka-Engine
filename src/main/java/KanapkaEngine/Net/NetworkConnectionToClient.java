@@ -94,13 +94,15 @@ public final class NetworkConnectionToClient implements Runnable {
         }
         finally {
             try {
-                in.close();
-                out.close();
+                if (!socket.isInputShutdown())
+                    in.close();
+                if (!socket.isOutputShutdown())
+                    out.close();
                 if (!socket.isClosed())
                     socket.close();
                 logger.log("Closed");
             } catch (IOException e) {
-
+                logger.error(e, "Shutdown err");
             }
             RouteManager.onServerClientDisconnect(this);
         }

@@ -27,8 +27,11 @@ public class Chunk {
     private final Point point;
     private final Block[][] blocks;
     private final Block[][] floor;
-    private final ImmutableBlocks immutableBlocks;
-    private final ImmutableBlocks immutableFloor;
+
+    public boolean isReady() {
+        return isReadyForRender;
+    }
+
     private boolean isReadyForRender = false;
     private boolean isActive = false;
     private boolean needReRender = false;
@@ -137,8 +140,6 @@ public class Chunk {
         if (SceneManager.hasScene()) {
             blocks = new Block[SceneManager.getCurrentlyLoaded().getChunkSize()][SceneManager.getCurrentlyLoaded().getChunkSize()];
             floor = new Block[SceneManager.getCurrentlyLoaded().getChunkSize()][SceneManager.getCurrentlyLoaded().getChunkSize()];
-            immutableBlocks = new ImmutableBlocks(blocks);
-            immutableFloor = new ImmutableBlocks(floor);
         }
         else
             throw new RuntimeException("No scene loaded.");
@@ -184,11 +185,11 @@ public class Chunk {
     }
 
     public final ImmutableBlocks getBlocks() {
-        return immutableBlocks;
+        return new ImmutableBlocks(blocks);
     }
 
     public final ImmutableBlocks getFloor() {
-        return immutableFloor;
+        return new ImmutableBlocks(floor);
     }
 
     public Texture getTexture() {
@@ -319,17 +320,23 @@ public class Chunk {
      * Now how does this save the block data in the first place: the blocks have their point, id, and special id buffered. The point object is buffered as 2 bytes in order to save on bytes therefore limiting chunk size to 127x127 which they probably shouldn't be as it defeats the point of the system in the first place. If the block value is null then its not buffered and its skipped.
      */
     public static class ChunkSerializer {
-        private static final ByteBuffer _buffer = ByteBuffer.allocate(12);
+        private static final ByteBuffer _buffer = ByteBuffer.allocate(Integer.BYTES * 4);
 
         private int block_count = 0;
         private int floor_count = 0;
 
         public byte[] Serialize(Chunk chunk) {
+            if (chunk == null)
+                return new byte[0];
+
             ImmutableBlocks temp_blocks = chunk.getBlocks();
             ImmutableBlocks floor_blocks = chunk.getFloor();
 
             CalculateBlockCount(temp_blocks);
             CalculateFloorCount(floor_blocks);
+
+            logger.log("Block Count: " + block_count);
+            logger.log("Floor Count: " + floor_count);
 
             int b_size = blockSerializer.SerializationDataSize();
 
@@ -395,19 +402,19 @@ public class Chunk {
         }
 
         public Chunk Deserialize(World world, byte[] data) {
-            _buffer.put(data, 0, ChunkDataSize());
+            if (data == null || data.length == 0)
+                return null;
 
-            int x = _buffer.getInt();
-            int y = _buffer.getInt();
-            block_count = _buffer.getInt();
-            floor_count = _buffer.getInt();
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+
+            int x = buffer.getInt();
+            int y = buffer.getInt();
+            block_count = buffer.getInt();
+            floor_count = buffer.getInt();
 
             Chunk chunk = new Chunk(new Point(x, y), world);
 
-            ByteBuffer buffer = ByteBuffer.wrap(data);
             byte[] blockBuffer = new byte[blockSerializer.SerializationDataSize()];
-
-            buffer.position(ChunkDataSize() - 1);
 
             for (int index = 0; index < block_count; index++) {
                 buffer.get(blockBuffer);

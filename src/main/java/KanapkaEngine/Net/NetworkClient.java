@@ -150,6 +150,14 @@ public final class NetworkClient implements Runnable {
             if (callback != null)
                 callback.callback(e);
             logger.error(e, "Client error");
+
+            try {
+                out.close();
+                in.close();
+                socket.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
