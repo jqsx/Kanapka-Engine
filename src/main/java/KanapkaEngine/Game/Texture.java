@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Vector;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL45.glGetTextureImage;
@@ -14,7 +15,7 @@ import static org.lwjgl.opengl.GL46.glClearTexImage;
 import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
 
 public final class Texture {
-    static final List<Texture> LoadedTextures = new ArrayList<>();
+    static final List<Texture> LoadedTextures = new Vector<>();
 
     private static final Logger logger = new Logger("texture");
 

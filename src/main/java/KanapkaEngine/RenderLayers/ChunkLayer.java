@@ -47,6 +47,8 @@ public class ChunkLayer implements RenderLayer {
                         Graphics.DrawSprite(chunk.getTexture(), getPositionForChunk(m_CameraChunk.x+x, m_CameraChunk.y+y), m_chunkScalev2d, 0f);
 
                     RenderDynamicDrawBlocks(chunk);
+
+                    chunk.activate();
                 }
             }
         }

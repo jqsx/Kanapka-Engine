@@ -10,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.List;
 
 public class Chunk {
     /**
@@ -17,6 +18,8 @@ public class Chunk {
      */
 
     private static final Logger logger = new Logger("CHUNK");
+
+    private static final Vector<Chunk> activeChunks = new Vector<>();
 
     public static final int BLOCK_SCALE = 16;
     private Rectangle2D bounds;
@@ -52,13 +55,18 @@ public class Chunk {
         Objects.requireNonNull(block);
         if (!isInRange(block.point)) return;
         Block old = blocks[block.point.x][block.point.y];
+        Block old_floor = floor[block.point.x][block.point.y];
         if (block.parent == this && isInRange(block.point)) {
-            if (old == null) needReRender = true;
-            else if (old.id != block.id) needReRender = true;
-            if (block.getBlockData().isFloor())
+            Block target = old;
+            if (block.getBlockData().isFloor()) {
                 floor[block.point.x][block.point.y] = block;
-            else
+                target = old_floor;
+            }
+            else {
                 blocks[block.point.x][block.point.y] = block;
+            }
+            if (target == null) needReRender = true;
+            else if (target.id != block.id) needReRender = true;
         }
     }
 
@@ -69,8 +77,10 @@ public class Chunk {
     public final void setAir(Point p) {
         if (isInRange(p)) {
             Block old = blocks[p.x][p.y];
-            if (old != null) {
+            Block old_floor = floor[p.x][p.y];
+            if (old != null || old_floor != null) {
                 blocks[p.x][p.y] = null;
+                floor[p.x][p.y] = null;
                 needReRender = true;
             }
         }
@@ -211,18 +221,21 @@ public class Chunk {
     public final void activate() {
         isActive = true;
         lastActive = System.currentTimeMillis();
+
+        if (!activeChunks.contains(this))
+            activeChunks.add(this);
     }
 
     private void deactivate() {
-        if (isActive && render != null) {
-
-        }
+        if (isActive && render != null)
             if (lastActive + 50L < System.currentTimeMillis()) {
                 render_stage = Renderer.Stage.NOTSTARTED;
                 isActive = false;
                 render.flush();
                 render = null;
                 bounds = null;
+                renderTexture.Dispose();
+                renderTexture = null;
             }
     }
 
@@ -230,15 +243,17 @@ public class Chunk {
         return isActive;
     }
 
-    public final void CheckDeactivation() {
-        deactivate();
-    }
-
     private void beginRender() {
         if (!isReadyForRender && !needReRender) return;
         if (needReRender)
             needReRender = false;
+
+        if (renderTexture == null || renderTexture.isDisposed()) {
+            renderTexture = new Texture();
+        }
+
         render_stage = Renderer.Stage.RENDERING;
+
         new Thread(() -> {
             int s = SceneManager.getCurrentlyLoaded().getChunkSize() * BLOCK_SCALE;
             BufferedImage image = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -308,7 +323,8 @@ public class Chunk {
      */
     protected static void UpdateChunks() {
         try {
-//            Chunks.getActiveChunks().foreach(Chunk::Update);
+            activeChunks.forEach(Chunk::deactivate);
+            activeChunks.removeIf(chunk -> !chunk.IsActive());
         } catch (ConcurrentModificationException ignore) {
 
         }

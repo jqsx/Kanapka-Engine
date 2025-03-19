@@ -5,9 +5,10 @@ import KanapkaEngine.Components.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class Scene {
-    protected final List<Node> nodes = new ArrayList<>();
+    protected final List<Node> nodes = new Vector<>();
     private final ImmutableList<Node> immutableNodes = new ImmutableList<>(nodes);
 
     public final World scene_world;
