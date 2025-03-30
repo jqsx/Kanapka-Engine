@@ -28,6 +28,9 @@ public final class Engine {
 
     private boolean isRunning = true;
 
+    private boolean isDisposed = false;
+    private boolean wasCleanUpCalled = false;
+
     private long window;
 
     private Window WindowObject;
@@ -83,6 +86,8 @@ public final class Engine {
         load(input = new Input());
         load(new Scheduler());
 
+        Runtime.getRuntime().addShutdownHook(new Thread(this::CleanUpValidation));
+
         try {
             InitializeLWJGL();
             InitializeOpenGLUpdate();
@@ -97,6 +102,12 @@ public final class Engine {
             End();
 
             throw new RuntimeException(e);
+        }
+    }
+
+    private void CleanUpValidation() {
+        if (!wasCleanUpCalled) {
+            logger.error("Invalid shutdown, resources were not disposed of correctly.");
         }
     }
 
@@ -194,6 +205,11 @@ public final class Engine {
         if (!isRunning)
             return;
 
+        if (wasCleanUpCalled)
+            return;
+
+        wasCleanUpCalled = true;
+
         isRunning = false;
         openglready = false;
 
@@ -240,6 +256,8 @@ public final class Engine {
         logger.log("Finished running end logic.");
 
         System.exit(0);
+
+        isDisposed = true;
     }
 
     /**

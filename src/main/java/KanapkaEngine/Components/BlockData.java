@@ -100,6 +100,10 @@ public class BlockData {
             return this;
         }
 
+        public BlockData build() {
+            return new BlockData(this);
+        }
+
         private boolean hasCollision = true;
         private boolean isFloor = false;
         private BufferedImage render;

@@ -260,6 +260,22 @@ public class World {
         return null;
     }
 
+    public static Chunk getChunk(Vector2d position) {
+        World world = getCurrent();
+
+        if (!SceneManager.hasScene()) return null;
+        int csize = SceneManager.getCurrentlyLoaded().getChunkSize();
+
+        if (world != null) {
+            Vector2d scaled = position.mul(1.0 / (double)csize);
+
+            Point c = new Point((int) floor(scaled.x), (int) floor(scaled.y));
+
+            return world.get(c.x, c.y);
+        }
+        return null;
+    }
+
     private static double floor(double v) {
         if (v < 0) {
             return -Math.floor(Math.abs(v) + 1);

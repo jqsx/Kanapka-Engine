@@ -259,21 +259,23 @@ public class Chunk {
             BufferedImage image = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();
 
-            for (Block[] column : floor)
-                for (Block block : column) {
-                    if (block == null) continue;
-                    BufferedImage block_render = block.getRender();
-                    AffineTransform at = getAffineTransform(block, block_render);
-                    g.drawImage(block_render, at, null);
-                }
+            for (int x = 0; x < floor.length; x++) {
+                for (int y = 0; y < floor.length; y++) {
+                    Block floorBlock = floor[x][y];
+                    Block blockBlock = blocks[x][y];
 
-            for (Block[] column : blocks)
-                for (Block block : column) {
-                    if (block == null) continue;
-                    BufferedImage block_render = block.getRender();
-                    AffineTransform at = getAffineTransform(block, block_render);
-                    g.drawImage(block_render, at, null);
+                    if (floorBlock != null) {
+                        BufferedImage block_render = floorBlock.getRender();
+                        AffineTransform at = getAffineTransform(floorBlock, block_render);
+                        g.drawImage(block_render, at, null);
+                    }
+                    if (blockBlock != null) {
+                        BufferedImage block_render = blockBlock.getRender();
+                        AffineTransform at = getAffineTransform(blockBlock, block_render);
+                        g.drawImage(block_render, at, null);
+                    }
                 }
+            }
 
             render = image;
             g.dispose();
