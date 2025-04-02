@@ -60,7 +60,8 @@ public class ChunkLayer implements RenderLayer {
             for (int y = 0; y < m_chunkScale; y++) {
                 Block block = blocks.get(x, y);
 
-                if (block != null && block.getBlockData() instanceof DynamicDraw dynamicDraw) {
+                if (block != null && block.getBlockData() instanceof DynamicDraw) {
+                    DynamicDraw dynamicDraw = (DynamicDraw) block.getBlockData();
                     dynamicDraw.Render(chunk, block, getPositionForChunk(chunk.getPoint().x, chunk.getPoint().y));
                 }
             }

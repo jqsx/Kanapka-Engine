@@ -214,7 +214,8 @@ public class Node {
             logger.error(e.toString());
         }
         for (Component component : components) {
-            if (component instanceof IUpdate update) {
+            if (component instanceof IUpdate) {
+                IUpdate update = (IUpdate) component;
                 try {
                     update.Update();
                 } catch (Exception e) {

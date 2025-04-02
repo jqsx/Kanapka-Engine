@@ -191,6 +191,10 @@ public class EditorDrawGUI implements IDrawGUI {
     private void nodeRecursive(Node node) {
         node_id++;
         ImGui.setNextItemWidth(300);
+
+        if (node == null)
+            return;
+
         String node_text = node_id + ". " + (node.name == null || node.name.isEmpty() ? "NoName" : node.name);
         if (ImGui.treeNodeEx("##TreeNodeN" + node_id, 0, node_text)) {
             if (ImGui.isItemClicked(ImGuiMouseButton.Right)) {
@@ -223,7 +227,7 @@ public class EditorDrawGUI implements IDrawGUI {
 
                 try {
                     field.setAccessible(true);
-                } catch (InaccessibleObjectException e) {
+                } catch (SecurityException e) {
                     if (ImGui.treeNode(field.getName() + " : Can't access oof")) {
                         ImGui.textWrapped(e.toString());
                         ImGui.treePop();
@@ -320,7 +324,7 @@ public class EditorDrawGUI implements IDrawGUI {
                     continue;
                 try {
                     method.setAccessible(true);
-                } catch (InaccessibleObjectException e) {
+                } catch (SecurityException e) {
                     if (ImGui.treeNode(method.getName() + " : Can't access method oof")) {
                         ImGui.textWrapped(e.toString());
                         ImGui.treePop();

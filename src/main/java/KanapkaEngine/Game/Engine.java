@@ -196,8 +196,10 @@ public final class Engine {
     void scroll_callback(long window, double xoffset, double yoffset)
     {
         plugins.forEach(plugin -> {
-            if (plugin instanceof IInput in)
+            if (plugin instanceof IInput) {
+                IInput in = (IInput) plugin;
                 in.ScrollCallback(xoffset, yoffset);
+            }
         });
     }
 
@@ -239,8 +241,10 @@ public final class Engine {
 
         logger.log("Detaching Plugins.");
         for (Plugin plugin : plugins) {
-            if (plugin instanceof ICleanUp iCleanUp)
+            if (plugin instanceof ICleanUp) {
+                ICleanUp iCleanUp = (ICleanUp) plugin;
                 iCleanUp.cleanUp();
+            }
             plugin.Detach();
         }
         logger.log("Detached Plugins.");
@@ -390,15 +394,19 @@ public final class Engine {
         }
 
         plugins.forEach(plugin -> {
-            if (plugin instanceof IInput in)
+            if (plugin instanceof IInput) {
+                IInput in = (IInput) plugin;
                 in.KeyCallBack(key, scancode, action, mods);
+            }
         });
     }
 
     private void CharKeyCallback(long window, int c) {
         plugins.forEach(plugin -> {
-            if (plugin instanceof IInput in)
+            if (plugin instanceof IInput) {
+                IInput in = (IInput) plugin;
                 in.CharKeyCallback(c);
+            }
         });
     }
 
@@ -438,11 +446,21 @@ public final class Engine {
         Objects.requireNonNull(renderLayer);
         Objects.requireNonNull(renderStage);
         switch (renderStage) {
-            case BACKGROUND -> BACKGROUND.add(renderLayer);
-            case WORLD -> WORLD.add(renderLayer);
-            case PARTICLES -> PARTICLES.add(renderLayer);
-            case UI -> UI.add(renderLayer);
-            case FOREGROUND -> FOREGROUND.add(renderLayer);
+            case BACKGROUND:
+                BACKGROUND.add(renderLayer);
+                break;
+            case WORLD:
+                WORLD.add(renderLayer);
+                break;
+            case PARTICLES:
+                PARTICLES.add(renderLayer);
+                break;
+            case UI:
+                UI.add(renderLayer);
+                break;
+            case FOREGROUND:
+                FOREGROUND.add(renderLayer);
+                break;
         }
     }
 

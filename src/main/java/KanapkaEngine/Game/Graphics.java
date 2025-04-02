@@ -117,7 +117,8 @@ public class Graphics {
     }
 
     public static void DrawSpriteMesh(Transformation transformation, Material material) {
-        if (material instanceof TextureMaterial mat) {
+        if (material instanceof TextureMaterial) {
+            TextureMaterial mat = (TextureMaterial) material;
             DrawSprite(transformation, mat);
         }
         else {

@@ -43,8 +43,8 @@ public class ParticleLayer implements RenderLayer {
         if (renderer.getMaterial().getShader() == null)
             return;
 
-        if (renderer instanceof ParticleSystem<?> any) {
-            ParticleSystem<Particle> system = (ParticleSystem<Particle>) any;
+        if (renderer instanceof ParticleSystem<?>) {
+            ParticleSystem<Particle> system = (ParticleSystem<Particle>) renderer;
 
             if (!Camera.main.isWithin(renderer))
                 return;

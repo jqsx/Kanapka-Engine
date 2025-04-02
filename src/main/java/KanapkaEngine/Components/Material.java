@@ -9,6 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ import java.util.Objects;
  */
 @Serialized
 public class Material {
-    private static final List<Class> permittedClassTypes = List.of(new Class[]{float.class, int.class, Vector2f.class, Vector3f.class, Vector4f.class, Texture.class, Matrix4f.class});
+    private static final List<Class> permittedClassTypes = Arrays.asList(new Class[]{float.class, int.class, Vector2f.class, Vector3f.class, Vector4f.class, Texture.class, Matrix4f.class});
 
     private List<ValidUniform> ValidatedUniforms = new ArrayList<>();
 
