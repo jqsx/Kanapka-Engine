@@ -1,12 +1,27 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Logger;
+import KanapkaEngine.Net.DataStorage.Payload;
+
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Stores <code><strong>BlockData</strong></code> that can be accessed by the chunks and blocks.
  */
 public class BlockManager {
-    private final static ArrayList<BlockData> blockData = init();
+    private static final Logger logger = new Logger("BlockManager");
+
+    private final static Vector<BlockData> blockData;
+
+    static {
+        blockData = new Vector<>();
+
+        createBlock(new BlockData(
+                new BlockData.Builder()
+                        .setRender(ResourceLoader.loadImageResource("wooden.png"))));
+    }
+
     private BlockManager() {
 
     }
@@ -16,8 +31,14 @@ public class BlockManager {
      * @param data
      */
     public static int createBlock(BlockData data) {
+        if (blockData.contains(data))
+            return data.getID();
+
         blockData.add(data);
         data.setBlockID(blockData.size() - 1);
+
+        logger.log("Registered new block with id: " + data.getID());
+
         return data.getID();
     }
 
@@ -28,15 +49,6 @@ public class BlockManager {
      */
     public static BlockData getBlockData(int id) {
         return blockData.get(id);
-    }
-
-    private static ArrayList<BlockData> init() {
-        ArrayList<BlockData> data = new ArrayList<>();
-        data.add(new BlockData(
-                new BlockData.Builder()
-                        .setRender(ResourceLoader.loadImageResource("wooden.png"))
-        ));
-        return data;
     }
 
     public static int getBlockCount() {

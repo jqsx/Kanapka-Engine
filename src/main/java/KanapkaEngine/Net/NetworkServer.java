@@ -1,5 +1,7 @@
 package KanapkaEngine.Net;
 
+import KanapkaEngine.Components.ImmutableCollection;
+import KanapkaEngine.Components.ImmutableList;
 import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.Logger;
 import KanapkaEngine.Game.Plugin;
@@ -25,8 +27,6 @@ public final class NetworkServer implements Runnable {
 
     private static ServerSocket serverSocket;
 
-    public static final List<NetworkConnectionToClient> clients = new ArrayList<>();
-
     private static Thread serverThread;
 
     private static NetworkServer instance;
@@ -49,7 +49,6 @@ public final class NetworkServer implements Runnable {
             logger.log("Created server socket.");
             serverSocket.bind(new InetSocketAddress(hostName != null && !hostName.isEmpty() ? hostName : getLANIP(), PORT));
             logger.log("Bound server to correct hostName and port.");
-            clients.clear();
             logger.log("Cleared existing clients.");
             if (serverThread != null)
                 instance.isRunning = false;
@@ -90,7 +89,6 @@ public final class NetworkServer implements Runnable {
 
                 connections.put(conn.getId(), conn);
 
-                clients.add(conn);
                 RouteManager.onServerClientConnect(conn);
             } catch (IOException e) {
                 if (serverSocket.isClosed())
@@ -153,8 +151,13 @@ public final class NetworkServer implements Runnable {
         return r;
     }
 
+    public static ImmutableCollection<NetworkConnectionToClient> clients() {
+        return new ImmutableCollection<>(connections.values());
+    }
+
     protected static void IClosed(NetworkConnectionToClient conn) {
-        if (conn.isClosed())
+        if (conn.isClosed()) {
             connections.remove(conn.getId());
+        }
     }
 }

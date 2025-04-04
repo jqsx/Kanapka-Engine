@@ -92,7 +92,7 @@ public class Block {
         }
 
         public int SerializationDataSize() {
-            return 10;
+            return _buffer.capacity();
         }
 
         public Block Deserialize(Chunk chunk, byte[] data) {
@@ -117,5 +117,12 @@ public class Block {
 
             return block;
         }
+    }
+
+    public String toString() {
+
+        BlockData data = getBlockData();
+
+        return "BLOCK:" +" -f:" +data.isFloor() + " -hc:" +data.hasCollision() + " -id:" + data.getID();
     }
 }

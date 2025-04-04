@@ -212,8 +212,9 @@ public final class AttributeElementBuffer extends AttributeBuffer {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer buffer = stack.callocInt(triangles.length);
 
-            buffer.position(0);
             buffer.put(triangles);
+
+            buffer.flip();
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);

@@ -15,4 +15,8 @@ public class ImmutableCollection<T> implements Iterable<T> {
     public Iterator<T> iterator() {
         return collection.iterator();
     }
+
+    public boolean contains(T v) {
+        return collection.contains(v);
+    }
 }

@@ -55,11 +55,10 @@ public final class NetworkConnectionToClient implements Runnable {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
-            logger.error("Failed connection with client " + socket.getLocalAddress().getHostAddress());
+            HandleError(e,"Failed connection with client " + socket.getLocalAddress().getHostAddress());
 
-            logger.error(e, "Network server connection error");
-            if (NetworkServer.callback != null)
-                NetworkServer.callback.callback(e);
+            Disconnect();
+
             return;
         }
 
@@ -81,15 +80,13 @@ public final class NetworkConnectionToClient implements Runnable {
                 route.ServerClient_IN(this, data);
             }
         } catch (IOException e) {
+
+
             if (socket.isClosed()) {
                 logger.log("Disconnected: " + getId());
             }
             else {
-                logger.error("Problem");
-
-                logger.error(e, "Network server connection error");
-                if (NetworkServer.callback != null)
-                    NetworkServer.callback.callback(e);
+                HandleError(e, "Network server connection error");
             }
         }
         finally {
@@ -102,7 +99,7 @@ public final class NetworkConnectionToClient implements Runnable {
                     socket.close();
                 logger.log("Closed");
             } catch (IOException e) {
-                logger.error(e, "Shutdown err");
+                HandleError(e, "Shutdown err");
             }
             RouteManager.onServerClientDisconnect(this);
         }
@@ -124,10 +121,33 @@ public final class NetworkConnectionToClient implements Runnable {
             out.writeInt(data.length);
             out.write(data);
         } catch (IOException e) {
-            logger.error(e, "Error while sending message.");
-            if (NetworkServer.callback != null)
-                NetworkServer.callback.callback(e);
+            HandleError(e, "Error while sending message.");
         }
+    }
+
+    public void Disconnect() {
+        if (isClosed())
+            return;
+
+        try {
+            if (!socket.isInputShutdown())
+                in.close();
+            if (!socket.isOutputShutdown())
+                out.close();
+            if (!socket.isClosed())
+                socket.close();
+        } catch (IOException e) {
+            HandleError(e, "ServerClient disconnection error.");
+        }
+
+        RouteManager.onServerClientConnect(this);
+    }
+
+    private void HandleError(Exception e, String message) {
+        logger.error(e, message);
+
+        if (NetworkServer.callback != null)
+            NetworkServer.callback.callback(e);
     }
 
     public boolean isClosed() {

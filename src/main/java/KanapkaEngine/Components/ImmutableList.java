@@ -19,6 +19,10 @@ public final class ImmutableList<T> implements Iterable<T> {
         return list.size();
     }
 
+    public boolean contains(T v) {
+        return list.contains(v);
+    }
+
     @Override
     public Iterator<T> iterator() {
         return new ImmutableIterator();

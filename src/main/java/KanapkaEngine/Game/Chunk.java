@@ -2,6 +2,7 @@ package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Components.Renderer;
+import org.apache.logging.log4j.LogManager;
 import org.joml.Vector2d;
 
 import java.awt.*;
@@ -22,6 +23,7 @@ public class Chunk {
     private static final Vector<Chunk> activeChunks = new Vector<>();
 
     public static final int BLOCK_SCALE = 16;
+    private static final org.apache.logging.log4j.Logger log = LogManager.getLogger(Chunk.class);
     private Rectangle2D bounds;
     protected Texture renderTexture;
     private BufferedImage render;
@@ -58,7 +60,14 @@ public class Chunk {
         Block old_floor = floor[block.point.x][block.point.y];
         if (block.parent == this && isInRange(block.point)) {
             Block target = old;
-            if (block.getBlockData().isFloor()) {
+            boolean _IsBlockFloor = block.getBlockData().isFloor();
+
+            BlockData data = block.getBlockData();
+
+            if (!data.isRegistered())
+                return;
+
+            if (_IsBlockFloor) {
                 floor[block.point.x][block.point.y] = block;
                 target = old_floor;
             }

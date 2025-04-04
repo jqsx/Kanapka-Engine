@@ -20,10 +20,6 @@ public class BlockData {
         return blockStrength;
     }
 
-    public int block_id() {
-        return block_id;
-    }
-
     public boolean hasCollision() {
         return hasCollision;
     }

@@ -57,7 +57,7 @@ public final class RTTRoute extends Route implements Plugin {
     }
 
     public void askRTT() {
-        for (NetworkConnectionToClient conn : NetworkServer.clients) {
+        for (NetworkConnectionToClient conn : NetworkServer.clients()) {
             RTT rtt = new RTT();
             track.put(conn, rtt);
 

@@ -1,6 +1,7 @@
 package KanapkaEngine.Net.Router;
 
 import KanapkaEngine.Game.Logger;
+import KanapkaEngine.Net.DataStorage.NetworkPayload;
 import KanapkaEngine.Net.NetworkClient;
 import KanapkaEngine.Net.NetworkConnectionToClient;
 import KanapkaEngine.Net.NetworkServer;
@@ -70,7 +71,7 @@ public class Route {
     public final void sendToClient(NetworkConnectionToClient connectionToClient, byte[] data) {
         if (data == null)
             data = new byte[0];
-        if (NetworkServer.clients.contains(connectionToClient))
+        if (NetworkServer.clients().contains(connectionToClient))
             connectionToClient.send(getID(), data);
         else
             logger.warn("[MSG>SERVERCLIENT] Server client isn't registered in current context.");
@@ -84,6 +85,14 @@ public class Route {
             NetworkClient.send(getID(), data);
         else
             logger.warn("[MSG>SERVER] Client isn't connected to a server.");
+    }
+
+    public final void sendToServer(NetworkPayload payload) {
+        sendToServer(payload.collect().array());
+    }
+
+    public final void sendToClient(NetworkConnectionToClient connectionToClient, NetworkPayload payload) {
+        sendToClient(connectionToClient, payload.collect().array());
     }
 
     protected final void define(short id) {
