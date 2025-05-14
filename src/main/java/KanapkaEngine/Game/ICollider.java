@@ -1,7 +1,5 @@
 package KanapkaEngine.Game;
 
-import KanapkaEngine.Components.Component;
-
 /**
  * Just an enveloping abstract class to find the collider component.
  */

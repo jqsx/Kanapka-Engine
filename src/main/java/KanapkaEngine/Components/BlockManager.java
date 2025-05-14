@@ -37,7 +37,7 @@ public class BlockManager {
         blockData.add(data);
         data.setBlockID(blockData.size() - 1);
 
-        logger.log("Registered new block with id: " + data.getID());
+        logger.log("Registered new block with id: " + data.getID() + ", name: " + data.blockName() + ", hasCollision: " + data.hasCollision() + ", floor: " + data.isFloor() + ", strength: " + data.blockStrength());
 
         return data.getID();
     }

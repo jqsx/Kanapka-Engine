@@ -1,5 +1,6 @@
 package KanapkaEngine.Components;
 
+import KanapkaEngine.Game.Component;
 import org.joml.Vector2d;
 
 public class Rigidbody extends Component {

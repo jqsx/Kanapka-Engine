@@ -1,83 +1,35 @@
 package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.vec2d;
+import KanapkaEngine.Components.vec3d;
 import KanapkaEngine.Game.Node;
 import KanapkaEngine.Game.Transformation;
 import org.joml.Vector2d;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import java.awt.geom.AffineTransform;
 
 public class Transform {
     private final Transformation transformation;
     public final Node parent;
-    private final vec2d position = new vec2d(0, 0);
-    private double rotation = 0;
-    private final Vector2d size = new Vector2d(1, 1);
+    protected final vec3d position = new vec3d(0, 0,0);
+    protected final Vector3f rotation = new Vector3f();
+    protected final Vector3d size = new Vector3d(1, 1, 1);
+
+    protected final Transform2D transform2D;
+    protected final Transform3D transform3D;
 
     protected Transform(Node parent) {
         this.parent = parent;
-        transformation = new Transformation(getPosition(), new Vector2d(1, 1), 0.f);
-    }
+        transformation = new Transformation(new Vector3d(), new Vector3d(1, 1, 1), new Vector3f());
 
-    public Vector2d getPosition() {
-        Node node_parent = parent.getParent();
-        if (node_parent != null) {
-            return position.add(node_parent.transform.getPosition());
-        }
-        return position.clone();
-    }
-
-    public Vector2d getLocalPosition() {
-        return position.clone();
-    }
-
-    public void setPosition(Vector2d position) {
-        Node node_parent = parent.getParent();
-        if (node_parent != null) {
-            this.position.set(node_parent.transform.getPosition().sub(position));
-        }
-        else
-            this.position.set(position.x, position.y);
-    }
-
-    public void setLocalPosition(double x, double y) {
-        position.set(x,y);
-    }
-
-    public void setLocalPosition(Vector2d position) {
-        position.set(position);
-    }
-
-    public void setPosition(double x, double y) {
-        Node node_parent = parent.getParent();
-        if (node_parent != null) {
-            this.position.set(node_parent.transform.getPosition().sub(x, y));
-        }
-        else
-            this.position.set(x, y);
-    }
-
-    public Vector2d getSize() {
-        return size;
-    }
-
-    public void setSize(Vector2d size) {
-        this.size.set(size);
-    }
-    public void setSize(double x, double y) {
-        this.size.set(x, y);
-    }
-
-    public double getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(double rotation) {
-        this.rotation = rotation % (Math.PI * 2);
+        transform2D = new Transform2D(this);
+        transform3D = new Transform3D(this);
     }
 
     public Transformation getTransformation() {
-        transformation.Update(getPosition(), size, (float) rotation);
+        transformation.Update(position, size, rotation);
 
         return transformation;
     }

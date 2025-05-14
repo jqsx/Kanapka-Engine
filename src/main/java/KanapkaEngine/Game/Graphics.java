@@ -23,7 +23,7 @@ public class Graphics {
 
     private static Mesh spriteMesh;
 
-    private static Mesh renderPassMesh;
+    private static AttributeElementBuffer renderPassMesh;
 
     public static void DrawMesh(Mesh mesh, Transformation transformation, Shader shader) {
         DrawMesh(mesh.attributeBuffer, transformation, shader);
@@ -145,18 +145,18 @@ public class Graphics {
 
         InitRenderTextureMesh();
 
-        shader.setUniform("uMainTex", texture.getTexture());
+        shader.setUniformTexture("uMainTex", texture.textureId);
         shader.setUniform("uTime", (float)Time.time());
         shader.setUniform("uScreenWidth", Engine.getMainInstance().getWindow().getWidth());
         shader.setUniform("uScreenHeight", Engine.getMainInstance().getWindow().getHeight());
 
         shader.bind();
 
-        renderPassMesh.attributeBuffer.bind();
+        renderPassMesh.bind();
 
-        glDrawElements(GL_TRIANGLES, renderPassMesh.attributeBuffer.getVertexCount(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, renderPassMesh.getVertexCount(), GL_UNSIGNED_INT, 0);
 
-        renderPassMesh.attributeBuffer.unbind();
+        renderPassMesh.unbind();
 
         shader.unbind();
     }
@@ -177,11 +177,11 @@ public class Graphics {
 
         shader.bind();
 
-        renderPassMesh.attributeBuffer.bind();
+        renderPassMesh.bind();
 
-        glDrawElements(GL_TRIANGLES, renderPassMesh.attributeBuffer.getVertexCount(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, renderPassMesh.getVertexCount(), GL_UNSIGNED_INT, 0);
 
-        renderPassMesh.attributeBuffer.unbind();
+        renderPassMesh.unbind();
 
         shader.unbind();
     }
@@ -253,22 +253,39 @@ public class Graphics {
                     new Vector3f(.5f, .5f, 0.f)
             });
 
+            spriteMesh.uvs(new Vector2f[]{
+                    new Vector2f(0f, 0f),
+                    new Vector2f(0f, 1f),
+                    new Vector2f(1f, 0f),
+                    new Vector2f(1f, 1f)
+            });
+
             spriteMesh.triangles(new int[] {0,2,1,2,3,1});
         }
     }
 
     private static void InitRenderTextureMesh() {
         if (renderPassMesh == null) {
-            renderPassMesh = new Mesh();
+            renderPassMesh = new AttributeElementBuffer();
 
-            renderPassMesh.vertices(new Vector3f[]{
+            renderPassMesh.createAttribute("vertices");
+            renderPassMesh.createAttribute("texcoords");
+
+            renderPassMesh.BufferVec3("vertices", new Vector3f[]{
                     new Vector3f(-1f, -1f, 0.f),
                     new Vector3f(-1f, 1f, 0.f),
                     new Vector3f(1f, -1f, 0.f),
                     new Vector3f(1f, 1f, 0.f)
             });
 
-            renderPassMesh.triangles(new int[] {0,2,1,2,3,1});
+            renderPassMesh.BufferVec2("texcoords", new Vector2f[] {
+                    new Vector2f(0f, 0f),
+                    new Vector2f(0f, 1f),
+                    new Vector2f(1f, 0f),
+                    new Vector2f(1f, 1f)
+            });
+
+            renderPassMesh.BufferTriangles(new int[] {0,2,1,2,3,1});
         }
     }
 }

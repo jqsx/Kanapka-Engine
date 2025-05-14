@@ -1,11 +1,13 @@
 package KanapkaEngine.Game;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public final class Mesh {
     final AttributeElementBuffer attributeBuffer;
 
     private static final String VERTICE_ID = "vertices";
+    private static final String TEXCOORD_ID = "texcoord";
 
     public Mesh() {
         if (!Engine.isOpenGLInitialized()) {
@@ -14,6 +16,7 @@ public final class Mesh {
         attributeBuffer = new AttributeElementBuffer();
 
         attributeBuffer.createAttribute(VERTICE_ID);
+        attributeBuffer.createAttribute(TEXCOORD_ID);
     }
 
     public void triangles(int[] triangles) {
@@ -22,6 +25,10 @@ public final class Mesh {
 
     public void vertices(Vector3f[] vertices) {
         attributeBuffer.BufferVec3(VERTICE_ID, vertices);
+    }
+
+    public void uvs(Vector2f[] uvs) {
+        attributeBuffer.BufferVec2(TEXCOORD_ID, uvs);
     }
 
     /**

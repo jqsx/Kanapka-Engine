@@ -34,10 +34,14 @@ public final class Window {
         glViewport(0, 0, width, height);
 
         Engine.getMainInstance().correctPhysicsUpdate();
+
+        Engine.getMainInstance().window_size_pos(width, height, window);
     }
 
     private void WindowPositionCallback(long window, int x, int y) {
         Engine.getMainInstance().correctPhysicsUpdate();
+
+        Engine.getMainInstance().window_size_pos(width, height, window);
     }
 
     long getGLFWwindow() {

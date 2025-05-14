@@ -76,6 +76,9 @@ public final class AttributeElementBuffer extends AttributeBuffer {
         int attrib_location = _attribCount;
 
         AttributeBuffers.put(identifier, new AttribLocationData(vboptr[0], attrib_location));
+
+        logger.log("Created attrib location " + identifier);
+
         _attribCount++;
         return attrib_location;
     }

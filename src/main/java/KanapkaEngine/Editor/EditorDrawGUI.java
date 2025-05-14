@@ -24,7 +24,7 @@ public class EditorDrawGUI implements IDrawGUI {
 
     private double[] data = new double[2];
 
-    private final List<Component> components = new ArrayList<>();
+    private final List<KanapkaEngine.Game.Component> components = new ArrayList<>();
 
     private ImBoolean displayHierarchy = new ImBoolean(false);
     private ImBoolean displayResourceExplorer = new ImBoolean(false);
@@ -124,18 +124,18 @@ public class EditorDrawGUI implements IDrawGUI {
                         ImGui.sameLine();
                         if (ImGui.treeNodeEx("##" + ref_name.get() + "reset", 0, "Reset")) {
                             if (ImGui.button("Reset Position")) {
-                                selected.transform.setPosition(0, 0);
+                                selected.transform2D().setPosition(0, 0);
                             }
                             else if (ImGui.button("Reset Scale")) {
-                                selected.transform.setSize(1, 1);
+                                selected.transform2D().setSize(1, 1);
                             }
                             else if (ImGui.button("Reset Rotation")) {
-                                selected.transform.setRotation(0);
+                                selected.transform2D().setRotation(0);
                             }
                             else if (ImGui.button("Reset Transform")) {
-                                selected.transform.setPosition(0, 0);
-                                selected.transform.setSize(1, 1);
-                                selected.transform.setRotation(0);
+                                selected.transform2D().setPosition(0, 0);
+                                selected.transform2D().setSize(1, 1);
+                                selected.transform2D().setRotation(0);
                             }
 
                             ImGui.treePop();
@@ -143,32 +143,32 @@ public class EditorDrawGUI implements IDrawGUI {
                         ImGui.separator();
                         ImGui.textColored(0xff0000ff, "Transform");
 
-                        Vector2d p = selected.transform.getPosition();
+                        Vector2d p = selected.transform2D().getPosition();
                         data[0] = p.x;
                         data[1] = p.y;
                         if (ImGui.dragScalarN("Position", data, 2, 0.031f)) {
-                            selected.transform.setPosition(data[0], data[1]);
+                            selected.transform2D().setPosition(data[0], data[1]);
                         }
 
-                        double[] r = { selected.transform.getRotation()};
+                        double[] r = { selected.transform2D().getRotation()};
 
                         if (ImGui.dragScalar("Rotation", r, 0.1f)) {
-                            selected.transform.setRotation(r[0]);
+                            selected.transform2D().setRotation(r[0]);
                         }
 
-                        Vector2d s = selected.transform.getSize();
+                        Vector2d s = selected.transform2D().getSize();
                         data[0] = s.x;
                         data[1] = s.y;
                         if (ImGui.dragScalarN("Scale", data, 2, 0.031f)) {
-                            selected.transform.setSize(data[0], data[1]);
+                            selected.transform2D().setSize(data[0], data[1]);
                         }
 
                         components.clear();
-                        selected.getComponents(components, Component.class);
+                        selected.getComponents(components, KanapkaEngine.Game.Component.class);
 
                         ImGui.separator();
                         for (int i = 0; i < components.size(); i++) {
-                            Component component = components.get(i);
+                            KanapkaEngine.Game.Component component = components.get(i);
                             ComponentRecursive(component);
                             if (i != components.size() - 1)
                                 ImGui.separator();

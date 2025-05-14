@@ -1,6 +1,7 @@
 package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.Camera;
+import KanapkaEngine.Game.Component;
 import KanapkaEngine.Game.Time;
 import KanapkaEngine.Game.WIP;
 
@@ -51,7 +52,7 @@ public class AudioSource extends Component implements IUpdate {
     }
 
     private float getP() {
-        float distance = (float) Mathd.aDistance(Camera.main.getWorldPosition(), getParent().transform.getPosition());
+        float distance = (float) Mathd.aDistance(Camera.main.getWorldPosition(), getParent().transform2D().getPosition());
         return (float) Mathd.Clamp((distance) / falloffDistance, 0.0, 1.0);
 
     }

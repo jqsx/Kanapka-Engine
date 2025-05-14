@@ -1,6 +1,4 @@
-package KanapkaEngine.Components;
-
-import KanapkaEngine.Game.Node;
+package KanapkaEngine.Game;
 
 import java.util.Objects;
 
@@ -14,7 +12,7 @@ public abstract class Component {
         return parent;
     }
 
-    public final void setParent(Node parent) {
+    protected final void setParent(Node parent) {
         Objects.requireNonNull(parent, "Parent cannot be null.");
         if (parent.isChild(this)) {
             this.parent = parent;

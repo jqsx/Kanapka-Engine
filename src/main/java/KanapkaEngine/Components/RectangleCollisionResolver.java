@@ -42,12 +42,12 @@ public class RectangleCollisionResolver implements ICollisionResolver {
 
         assert node.node.getRigidbody() != null;
 
-        Vector2d position = node.node.transform.getPosition();
+        Vector2d position = node.node.transform2D().getPosition();
         Vector2d velocity = node.node.getRigidbody().getVelocity();
 
         resolveCollision(position, velocity, nodeRectangleCollider.getRectangle(), otherRectangleCollider.getRectangle());
 
-        node.node.transform.setPosition(position);
+        node.node.transform2D().setPosition(position);
         node.node.getRigidbody().setVelocity(velocity);
     }
 
@@ -63,12 +63,12 @@ public class RectangleCollisionResolver implements ICollisionResolver {
 
         assert node.node.getRigidbody() != null;
 
-        Vector2d position = node.node.transform.getPosition();
+        Vector2d position = node.node.transform2D().getPosition();
         Vector2d velocity = node.node.getRigidbody().getVelocity();
 
         resolveCollision(position, velocity, nodeRectangleCollider.getRectangle(), (Rectangle2D.Double) otherCollider);
 
-        node.node.transform.setPosition(position);
+        node.node.transform2D().setPosition(position);
         node.node.getRigidbody().setVelocity(velocity);
     }
 

@@ -45,8 +45,8 @@ public class RectangleCollider extends ICollider {
         double w = scaledSize.x;
         double h = scaledSize.y;
 
-        double x = (offset.x + (getParent().transform.getPosition().x + getParent().transform.getSize().x / 2.0) - scaledSize.x / 2.0);
-        double y = (offset.y + getParent().transform.getPosition().y - scaledSize.y / 2.0);
+        double x = (offset.x + (getParent().transform2D().getPosition().x + getParent().transform2D().getSize().x / 2.0) - scaledSize.x / 2.0);
+        double y = (offset.y + getParent().transform2D().getPosition().y - scaledSize.y / 2.0);
 
         rect.setRect(x, y, w, h);
         return rect;
@@ -57,15 +57,15 @@ public class RectangleCollider extends ICollider {
         double w = scaledSize.x;
         double h = scaledSize.y;
 
-        double x = (offset.x + getParent().transform.getPosition().x - scaledSize.x / 2.0);
-        double y = (offset.y + getParent().transform.getPosition().y - scaledSize.y / 2.0);
+        double x = (offset.x + getParent().transform2D().getPosition().x - scaledSize.x / 2.0);
+        double y = (offset.y + getParent().transform2D().getPosition().y - scaledSize.y / 2.0);
 
         rect.setRect(x, y, w, h);
         return rect;
     }
 
     public Vector2d getScaledSize() {
-        return new Vector2d(size.x * getParent().transform.getSize().x, size.y * getParent().transform.getSize().y);
+        return new Vector2d(size.x * getParent().transform2D().getSize().x, size.y * getParent().transform2D().getSize().y);
     }
 
     public Vector2d getOffset() {

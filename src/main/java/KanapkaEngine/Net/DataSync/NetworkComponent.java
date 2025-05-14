@@ -1,10 +1,8 @@
 package KanapkaEngine.Net.DataSync;
 
-import KanapkaEngine.Components.Component;
+import KanapkaEngine.Game.Component;
 import KanapkaEngine.Game.WIP;
 import KanapkaEngine.Net.NetworkIdentity;
-
-import java.util.Set;
 
 @WIP
 public class NetworkComponent extends Component {

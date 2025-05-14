@@ -27,9 +27,9 @@ public class NodeLayer implements RenderLayer {
         for (Renderer renderer : renderers) {
             if (Camera.main.isWithin(renderer)) {
                 if (DRAW_WIREFRAME) {
-                    Graphics.DrawWireframe(node.transform.getTransformation());
+                    Graphics.DrawWireframe(node.transform2D().getTransformation());
                 }
-                else Graphics.DrawSpriteMesh(node.transform.getTransformation(), renderer.getMaterial());
+                else Graphics.DrawSpriteMesh(node.transform2D().getTransformation(), renderer.getMaterial());
             }
         }
     }

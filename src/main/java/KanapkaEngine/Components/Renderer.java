@@ -1,16 +1,13 @@
 package KanapkaEngine.Components;
 
-import KanapkaEngine.Editor.Attributes.HideEditor;
-import KanapkaEngine.Editor.Attributes.ReadOnly;
 import KanapkaEngine.Editor.Attributes.Serialized;
+import KanapkaEngine.Game.Component;
 import KanapkaEngine.Game.Logger;
-import KanapkaEngine.Game.Texture;
 import org.joml.Matrix3f;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 /**
  * The renderer component allows for defining a texture for the node to be drawn to the screen. This is a component and has to be added to the node for it to be recognized. Only the last added renderer will be recognized on a node when rendering. <br><br>
@@ -49,7 +46,7 @@ public class Renderer extends Component {
 
     public Rectangle2D.Double bounds() {
 
-        Matrix3f matrix3f = getParent().transform.getTransformation().get2DMatrix();
+        Matrix3f matrix3f = getParent().transform2D().getTransformation().get2DMatrix();
 
         matrix3f.transform(TOPRIGHT, topRight);
         matrix3f.transform(BOTTOMLEFT, bottomLeft);

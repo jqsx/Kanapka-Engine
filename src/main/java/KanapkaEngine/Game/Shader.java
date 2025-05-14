@@ -259,6 +259,28 @@ public class Shader {
         setUniform(uniform, texture, GL_TEXTURE0, 0);
     }
 
+    public final void setUniformTexture(String uniform, int texture) {
+        setUniform(uniform, texture, GL_TEXTURE0, 0);
+    }
+
+    public final void setUniform(String uniform, int texture, int gltexture, int i) {
+        Objects.requireNonNull(uniform);
+        if (isDisposed)
+            return;
+        if (!UniformLocations.containsKey(uniform))
+            return;
+
+        bind();
+
+        setUniform(uniform, i);
+
+        glActiveTexture(gltexture);
+
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        unbind();
+    }
+
     public final void setUniform(String uniform, Texture texture, int gltexture, int i) {
         Objects.requireNonNull(texture);
         Objects.requireNonNull(uniform);
@@ -274,6 +296,29 @@ public class Shader {
         glActiveTexture(gltexture);
 
         glBindTexture(GL_TEXTURE_2D, texture.textureId);
+
+        unbind();
+    }
+
+    public final void setUniform(String uniform, RenderTexture renderTexture) {
+        setUniform(uniform, renderTexture, GL_TEXTURE0, 0);
+    }
+
+    public final void setUniform(String uniform, RenderTexture renderTexture, int gltexture, int i) {
+        Objects.requireNonNull(renderTexture);
+        Objects.requireNonNull(uniform);
+        if (isDisposed)
+            return;
+        if (!UniformLocations.containsKey(uniform))
+            return;
+
+        bind();
+
+        setUniform(uniform, i);
+
+        glActiveTexture(gltexture);
+
+        glBindTexture(GL_TEXTURE_2D, renderTexture.textureId);
 
         unbind();
     }

@@ -308,7 +308,7 @@ public final class Physics {
 
     private void CheckCollisionFor(Node node, double fixedDelta) {
         if (node.getRigidbody() == null) return;
-        Vector2d oldposition = node.transform.getPosition();
+        Vector2d oldposition = node.transform2D().getPosition();
         VelocityUpdate(node, fixedDelta);
         ApplyVelocity(node, oldposition, fixedDelta);
 
@@ -365,8 +365,8 @@ public final class Physics {
             return;
 
         Point chunkPoint = new Point(
-                (int) (Math.floor(node.transform.getPosition().x / chunkSize.x) + round(Mathd.Clamp01(-node.transform.getPosition().x))),
-                (int) (Math.floor(node.transform.getPosition().y / chunkSize.y) + 1));
+                (int) (Math.floor(node.transform2D().getPosition().x / chunkSize.x) + round(Mathd.Clamp01(-node.transform2D().getPosition().x))),
+                (int) (Math.floor(node.transform2D().getPosition().y / chunkSize.y) + 1));
 
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -409,7 +409,7 @@ public final class Physics {
     private void ApplyVelocity(Node node, Vector2d old, double fixedDelta) {
         assert node.getRigidbody() != null;
 
-        Vector2d position = node.transform.getPosition().add(node.getRigidbody().getVelocity().mul(fixedDelta));
+        Vector2d position = node.transform2D().getPosition().add(node.getRigidbody().getVelocity().mul(fixedDelta));
 
         if (node.getCollider() != null) {
             one.node = node;
@@ -424,6 +424,6 @@ public final class Physics {
             }
         }
 
-        node.transform.setPosition(position);
+        node.transform2D().setPosition(position);
     }
 }

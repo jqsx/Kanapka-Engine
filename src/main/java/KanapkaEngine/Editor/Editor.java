@@ -1,27 +1,17 @@
 package KanapkaEngine.Editor;
 
 import KanapkaEngine.Components.*;
-import KanapkaEngine.Components.Component;
 import KanapkaEngine.Components.Renderer;
-import KanapkaEngine.Editor.Attributes.*;
 import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.*;
-import KanapkaEngine.Game.Window;
 import KanapkaEngine.RenderLayers.ChunkLayer;
 import KanapkaEngine.RenderLayers.NodeLayer;
 import KanapkaEngine.RenderLayers.ParticleLayer;
-import imgui.ImGui;
-import imgui.ImVec2;
-import imgui.flag.*;
-import imgui.type.*;
 import org.joml.Vector2d;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 import java.awt.*;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Editor {
     private static boolean editor = false;
@@ -100,7 +90,7 @@ public class Editor {
             private void createSandwich(double x, double y) {
                 Node node = new Node();
 
-                node.transform.setPosition(x, y);
+                node.transform2D().setPosition(x, y);
 
                 TextureMaterial material = new TextureMaterial();
                 material.MainTex = texture;
@@ -129,7 +119,7 @@ public class Editor {
 
                     floor.addComponent(renderer);
 
-                    floor.transform.setSize(3, 1);
+                    floor.transform2D().setSize(3, 1);
 
                     floor.append();
                 }
@@ -145,7 +135,7 @@ public class Editor {
 
                     box.addComponent(renderer);
 
-                    box.transform.setPosition(0, 3);
+                    box.transform2D().setPosition(0, 3);
 
                     box.append();
                 }

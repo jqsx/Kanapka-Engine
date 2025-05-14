@@ -69,7 +69,7 @@ public class ParticleLayer implements RenderLayer {
             else {
                 List<Particle> particles = system.getList();
 
-                Matrix3f center = node.transform.getTransformation().get2DMatrix();
+                Matrix3f center = node.transform2D().getTransformation().get2DMatrix();
 
                 Vector3f p = new Vector3f();
 

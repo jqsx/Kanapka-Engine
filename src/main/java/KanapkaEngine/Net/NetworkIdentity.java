@@ -1,8 +1,8 @@
 package KanapkaEngine.Net;
 
-import KanapkaEngine.Components.Component;
 import KanapkaEngine.Components.ImmutableCollection;
 import KanapkaEngine.Editor.Attributes.ReadOnly;
+import KanapkaEngine.Game.Component;
 import KanapkaEngine.Game.Logger;
 
 import java.util.HashMap;

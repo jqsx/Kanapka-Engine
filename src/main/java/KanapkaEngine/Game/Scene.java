@@ -51,7 +51,7 @@ public class Scene {
                 Node one = nodes.get(i);
                 Node two = nodes.get(i+1);
 
-                if (one.transform.getPosition().y > two.transform.getPosition().y) {
+                if (one.transform2D().getPosition().y > two.transform2D().getPosition().y) {
                     nodes.set(i, two);
                     nodes.set(i+1, one);
                 }

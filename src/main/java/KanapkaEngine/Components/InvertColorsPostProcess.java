@@ -2,6 +2,8 @@ package KanapkaEngine.Components;
 
 import KanapkaEngine.Game.*;
 
+import static org.lwjgl.opengl.GL11.*;
+
 @WIP
 public class InvertColorsPostProcess extends PostProcessEffect {
 
@@ -14,13 +16,17 @@ public class InvertColorsPostProcess extends PostProcessEffect {
     }
 
     @Override
-    public Texture Render(Texture inout, Window window) {
+    public RenderTexture Render(Texture texture) {
         renderTexture.bind();
 
-        Graphics.DrawFullScreen(inout, shader);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+
+        Graphics.DrawFullScreen(texture, shader);
 
         renderTexture.unbind();
 
-        return renderTexture.getTexture();
+        return renderTexture;
     }
 }

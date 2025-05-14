@@ -119,33 +119,31 @@ public final class Engine {
     public Window getWindow() {
         return WindowObject;
     }
-
-    private TextureMaterial textureMaterial;
-    private Shader invert;
+    private Shader FSP_Draw;
 
     private void Draw() {
         Camera.createProjectionMatrix(WindowObject.getWidth() / (float)WindowObject.getHeight());
 
-        if (textureMaterial == null)
-            textureMaterial = new TextureMaterial();
+        globalTexture.bind();
 
-        if (invert == null) {
-            invert = Shader.findOrCreate("builtin:post:invert", "Shader/standard/PostProcess/Invert");
-        }
-//
-//        globalTexture.bind();
-//
-//        globalTexture.clear();
+        glClearColor(0.f, 0.f, 0.f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
 
         Render_Layer(BACKGROUND);
         Render_Layer(WORLD);
         Render_Layer(PARTICLES);
-        Render_Layer(UI);
-        Render_Layer(FOREGROUND);
 
         globalTexture.unbind();
 
-//        Graphics.DrawFullScreen(globalTexture.getTexture(), invert);
+        glClearColor(0.f, 0.f, 0.f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+
+        globalTexture.DrawFullScreen(FSP_Draw);
+
+        Render_Layer(UI);
+        Render_Layer(FOREGROUND);
     }
 
     private void Update()  {
@@ -231,7 +229,12 @@ public final class Engine {
         logger.log("Freeing loaded textures.");
         for (Texture texture : Texture.LoadedTextures)
             texture.Dispose(false);
-        logger.log("Freed loaded textures.");
+        logger.log("Freed loaded textures. [" + Texture.LoadedTextures.size() + "]");
+
+        logger.log("Freeing loaded render textures.");
+        for (RenderTexture renderTexture : RenderTexture.RENDER_TEXTURES)
+            renderTexture.Dispose(false);
+        logger.log("Freed loaded render textures. [" + RenderTexture.RENDER_TEXTURES.size() + "]");
 
         Shader.LoadedShaders.clear();
 
@@ -331,7 +334,9 @@ public final class Engine {
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-        globalTexture = new RenderTexture(1920, 1080);
+        globalTexture = new RenderTexture(600, 400);
+
+        FSP_Draw = Shader.findOrCreate("builtIn:FSP_Draw", "Shader/standard/PostProcess/FSP_Draw");
 
         Shader.Standard.init();
 
@@ -350,6 +355,11 @@ public final class Engine {
     private void window_refresh_callback(long window) {
         correctPhysicsUpdate();
         glfwSwapBuffers(window);
+    }
+
+    protected void window_size_pos(int w, int h, long window) {
+        if (globalTexture != null)
+            globalTexture.setDimension(w / 2, h / 2);
     }
 
     void correctPhysicsUpdate() {

@@ -13,6 +13,7 @@ public class BlockData {
     private final boolean hasCollision;
     private final boolean floor;
     private final BufferedImage render;
+    private final String blockName;
 
     private int block_id = -1;
 
@@ -35,6 +36,8 @@ public class BlockData {
         this.hasCollision = builder.hasCollision;
         this.floor = builder.isFloor;
         this.blockStrength = builder.blockStrength;
+
+        this.blockName = builder.blockName != null ? builder.blockName : (this.floor ? "Unnamed FloorBlock" : "Unnamed Block");
     }
 
     protected void setBlockID(int id) {
@@ -57,6 +60,10 @@ public class BlockData {
      */
     public final BufferedImage getRender() {
         return render;
+    }
+
+    public String blockName() {
+        return blockName;
     }
 
     public static class Builder {
@@ -104,5 +111,16 @@ public class BlockData {
         private boolean isFloor = false;
         private BufferedImage render;
         private int blockStrength = 1;
+
+        private String blockName;
+
+        public String blockName() {
+            return blockName;
+        }
+
+        public Builder setBlockName(String blockName) {
+            this.blockName = blockName;
+            return this;
+        }
     }
 }

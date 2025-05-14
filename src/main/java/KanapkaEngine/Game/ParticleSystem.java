@@ -185,7 +185,7 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         if (isLoop && lastEmit + loopEmitDelay < Time.time()) {
             lastEmit = Time.time();
 
-            emit(getParent().transform.getPosition());
+            emit(getParent().transform2D().getPosition());
         }
     }
 
@@ -199,7 +199,7 @@ public class ParticleSystem<T extends Particle> extends Renderer implements IUpd
         particles.forEach((particle) -> {
             UpdateParticle(particle, fixedDelta);
 
-            transformation.Update(particle.getPosition(), getParent().transform.getPosition().set(1,1), 0.f);
+            transformation.Update(particle.getPosition(), getParent().transform2D().getPosition().set(1,1), 0.f);
             Matrix3f mat = transformation.get2DMatrix();
 
             mat.transform(TOPRIGHT, topRight);

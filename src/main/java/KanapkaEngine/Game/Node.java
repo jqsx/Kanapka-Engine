@@ -2,7 +2,6 @@ package KanapkaEngine.Game;
 
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Components.Renderer;
-import org.joml.Vector2d;
 
 import java.util.*;
 
@@ -13,11 +12,19 @@ public class Node {
     private boolean alive = true;
     public String name = "Node_Instance";
     private Node parent;
-    public final Transform transform = new Transform(this);
+    protected final Transform transform = new Transform(this);
     private Renderer renderer;
     private ICollider collider;
     private Rigidbody rigidbody;
     private final Set<Node> children = new HashSet<>();
+
+    public final Transform2D transform2D() {
+        return transform.transform2D;
+    }
+
+    public final Transform3D transform3D() {
+        return transform.transform3D;
+    }
 
     public final int childCount() {
         return children.size();
@@ -36,10 +43,6 @@ public class Node {
     }
 
     private final Set<Component> components = new HashSet<>();
-
-    public Vector2d position() {
-        return transform.getPosition();
-    }
 
     public final void addComponent(Component component) {
         if (!alive) return;
@@ -139,7 +142,7 @@ public class Node {
         this.parent = parent;
         if (parent != null) {
             setParent(parent);
-            transform.setPosition(parent.transform.getPosition());
+            transform3D().setPosition(parent.transform3D().getPosition());
         }
         NodeCount++;
     }
