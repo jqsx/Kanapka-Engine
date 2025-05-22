@@ -92,6 +92,10 @@ public class Transform2D {
     }
 
     public final Transformation getTransformation() {
-        return transform.getTransformation();
+        Transformation transformation = transform.getTransformation();
+
+        transformation.position.z = Camera.main.getPosition().y + transform.position.y - Camera.main.FAR / 2.0;
+
+        return transformation;
     }
 }

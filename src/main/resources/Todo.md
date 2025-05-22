@@ -4,8 +4,7 @@
 - RenderTextures fix because they're drawing everything without uniforms?? and the final texture gets stretched out
 - ```Implement ImGui into the render stack somehow, possibly as a plugin``` done
 - ```Add gpu instancing``` Done /// SCRATCH THAT GOTTA REDO
+- ```Add Dyn4j Support as physics engine or just toss everything that i have rn and just use dyn4j```
 ---
 
-Currently working on fixing the rendering for chunks and nodes
-
-Make Node.java a base class and force the user to cast it either to a Node2D or Node3D to access values
+Chunk rendering broken for some reason.

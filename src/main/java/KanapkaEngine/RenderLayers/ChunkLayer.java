@@ -9,6 +9,8 @@ import org.joml.Vector3f;
 
 import java.awt.geom.Rectangle2D;
 
+import static org.lwjgl.opengl.GL11C.*;
+
 public class ChunkLayer implements RenderLayer {
 
     private static final vec2d m_globalChunkPosition = new vec2d();
@@ -37,6 +39,7 @@ public class ChunkLayer implements RenderLayer {
         Shader.Standard.getTextureShader().setUniform("uAtlasIndex", 0);
         Shader.Standard.getTextureShader().setUniform("uAtlasRes", uAtlasRes);
 
+//        glDisable(GL_DEPTH_TEST);
         for (int x = -renderDistance; x <= renderDistance; x++) {
             for (int y = -renderDistance; y <= renderDistance; y++) {
                 Chunk chunk = World.getCurrent().get(m_CameraChunk.x+x, m_CameraChunk.y+y);
@@ -46,9 +49,17 @@ public class ChunkLayer implements RenderLayer {
                     if (texture != null)
                         Graphics.DrawSprite(chunk.getTexture(), getPositionForChunk(m_CameraChunk.x+x, m_CameraChunk.y+y), m_chunkScalev2d, 0f);
 
-                    RenderDynamicDrawBlocks(chunk);
-
                     chunk.activate();
+                }
+            }
+        }
+//        glEnable(GL_DEPTH_TEST);
+        for (int x = -renderDistance; x <= renderDistance; x++) {
+            for (int y = -renderDistance; y <= renderDistance; y++) {
+                Chunk chunk = World.getCurrent().get(m_CameraChunk.x+x, m_CameraChunk.y+y);
+
+                if (chunk != null) {
+                    RenderDynamicDrawBlocks(chunk);
                 }
             }
         }
@@ -60,7 +71,7 @@ public class ChunkLayer implements RenderLayer {
             for (int y = 0; y < m_chunkScale; y++) {
                 Block block = blocks.get(x, y);
 
-                if (block != null && block.getBlockData() instanceof DynamicDraw) {
+                if (block != null && block.getBlockData().isDynamicDraw()) {
                     DynamicDraw dynamicDraw = (DynamicDraw) block.getBlockData();
                     dynamicDraw.Render(chunk, block, getPositionForChunk(chunk.getPoint().x, chunk.getPoint().y));
                 }

@@ -12,6 +12,7 @@ import imgui.type.ImBoolean;
 import imgui.type.ImString;
 import org.joml.Vector2d;
 
+import java.awt.geom.Rectangle2D;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,14 @@ public class EditorDrawGUI implements IDrawGUI {
         openNodes.clear();
 
         // First Time ever using imgui... tragedy
+
+        if (selected != null) {
+            if (selected.getRenderer() == null)
+                return;
+            Rectangle2D.Double bounds = selected.getRenderer().bounds();
+            Graphics.DrawWireframe(bounds.x, bounds.y, bounds.width, bounds.height, 0.f);
+        }
+
         DrawHeirarchy();
         DrawResourceExplorer();
 
@@ -88,7 +97,11 @@ public class EditorDrawGUI implements IDrawGUI {
         if (displayResourceExplorer.get()) {
             if (ImGui.begin("Resource Explorer")) {
                 if (ImGui.treeNode("Texures")) {
-
+                    ImVec2 size = new ImVec2(10, 10);
+                    ImVec2 uv = new ImVec2(1, 1);
+                    for (Texture texture : Texture.getLoadedTextures()) {
+                        ImGuiDrawImage(texture, size, uv);
+                    }
                     ImGui.treePop();
                 }
             }

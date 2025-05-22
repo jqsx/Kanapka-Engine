@@ -2,6 +2,7 @@ package KanapkaEngine.Editor;
 
 import KanapkaEngine.Components.*;
 import KanapkaEngine.Components.Renderer;
+import KanapkaEngine.Game.Component;
 import KanapkaEngine.Game.Engine;
 import KanapkaEngine.Game.*;
 import KanapkaEngine.RenderLayers.ChunkLayer;
@@ -57,16 +58,41 @@ public class Editor {
                 RenderLayer.register(new ChunkLayer());
                 RenderLayer.register(new ParticleLayer());
 
+                SceneManager.getCurrentlyLoaded().isZSorted = false;
+
                 BindEditor();
 
                 texture = new Texture(ResourceLoader.loadImageResource("logo.png"));
                 wooden = new Texture(ResourceLoader.loadImageResource("wooden.png"));
 
-                physicsTest();
-                particleSystemTest();
+//                physicsTest();
+//                particleSystemTest();
 
-//                GenerateChunk(0, 0);
+//                createSandwich(0, 0);
+//                createSandwich(2, 0);
+//                createSandwich(5, 0);
+                GenerateChunk(0, 0);
 //                GenerateChunk(1, 0);
+
+                LookTexture("Basic Charakter Spritesheet.png", 4, 4);
+                LookTexture("water from wateringcan frames.png", 8, 3).transform2D().setPosition(1, 0);
+                LookTexture("chicken default.png", 8, 27).transform2D().setPosition(2, 0);
+            }
+
+            private Node LookTexture(String path, int width, int height) {
+                Node node = new Node();
+
+                Renderer renderer;
+                node.addComponent(renderer = new Renderer());
+                TextureMaterial material = new TextureMaterial();
+                renderer.setMaterial(material);
+
+                material.MainTex = new Texture(ResourceLoader.loadImageResource(path));
+                material.spriteAtlasResolution.set(width, height);
+                node.addComponent(new EditorComponent());
+
+                node.append();
+                return node;
             }
 
             private void particleSystemTest() {
@@ -127,7 +153,7 @@ public class Editor {
                 {
                     Node box = new Node();
                     box.addComponent(new RectangleCollider());
-                    box.addComponent(new Rigidbody());
+//                    box.addComponent(new Rigidbody());
 
                     Renderer renderer = new Renderer();
 

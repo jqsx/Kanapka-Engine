@@ -28,21 +28,21 @@ public class Block {
 
     public int damage = 0;
 
-    public Block(Chunk parent, Point point) {
+    public Block(Chunk parent, Point point, int id) {
         Objects.requireNonNull(point, "Missing chunk point.");
         Objects.requireNonNull(parent, "Missing parent.");
         this.point = new Point(point.x, point.y);
         this.parent = parent;
-        parent.appendBlock(this);
-    }
-
-    public Block(Chunk parent, Point point, int id) {
-        this(parent, point);
-        if (id < 0)
-            return;
-        if (id >= BlockManager.getBlockCount())
-            logger.warn("Block id " + id + " is not registered in the BlockManager. Will default to block id 0 instead.");
+        if (id < 0) {
+            throw new RuntimeException("Invalid block id.");
+//            return;
+        }
+        else if (id >= BlockManager.getBlockCount()) {
+//            logger.warn("Block id " + id + " is not registered in the BlockManager. Will default to block id 0 instead.");
+            throw new RuntimeException("Invalid block id.");
+        }
         this.id = id;
+        parent.appendBlock(this);
     }
 
     private Block(Chunk parent) {
@@ -78,6 +78,8 @@ public class Block {
     }
 
     public static class BlockSerializer {
+        private final Point point = new Point(0, 0);
+
         public byte[] SerializationData(Block block) {
             _buffer.clear();
 
@@ -96,24 +98,22 @@ public class Block {
         }
 
         public Block Deserialize(Chunk chunk, byte[] data) {
-            Block block = new Block(chunk);
-
             _buffer.clear();
-            _buffer.put(data);
 
-            block.point.x = _buffer.get();
-            block.point.y = _buffer.get();
+            byte x = _buffer.get();
+            byte y = _buffer.get();
 
-            block.id = _buffer.getInt();
-            if (block.id < 0)
+            int id = _buffer.getInt();
+
+            int special = _buffer.getInt();
+
+            point.setLocation(x,y);
+
+            Block block = chunk.createBlock(id, point);
+
+            if (block == null)
                 return null;
-            if (block.id >= BlockManager.getBlockCount()) {
-                logger.warn("Problem while deserializing world chunk data: Block id " + block.id + " is not registered in the BlockManager. Will default to block id 0 instead.");
-                block.id = 0;
-            }
-            block.special_id = _buffer.getInt();
-
-            chunk.appendBlock(block);
+            block.special_id = special;
 
             return block;
         }

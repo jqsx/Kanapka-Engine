@@ -67,14 +67,12 @@ public class Chunk {
 
             boolean _IsBlockFloor = data.isFloor();
 
-            logger.log(data.blockName() + " " + _IsBlockFloor);
-
             if (_IsBlockFloor) {
                 floor[block.point.x][block.point.y] = block;
                 target = old_floor;
             }
             else {
-                blocks[block.point.x][block.point.y] = block;
+                 blocks[block.point.x][block.point.y] = block;
             }
             if (target == null) needReRender = true;
             else if (target.id != block.id) needReRender = true;

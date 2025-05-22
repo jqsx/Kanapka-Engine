@@ -143,7 +143,7 @@ public class Camera {
         float widthMult = (float) Mathd.Clamp(ratio, 1.0, 20.0);
 
         if (main.projection == Projection.ORTHOGRAPHIC)
-            proj = proj.identity().ortho2D(-size * widthMult, size * widthMult, -size * heightMult, size * heightMult);
+            proj = proj.identity().ortho(-size * widthMult, size * widthMult, -size * heightMult, size * heightMult, Camera.main.NEAR, Camera.main.FAR);
         else if (main.projection == Projection.PERSPECTIVE)
             proj = proj.identity().perspectiveLH((float)Math.toRadians(main.FOV), ratio, main.NEAR, main.FAR);
 

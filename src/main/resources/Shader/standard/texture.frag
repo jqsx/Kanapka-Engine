@@ -10,7 +10,7 @@ uniform vec2 uAtlasRes;
 uniform int uAtlasIndex;
 
 void main() {
-    vec2 a = round(abs(uAtlasRes));
+    vec2 a = floor(abs(uAtlasRes));
 
     vec2 texCoord = vTexCoord;
 

@@ -10,15 +10,15 @@ import org.joml.Vector4f;
 @Serialized
 public class TextureMaterial extends Material {
 
-    @ReadOnly
+    @Serialized
     @Uniform(uniformName = "uMainTex")
     public Texture MainTex;
 
-    @ReadOnly
+    @Serialized
     @Uniform(uniformName = "uAtlasRes")
     public final Vector2f spriteAtlasResolution = new Vector2f(1f,1.f);
 
-    @ReadOnly
+    @Serialized
     @Uniform(uniformName = "uAtlasIndex")
     public int atlasIndex = 0;
 

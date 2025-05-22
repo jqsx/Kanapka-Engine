@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -67,6 +68,35 @@ public final class Logger {
             String message = ANSI_RESET + "[ " + ANSI_YELLOW + getTime() + ANSI_RESET + " ] " + INFO_PREFIX + getThreadText() + " [ " + ANSI_YELLOW + getFrom() + ANSI_RESET + " ] " + text.toString() + ANSI_RESET;
             System.out.println(message);
         }
+    }
+
+    public void logParams(Object object, boolean logPrivateFields) {
+        if (!VERBOSE)
+            return;
+
+        if (ignoreInfo)
+            return;
+
+        log("Logging parameters of object of class " + object.getClass().getName());
+
+        if (logPrivateFields)
+            for (Field field : object.getClass().getDeclaredFields()) {
+                try {
+                    field.setAccessible(true);
+                    System.out.println(ANSI_WHITE + "> " + field.getType().getName() + " " + field.getName() + " = " + field.get(object) + ANSI_RESET);
+                    field.setAccessible(false);
+                } catch (IllegalAccessException e) {
+
+                }
+            }
+        else
+            for (Field field : object.getClass().getFields()) {
+                try {
+                    System.out.println(ANSI_WHITE + "> " + field.getType().getName() + " " + field.getName() + " = " + field.get(object) + ANSI_RESET);
+                } catch (IllegalAccessException e) {
+
+                }
+            }
     }
 
     private String getFrom() {

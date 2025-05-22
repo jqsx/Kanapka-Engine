@@ -14,6 +14,7 @@ public class BlockData {
     private final boolean floor;
     private final BufferedImage render;
     private final String blockName;
+    private final boolean isDynamicDraw;
 
     private int block_id = -1;
 
@@ -36,6 +37,7 @@ public class BlockData {
         this.hasCollision = builder.hasCollision;
         this.floor = builder.isFloor;
         this.blockStrength = builder.blockStrength;
+        isDynamicDraw = this instanceof DynamicDraw;
 
         this.blockName = builder.blockName != null ? builder.blockName : (this.floor ? "Unnamed FloorBlock" : "Unnamed Block");
     }
@@ -64,6 +66,10 @@ public class BlockData {
 
     public String blockName() {
         return blockName;
+    }
+
+    public boolean isDynamicDraw() {
+        return isDynamicDraw;
     }
 
     public static class Builder {
